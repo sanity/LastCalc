@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-public class ParserTest {
+public class ParsersTest {
 
 	@Test
 	public void test() {

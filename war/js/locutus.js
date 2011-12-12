@@ -1,32 +1,32 @@
-var tokens = {
-	"alphabet" : "token blue",
-	"emu" : "token green"
+var variables = {
+	"alphabet" : "variable blue",
+	"emu" : "variable green",
+	"andrew" : "variable red"
 };
 
-// Set up token highlighting
-function tokenifier(parent) {
+// Set up highlighting
+function variableifier(parent) {
 			parent.on(
 					"keyup",
 					function() {
 						var savedSel = rangy.saveSelection();
-						$(this).find("span.pill").replaceWith(function() {
+						// Remove any existing pills
+						$(this).find("span.variable").replaceWith(function() {
 							return $(this).contents();
 						});
-						var regexpStr;
-						var oThis = $(this);
-						$.each(tokens, function(tokenRX, classes) {
-							var rgx = new RegExp("(^|[^\\w>])(" + tokenRX
-									+ ")([^\\w])", "g");
-							oThis.html(oThis.html().replace(
-									rgx,
-									"$1<span class=\"pill " + classes
-											+ "\">$2</span>$3"));
-						});
+						$(this).html($(this).html().replace(/[0-9,.]+|[a-zA-Z0-9]+|[\+-\/*=()\[\]]/g, function(str) {
+							nc = variables[str];
+							if (nc) {
+								return "<span class=\""+nc+"\">"+str+"</span>";
+							} else {
+								return str;
+							}
+						}));
 						rangy.restoreSelection(savedSel);
 					});
 }
 
-// Set up token clicking
+// Set up variable clicking
 function isOrContainsNode(ancestor, descendant) {
   var node = descendant;
   while (node) {
@@ -62,18 +62,18 @@ function insertNodeOverSelection(node, containerNode) {
   }
 }
 
-$(document).on("mousedown", ".token", function(event) {
+$(document).on("mousedown", ".variable", function(event) {
 	var savedSel = rangy.saveSelection();
-	var clickedToken = $(this).get(0);
+	var clickedvariable = $(this).get(0);
 	var divWithFocus = $("div:focus").get(0);
-	// Confirm that divWithFocus isn't a parent of clickedToken
-	if (clickedToken.parentElement != divWithFocus) {
+	// Confirm that divWithFocus isn't a parent of clickedvariable
+	if (clickedvariable.parentElement != divWithFocus) {
 		event.preventDefault();
-		insertNodeOverSelection(clickedToken.cloneNode(true), divWithFocus);
+		insertNodeOverSelection(clickedvariable.cloneNode(true), divWithFocus);
 		rangy.restoreSelection(savedSel);
 	}
 });
 		
 $(document).ready(function () {
-	tokenifier($("div.line.editable"));
+	variableifier($("div.line.editable"));
 });

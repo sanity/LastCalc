@@ -1,4 +1,4 @@
-package us.locut.reducers.amounts;
+package us.locut.parsers.amounts;
 
 import java.util.Set;
 
