@@ -1,9 +1,13 @@
 package us.locut.engines;
 
-import java.util.ArrayList;
+import java.util.*;
 
-public interface ParseEngine {
+public abstract class ParseEngine {
 
-	public abstract ArrayList<Object> parse(final ArrayList<Object> input, final long maxTimeMillis);
+	public ArrayList<Object> parseAndGetLastStep(final ArrayList<Object> input, final long maxTimeMillis) {
+		return parse(input, maxTimeMillis).getLast().result.output;
+	}
+
+	public abstract LinkedList<ParseStep> parse(final ArrayList<Object> input, final long maxTimeMillis);
 
 }

@@ -2,62 +2,40 @@ package us.locut.engines;
 
 import java.util.*;
 
-import us.locut.parsers.Parser;
+import us.locut.engines.ParserPickerFactory.ParserPicker;
 
-import com.google.appengine.repackaged.com.google.common.collect.*;
+import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
-public class SimpleParseEngine implements ParseEngine {
-	LinkedList<Parser> parsers = Lists.newLinkedList();
+public class SimpleParseEngine extends ParseEngine {
 
-	public SimpleParseEngine(final Iterable<Parser> parsers) {
-		Iterables.addAll(this.parsers, parsers);
+	private final ParserPickerFactory ppf;
+
+	public SimpleParseEngine(final ParserPickerFactory ppf) {
+		this.ppf = ppf;
+
 	}
 
 	/* (non-Javadoc)
 	 * @see us.locut.engines.ParseEngine#parse(java.util.ArrayList, long)
 	 */
 	@Override
-	public synchronized ArrayList<Object> parse(final ArrayList<Object> input, final long maxTimeMillis) {
+	public LinkedList<ParseStep> parse(final ArrayList<Object> input, final long maxTimeMillis) {
 		final long startTime = System.currentTimeMillis();
-		ArrayList<Object> intermediate = input;
-		outer: while (true) {
-			for (final ListIterator<Parser> li = parsers.listIterator(); li.hasNext();) {
-				final Parser p = li.next();
-				final ArrayList<Object> template = p.getTemplate();
-				templateScan: for (int sPos = 0; sPos < 1 + intermediate.size() - template.size(); sPos++) {
-					for (int x = 0; x < template.size(); x++) {
-						final Object templ = template.get(x);
-						final Object src = intermediate.get(sPos + x);
-						if (templ instanceof Class) {
-							final Class<?> templC = (Class<?>) templ;
-							if (!templC.isAssignableFrom(src.getClass())) {
-								continue templateScan;
-							}
-						} else {
-							if (!templ.equals(src)) {
-								continue templateScan;
-							}
-						}
-					}
-					// We have a match!
-					intermediate = p.parse(intermediate, sPos).output;
-
-					System.out.print(p + " -> ");
-					for (final Object o : intermediate) {
-						System.out.print(o.getClass().getSimpleName() + " : " + o + " , ");
-					}
-
-					// And move this parser to the top of the stack
-					li.remove();
-					parsers.addFirst(p);
-
-					if (System.currentTimeMillis() > startTime + maxTimeMillis)
-						return intermediate;
-
-					continue outer;
-				}
+		final ParserPicker picker = ppf.getPicker();
+		final LinkedList<ParseStep> steps = Lists.newLinkedList();
+		ArrayList<Object> current = input;
+		while (System.currentTimeMillis() - startTime < maxTimeMillis) {
+			final ParseStep nextStep = picker.pickNext(current);
+			if (nextStep == null) {
+				break;
 			}
-			return intermediate;
+			steps.add(nextStep);
+			if (nextStep.result.isError()) {
+				break;
+			}
+			current = nextStep.result.output;
 		}
+		ppf.teach(steps);
+		return steps;
 	}
 }

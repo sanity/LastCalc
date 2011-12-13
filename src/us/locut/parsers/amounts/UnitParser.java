@@ -28,16 +28,6 @@ public class UnitParser extends Parser {
 
 
 	@Override
-	public int hashCode() {
-		return "UnitParser".hashCode();
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		return obj instanceof AmountParser;
-	}
-
-	@Override
 	public ArrayList<Object> getTemplate() {
 		return template;
 	}
@@ -85,5 +75,36 @@ public class UnitParser extends Parser {
 	@Override
 	public String toString() {
 		return "UnitParser[" + unit.toString() + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((template == null) ? 0 : template.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof UnitParser))
+			return false;
+		final UnitParser other = (UnitParser) obj;
+		if (template == null) {
+			if (other.template != null)
+				return false;
+		} else if (!template.equals(other.template))
+			return false;
+		if (unit == null) {
+			if (other.unit != null)
+				return false;
+		} else if (!unit.equals(other.unit))
+			return false;
+		return true;
 	}
 }

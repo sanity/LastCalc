@@ -75,5 +75,6 @@ $(document).on("mousedown", ".variable", function(event) {
 });
 		
 $(document).ready(function () {
-	variableifier($("div.line.editable"));
+	variableifier($("div.question div.editable"));
+	$("#q1 div.editable").focus();
 });
