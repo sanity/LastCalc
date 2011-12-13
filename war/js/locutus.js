@@ -10,28 +10,36 @@ function highlightSyntax(element) {
 	}
 	
 	var savedSel = rangy.saveSelection();
-	// Remove any existing pills
-	element.find("span.variable").replaceWith(function() {
+	// Remove any existing variables
+	element.find("span.highlighted").replaceWith(function() {
 		return $(this).contents();
 	});
-	element.html(element.html().replace(/[0-9,.]+|[a-zA-Z0-9]+|[\+-\/*=()\[\]]/g, function(str) {
-		nc = variables[str];
-		if (nc) {
-			return "<span class=\""+nc+"\">"+str+"</span>";
-		} else {
+	console.log("Scanning");
+	inSpan = false;
+	element.html(element.html().replace(/[0-9\.]+|[a-zA-Z0-9]+|"(?:[^"\\]|\\.)*"/g, function(str) {
+		// We have to do this because of the <span> inserted by rangy - ugly but works
+		if (str.match(/span/)) {
+			inSpan = !inSpan;
+		}
+		if (inSpan) {
 			return str;
 		}
-	}));
+		if (str.match(/^"(?:[^"\\]|\\.)*"$/)) {
+			return "<span class=\"highlighted quoted\">"+str+"</span>";
+		}
+		if (str.match(/^[0-9\.]+$/)) {
+			return "<span class=\"highlighted number\">"+str+"</span>";
+		}
+		nc = variables[str];
+		if (nc) {
+			return "<span class=\"highlighted "+nc+"\">"+str+"</span>";
+		} else {
+				return str;
+			}
+		
+}));
+		
 	rangy.restoreSelection(savedSel);
-}
-
-// Set up highlighting
-function variableifier(parent) {
-			parent.on(
-					"keyup",
-					function() {
-						highlightSyntax($(this));
-					});
 }
 
 // Set up variable clicking
@@ -70,6 +78,7 @@ function insertNodeOverSelection(node, containerNode) {
   }
 }
 
+// Catch clicks on variables
 $(document).on("mousedown", ".variable", function(event) {
 	var savedSel = rangy.saveSelection();
 	var clickedvariable = $(this).get(0);
@@ -81,8 +90,29 @@ $(document).on("mousedown", ".variable", function(event) {
 		rangy.restoreSelection(savedSel);
 	}
 });
-		
+
+// Catch keyups within questions for highlighting
+$(document).on("keyup", "div.editable", function() {
+	highlightSyntax($(this));
+});
+
+$(document).on("keydown", "div.editable", function(event) {
+	if (event.keyCode == 13) {
+		// Carriage return
+		console.log("Carriage return");
+		event.preventDefault();
+	} else if (event.keyCode == 38) {
+		console.log("Arrow up");
+		event.preventDefault();
+	} else if (event.keyCode == 40) {
+		// Arrow down
+	}
+});
+
+$(document).on("focusout", "div.editable", function(event) {
+	// $(this) and all below must be submitted to the server
+});
+
 $(document).ready(function () {
-	variableifier($("div.question div.editable"));
 	$("#q1 div.editable").focus();
 });

@@ -3,7 +3,7 @@ package us.locut.engines;
 import java.io.Serializable;
 import java.util.*;
 
-import us.locut.parsers.Parser;
+import us.locut.parsers.*;
 
 import com.google.appengine.repackaged.com.google.common.collect.Maps;
 
@@ -21,7 +21,7 @@ public abstract class ParserPickerFactory implements Serializable {
 
 	public static abstract class ParserPicker {
 
-		public abstract ParseStep pickNext(ArrayList<Object> input);
+		public abstract ParseStep pickNext(ArrayList<Object> input, ParserContext context);
 	}
 
 	public static class Attempt {

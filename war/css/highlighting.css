@@ -1,3 +1,11 @@
+.number {
+	color: #992299;
+}
+
+.quoted {
+	color: #229999;
+}
+
 .variable {
   display: inline-block;
   outline: none;

@@ -6,6 +6,10 @@ import java.util.ArrayList;
 public abstract class Parser implements Serializable {
 	private static final long serialVersionUID = -6533682381337736230L;
 
+	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos, final ParserContext context) {
+		return parse(tokens, templatePos);
+	}
+
 	public abstract ParseResult parse(final ArrayList<Object> tokens, int templatePos);
 
 	public abstract ArrayList<Object> getTemplate();

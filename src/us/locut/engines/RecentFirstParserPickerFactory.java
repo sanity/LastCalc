@@ -52,7 +52,7 @@ public class RecentFirstParserPickerFactory extends ParserPickerFactory {
 		return new ParserPicker() {
 
 			@Override
-			public ParseStep pickNext(final ArrayList<Object> input) {
+			public ParseStep pickNext(final ArrayList<Object> input, final ParserContext context) {
 				int sPos = -1; // Decrement because we add 1 before each call to
 				// matchTemplate
 				rwl.readLock().lock();
@@ -77,7 +77,7 @@ public class RecentFirstParserPickerFactory extends ParserPickerFactory {
 					templateScan : while (true) {
 						sPos = candidate.matchTemplate(input, sPos+1);
 						if (sPos != -1) {
-							final ParseResult parseResult = candidate.parse(input, sPos);
+							final ParseResult parseResult = candidate.parse(input, sPos, context);
 							if (parseResult.isSuccess() || parseResult.isError()) {
 								rwl.readLock().unlock();
 								prevAttemptPos.put(attempt, sPos);
