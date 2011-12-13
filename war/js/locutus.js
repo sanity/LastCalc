@@ -4,25 +4,33 @@ var variables = {
 	"andrew" : "variable red"
 };
 
+function highlightSyntax(element) {
+	if (element.length != 1) {
+		alert("highlightSyntax() called with "+element.length+" elements (should be 1)");
+	}
+	
+	var savedSel = rangy.saveSelection();
+	// Remove any existing pills
+	element.find("span.variable").replaceWith(function() {
+		return $(this).contents();
+	});
+	element.html(element.html().replace(/[0-9,.]+|[a-zA-Z0-9]+|[\+-\/*=()\[\]]/g, function(str) {
+		nc = variables[str];
+		if (nc) {
+			return "<span class=\""+nc+"\">"+str+"</span>";
+		} else {
+			return str;
+		}
+	}));
+	rangy.restoreSelection(savedSel);
+}
+
 // Set up highlighting
 function variableifier(parent) {
 			parent.on(
 					"keyup",
 					function() {
-						var savedSel = rangy.saveSelection();
-						// Remove any existing pills
-						$(this).find("span.variable").replaceWith(function() {
-							return $(this).contents();
-						});
-						$(this).html($(this).html().replace(/[0-9,.]+|[a-zA-Z0-9]+|[\+-\/*=()\[\]]/g, function(str) {
-							nc = variables[str];
-							if (nc) {
-								return "<span class=\""+nc+"\">"+str+"</span>";
-							} else {
-								return str;
-							}
-						}));
-						rangy.restoreSelection(savedSel);
+						highlightSyntax($(this));
 					});
 }
 
