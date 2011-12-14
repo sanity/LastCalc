@@ -14,10 +14,10 @@ function highlightSyntax(element) {
 	element.find("span.highlighted").replaceWith(function() {
 		return $(this).contents();
 	});
-	console.log("Scanning");
 	inSpan = false;
 	element.html(element.html().replace(/[0-9\.]+|[a-zA-Z0-9]+|"(?:[^"\\]|\\.)*"/g, function(str) {
-		// We have to do this because of the <span> inserted by rangy - ugly but works
+		// We have to do this because of the <span> inserted by rangy which was tripping
+		// up the regexp.  Ugly but it works.
 		if (str.match(/span/)) {
 			inSpan = !inSpan;
 		}

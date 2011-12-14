@@ -5,14 +5,23 @@ xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet>
-		<servlet-name>Locutus</servlet-name>
-		<servlet-class>us.locut.LocutusServlet</servlet-class>
+		<servlet-name>MainPage</servlet-name>
+		<servlet-class>us.locut.servlets.MainPageServlet</servlet-class>
 	</servlet>
-	<servlet-mapping>
-		<servlet-name>Locutus</servlet-name>
-		<url-pattern>/locutus</url-pattern>
+	<servlet>
+		<servlet-name>Worksheet</servlet-name>
+		<servlet-class>us.locut.servlets.WorksheetServlet</servlet-class>
+	</servlet>
+		<servlet-mapping>
+		<servlet-name>MainPage</servlet-name>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
+	<servlet-mapping>
+		<servlet-name>MainPage</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Worksheet</servlet-name>
+		<url-pattern>/ws</url-pattern>
+	</servlet-mapping>
 </web-app>
