@@ -21,16 +21,16 @@ public class ParseEngineTest {
 		// final ParseEngine st = new SimpleParseEngine(rfppf);
 
 		final ParserContext context = new ParserContext(st, System.currentTimeMillis() + 2000);
-		LinkedList<ParseStep> res = st.parse(Parsers.tokenize("30 miles / 5 minutes \"blah blah 5 blah\""),
+		final LinkedList<ParseStep> res = st.parse(Parsers.tokenize("2 miles *5"),
 				context);
 		for (final ParseStep ps : res) {
 			System.out.println(ps);
 		}
 
-		res = st.parse(Parsers.tokenize("30 miles [1,2,3,4]"), context);
-		for (final ParseStep ps : res) {
-			System.out.println(ps);
-		}
+		// res = st.parse(Parsers.tokenize("30 miles [1,2,3,4]"), context);
+		// for (final ParseStep ps : res) {
+		// System.out.println(ps);
+		// }
 	}
 
 }

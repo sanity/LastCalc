@@ -9,6 +9,7 @@ import us.locut.parsers.Parser;
 import us.locut.parsers.amounts.*;
 import us.locut.parsers.datastructures.lists.ListParser;
 
+import com.google.appengine.repackaged.com.google.common.base.Joiner;
 import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
 public class Parsers {
@@ -17,12 +18,19 @@ public class Parsers {
 	public static void getAll(final Collection<Parser> parsers) {
 		parsers.addAll(UnitParser.getParsers());
 		parsers.add(new AmountParser());
+		parsers.add(new DimensionlessAmountParser());
 		parsers.addAll(AmountMathOp.getOps());
 		parsers.add(new ListParser());
 	}
 
 	static {
 		p = Pattern.compile("[0-9.]+|[a-zA-Z0-9]+|[\\+-/*=()\\[\\]]|\"(?:[^\"\\\\]|\\\\.)*\"");
+	}
+
+	public static Joiner tokenJoiner = Joiner.on(' ');
+
+	public static String toHtml(final ArrayList<Object> tokens) {
+		return tokenJoiner.join(tokens);
 	}
 
 	public static ArrayList<Object> tokenize(final String orig) {
@@ -65,6 +73,37 @@ public class Parsers {
 		}
 
 		return ret;
+	}
+
+	public static ParsedQuestion parseQuestion(final String question, final Map<String, ArrayList<Object>> variables) {
+
+		List<Object> origTokens = tokenize(question);
+
+		final ParsedQuestion pq = new ParsedQuestion();
+
+		if (origTokens.get(1).equals("=") || origTokens.get(1).toString().equalsIgnoreCase("is")) {
+			pq.variableAssignment = origTokens.get(0).toString();
+			origTokens = origTokens.subList(2, origTokens.size());
+		}
+
+		pq.question = Lists.newArrayListWithCapacity(origTokens.size() * 2);
+		for (final Object token : origTokens) {
+			if (token instanceof String) {
+				final ArrayList<Object> repl = variables.get(token);
+				if (repl != null) {
+					pq.question.addAll(repl);
+					continue;
+				}
+			}
+			pq.question.add(token);
+		}
+		return pq;
+	}
+
+	public static class ParsedQuestion {
+		public String variableAssignment;
+
+		public ArrayList<Object> question;
 	}
 
 	public static class QuotedString {

@@ -12,10 +12,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>Worksheet</servlet-name>
 		<servlet-class>us.locut.servlets.WorksheetServlet</servlet-class>
 	</servlet>
-		<servlet-mapping>
-		<servlet-name>MainPage</servlet-name>
-		<url-pattern>/</url-pattern>
-	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>MainPage</servlet-name>
 		<url-pattern>/*</url-pattern>

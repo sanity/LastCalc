@@ -3,34 +3,21 @@ package us.locut.db;
 import java.io.*;
 import java.util.ArrayList;
 
-import javax.persistence.Id;
-
 import com.googlecode.objectify.annotation.Unindexed;
 
-public class QAPair {
-	@Id
-	public long id;
+public class QAPair implements Serializable {
+	private static final long serialVersionUID = 8234981855606438804L;
 
-	public QAPair(final int position, final String question, final ArrayList<Object> answer)
+	public QAPair(final String question, final ArrayList<Object> answer)
 			throws IOException {
-		this.position = position;
 		this.question = question;
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		final ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(answer);
-		oos.flush();
-		this.answer = baos.toByteArray();
+		this.answer = answer;
 	}
 
-	public int position;
+	public String varAssignment;
 
 	public String question;
 
 	@Unindexed
-	public byte[] answer;
-
-	public ArrayList<Object> deserializeAnswer() throws IOException, ClassNotFoundException {
-		final ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(answer));
-		return (ArrayList<Object>) ois.readObject();
-	}
+	public ArrayList<Object> answer;
 }

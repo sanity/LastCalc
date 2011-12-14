@@ -102,15 +102,38 @@ $(document).on("keydown", "div.editable", function(event) {
 		console.log("Carriage return");
 		event.preventDefault();
 	} else if (event.keyCode == 38) {
-		console.log("Arrow up");
+		$(this).parent().prev().find(".editable").focus();
 		event.preventDefault();
 	} else if (event.keyCode == 40) {
-		// Arrow down
+		$(this).parent().next().find(".editable").focus();
+		event.preventDefault();
 	}
 });
 
 $(document).on("focusout", "div.editable", function(event) {
-	// $(this) and all below must be submitted to the server
+	var toSend = {"worksheetId" : $("body").attr("data-worksheet-id"), "questions" : {}};
+	var question = $(this).parent();
+	do {
+		var qText = $.trim(question.find(".editable").text());
+		if (qText.length > 0) {
+			toSend.questions[$.trim(question.find(".question_no").text())] = qText;
+		}
+		question = question.next();
+	} while (question.length > 0);
+	$.ajax({
+		type: "POST",
+		url: "/ws",
+		data: JSON.stringify(toSend),
+		contentType: "application/json",
+		dataType: "json",
+		success: function(response) {
+			$(".question").each(function(qIx) {
+				if (response.answers[(qIx+1).toString()]) {
+					$(this).find(".answer").html(response.answers[(qIx+1).toString()]);
+				}
+			});
+		}
+	});
 });
 
 $(document).ready(function () {

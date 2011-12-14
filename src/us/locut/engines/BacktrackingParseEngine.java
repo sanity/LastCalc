@@ -1,6 +1,5 @@
 package us.locut.engines;
 
-import java.io.Serializable;
 import java.util.*;
 
 import us.locut.engines.ParserPickerFactory.ParserPicker;
@@ -28,7 +27,7 @@ public class BacktrackingParseEngine extends ParseEngine {
 			if (candidates.isEmpty()) {
 				final ParseStep nextStep = picker.pickNext(input, context);
 				if (nextStep == null)
-					return null;
+					return Lists.newLinkedList();
 				else {
 					candidates.add(new BTParseStep(nextStep, null));
 				}
@@ -46,8 +45,8 @@ public class BacktrackingParseEngine extends ParseEngine {
 			}
 			break outer;
 		}
-		BTParseStep bestStep = candidates.first();
 		final LinkedList<ParseStep> steps = Lists.newLinkedList();
+		BTParseStep bestStep = candidates.first();
 		while (bestStep != null) {
 			steps.addFirst(bestStep);
 			bestStep = bestStep.previous;
@@ -76,8 +75,27 @@ public class BacktrackingParseEngine extends ParseEngine {
 				return -1;
 			else if (result.output.size() > o.result.output.size())
 				return 1;
-			else
-				return Double.compare(result.output.hashCode(), o.result.output.hashCode());
+			else {
+				// Go with whichever has fewer strings since they
+				// often indicate a failure to parse
+				int myStringCount = 0, otherStringCount = 0;
+				for (final Object ob : result.output) {
+					if (ob instanceof String) {
+						myStringCount++;
+					}
+				}
+				for (final Object ob : o.result.output) {
+					if (ob instanceof String) {
+						otherStringCount++;
+					}
+				}
+				if (myStringCount < otherStringCount)
+					return -1;
+				else if (myStringCount > otherStringCount)
+					return 1;
+				else
+					return Double.compare(result.output.hashCode(), o.result.output.hashCode());
+			}
 		}
 
 	}

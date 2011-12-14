@@ -6,12 +6,12 @@ import javax.measure.converter.ConversionException;
 
 import org.jscience.physics.amount.Amount;
 
-import us.locut.parsers.Parser;
+import us.locut.parsers.*;
 
 import com.google.appengine.repackaged.com.google.common.collect.*;
 
 public abstract class AmountMathOp extends Parser {
-
+	private static final long serialVersionUID = -2510157348504286501L;
 	private final String description;
 	private final ArrayList<Object> template;
 
@@ -39,8 +39,8 @@ public abstract class AmountMathOp extends Parser {
 		return template;
 	}
 
-	public static Set<AmountMathOp> getOps() {
-		final Set<AmountMathOp> ops = Sets.newHashSet();
+	public static Set<Parser> getOps() {
+		final Set<Parser> ops = Sets.newHashSet();
 		ops.add(new AmountMathOp("+", "Add") {
 			private static final long serialVersionUID = 8999743708212969031L;
 
@@ -75,6 +75,26 @@ public abstract class AmountMathOp extends Parser {
 				return a.divide(b);
 			}
 		});
+		ops.add(new AmountMathOp("^", "Raise to Power") {
+			private static final long serialVersionUID = 4974989053479508332L;
+
+			@Override
+			protected Amount<?> operation(final Amount<?> a, final Amount<?> b) throws ConversionException {
+				if (b.getEstimatedValue() != b.getExactValue())
+					throw new ConversionException("Can only raise to an integer power");
+				return a.pow((int) b.getExactValue());
+			}
+		});
+
+		ops.add(new RewriteParser("plus", "+"));
+		ops.add(new RewriteParser("x", "+"));
+		ops.add(new RewriteParser("minus", "-"));
+		ops.add(new RewriteParser("multiply", "*"));
+		ops.add(new RewriteParser(Lists.newArrayList("multiplied", "by"), "*"));
+		ops.add(new RewriteParser("divide", "/"));
+		ops.add(new RewriteParser(Lists.newArrayList("divided", "by"), "/"));
+		ops.add(new RewriteParser(Lists.newArrayList("to", "the", "power", "of"), "^"));
+
 		return ops;
 	}
 

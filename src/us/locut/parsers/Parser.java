@@ -7,10 +7,14 @@ public abstract class Parser implements Serializable {
 	private static final long serialVersionUID = -6533682381337736230L;
 
 	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos, final ParserContext context) {
+		if (context == null)
+			throw new IllegalArgumentException("context is null");
 		return parse(tokens, templatePos);
 	}
 
-	public abstract ParseResult parse(final ArrayList<Object> tokens, int templatePos);
+	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos) {
+		return parse(tokens, templatePos, null);
+	}
 
 	public abstract ArrayList<Object> getTemplate();
 
