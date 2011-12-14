@@ -1,5 +1,6 @@
 package us.locut.engines;
 
+import java.io.Serializable;
 import java.util.*;
 
 import us.locut.engines.ParserPickerFactory.ParserPicker;

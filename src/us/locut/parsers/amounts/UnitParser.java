@@ -50,12 +50,12 @@ public class UnitParser extends Parser {
 				try {
 					final Unit<?> unit = (Unit<?>) f.get(null);
 					if (longName.length > 0) {
-						ret.add(new UnitParser(unit, Lists.newArrayList(longName)));
+						ret.add(new UnitParser(unit, Lists.<Object> newArrayList(longName)));
 						// And pluralize
 						if (longName[0].toString().charAt(longName[0].toString().length() - 1) != 's') {
-							final ArrayList<Object> pluralLongName = Lists.newArrayList(longName);
+							final ArrayList<Object> pluralLongName = Lists.<Object> newArrayList(longName);
 							pluralLongName.set(0, pluralLongName.get(0) + "s");
-							ret.add(new UnitParser(unit, Lists.newArrayList(pluralLongName)));
+							ret.add(new UnitParser(unit, Lists.<Object> newArrayList(pluralLongName)));
 						}
 					}
 					final ArrayList<Object> shortName = Parsers.tokenize(unit.toString());
