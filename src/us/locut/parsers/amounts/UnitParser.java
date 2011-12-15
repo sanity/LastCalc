@@ -8,6 +8,7 @@ import javax.measure.unit.*;
 import us.locut.Parsers;
 import us.locut.parsers.Parser;
 
+import com.google.appengine.repackaged.com.google.common.base.Joiner;
 import com.google.appengine.repackaged.com.google.common.collect.*;
 
 public class UnitParser extends Parser {
@@ -39,7 +40,13 @@ public class UnitParser extends Parser {
 		return ret;
 	}
 
+	public static Map<Unit<?>, String> verboseNamesSing = Maps.newHashMap();
+
+	public static Map<Unit<?>, String> verboseNamesPlur = Maps.newHashMap();
+
+
 	private static void addParsers(final Set<UnitParser> ret, final Class<? extends SystemOfUnits> cls) {
+		final Joiner joiner = Joiner.on(' ');
 		for (final Field f : cls.getDeclaredFields()) {
 			if (!Modifier.isStatic(f.getModifiers())) {
 				continue;
@@ -51,11 +58,13 @@ public class UnitParser extends Parser {
 					final Unit<?> unit = (Unit<?>) f.get(null);
 					if (longName.length > 0) {
 						ret.add(new UnitParser(unit, Lists.<Object> newArrayList(longName)));
+						verboseNamesSing.put(unit, joiner.join(longName));
 						// And pluralize
 						if (longName[0].toString().charAt(longName[0].toString().length() - 1) != 's') {
 							final ArrayList<Object> pluralLongName = Lists.<Object> newArrayList(longName);
 							pluralLongName.set(0, pluralLongName.get(0) + "s");
 							ret.add(new UnitParser(unit, Lists.<Object> newArrayList(pluralLongName)));
+							verboseNamesPlur.put(unit, joiner.join(pluralLongName));
 						}
 					}
 					final ArrayList<Object> shortName = Parsers.tokenize(unit.toString());
@@ -70,6 +79,8 @@ public class UnitParser extends Parser {
 				}
 			}
 		}
+		verboseNamesPlur.put(NonSI.FOOT, "feet");
+		ret.add(new UnitParser(NonSI.FOOT, Lists.<Object> newArrayList("feet")));
 	}
 
 	@Override

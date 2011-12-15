@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServlet;
 
 import org.jsoup.nodes.*;
 
-import us.locut.Parsers;
+import us.locut.Renderers;
 import us.locut.db.*;
 
 import com.googlecode.objectify.Objectify;
@@ -89,7 +89,8 @@ public class MainPageServlet extends HttpServlet {
 					question.appendElement("div").attr("class", "question_no").text(Integer.toString(x));
 					question.appendElement("div").attr("class", "editable").attr("contentEditable", "true")
 					.text(qa.question);
-					question.appendElement("div").attr("class", "answer").text(Parsers.toHtml(qa.answer));
+					question.appendElement("div").attr("class", "answer")
+							.html(Renderers.toHtml(requestURL.toString(), qa.answer).toString());
 					x++;
 				}
 				final Element question = doc.body().appendElement("div").attr("class", "question");

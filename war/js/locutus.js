@@ -103,7 +103,6 @@ $(document).on("mousedown", ".variable", function(event) {
 function tidyQuestions() {
 	$("div.question").each(function(ix) {
 		highlightSyntax($(this).find(".editable"));
-		highlightSyntax($(this).find(".answer"));
 		$(this).find(".question_no").text((ix+1).toString());
 	});
 }

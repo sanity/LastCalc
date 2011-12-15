@@ -98,7 +98,8 @@ public class WorksheetServlet extends HttpServlet {
 		response.variables = variableDefinitions;
 
 		for (int x = 0; x < worksheet.qaPairs.size(); x++) {
-			response.answers.put(x + 1, Parsers.toHtml(worksheet.qaPairs.get(x).answer));
+			response.answers.put(x + 1, Renderers.toHtml(req.getRequestURI(), worksheet.qaPairs.get(x).answer)
+					.toString());
 		}
 
 		resp.setContentType("application/json");

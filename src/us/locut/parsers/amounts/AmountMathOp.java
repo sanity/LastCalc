@@ -27,10 +27,14 @@ public abstract class AmountMathOp extends Parser {
 		try {
 			return Parser.ParseResult.success(createResponse(tokens, templatePos, operation(a, b)), description);
 		} catch (final ConversionException ce) {
-			return Parser.ParseResult.success(null, ce.getMessage());
+			return Parser.ParseResult.fail();
 		}
 	}
 
+	@Override
+	public String toString() {
+		return description;
+	}
 
 	protected abstract Amount<?> operation(final Amount<?> a, final Amount<?> b) throws ConversionException;
 

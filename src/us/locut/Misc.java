@@ -1,5 +1,6 @@
 package us.locut;
 
+import java.text.NumberFormat;
 import java.util.Random;
 
 import com.google.gson.*;
@@ -19,4 +20,10 @@ public class Misc {
 	}
 
 	public static final Gson gson = new GsonBuilder().create();
+
+	public static NumberFormat numberFormat;
+	static {
+		numberFormat = NumberFormat.getInstance();
+		numberFormat.setParseIntegerOnly(false);
+	}
 }

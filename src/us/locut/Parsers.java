@@ -9,7 +9,6 @@ import us.locut.parsers.*;
 import us.locut.parsers.amounts.*;
 import us.locut.parsers.datastructures.lists.ListParser;
 
-import com.google.appengine.repackaged.com.google.common.base.Joiner;
 import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
 public class Parsers {
@@ -19,6 +18,13 @@ public class Parsers {
 		parsers.addAll(UnitParser.getParsers());
 		parsers.add(new TrailingEqualsStripper());
 		parsers.add(new AmountParser());
+
+		parsers.add(new RewriteParser("to", "in"));
+		parsers.add(new RewriteParser("as", "in"));
+
+		parsers.add(new AmountConverterParser());
+
+		parsers.add(new RemoveBrackets());
 		parsers.add(new DimensionlessAmountParser());
 		parsers.addAll(AmountMathOp.getOps());
 		parsers.add(new ListParser());
@@ -26,12 +32,6 @@ public class Parsers {
 
 	static {
 		p = Pattern.compile("[0-9.]+|[a-zA-Z0-9]+|[\\+-/*=()\\[\\]]|\"(?:[^\"\\\\]|\\\\.)*\"");
-	}
-
-	public static Joiner tokenJoiner = Joiner.on(' ');
-
-	public static String toHtml(final ArrayList<Object> tokens) {
-		return tokenJoiner.join(tokens);
 	}
 
 	public static ArrayList<Object> tokenize(final String orig) {
