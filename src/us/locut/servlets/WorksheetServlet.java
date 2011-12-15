@@ -74,7 +74,6 @@ public class WorksheetServlet extends HttpServlet {
 		}
 
 		// Recompute worksheet
-		final ParserContext context = new ParserContext(parseEngine, Long.MAX_VALUE);
 		final Map<String, ArrayList<Object>> variables = Maps.newHashMap();
 		final Map<String, Integer> variableDefinitions = Maps.newHashMap();
 		int pos = 0;
@@ -82,6 +81,7 @@ public class WorksheetServlet extends HttpServlet {
 			final ParsedQuestion pq = Parsers.parseQuestion(qap.question, variables);
 
 			if (qap.answer == null) {
+				final ParserContext context = new ParserContext(parseEngine, System.currentTimeMillis() + 1500);
 				qap.answer = parseEngine.parseAndGetLastStep(pq.question, context);
 			}
 

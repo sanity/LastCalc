@@ -37,6 +37,11 @@ public class AmountParser extends Parser {
 	}
 
 	@Override
+	public String toString() {
+		return "";
+	}
+
+	@Override
 	public boolean equals(final Object obj) {
 		return obj instanceof AmountParser;
 	}

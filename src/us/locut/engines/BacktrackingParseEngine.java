@@ -21,25 +21,21 @@ public class BacktrackingParseEngine extends ParseEngine {
 	public LinkedList<ParseStep> parse(final ArrayList<Object> input,
 			final ParserContext context) {
 		final TreeSet<BTParseStep> candidates = Sets.newTreeSet();
-		final long startTime = System.currentTimeMillis();
 		final ParserPicker picker = ppf.getPicker();
+		int createOrder = 0;
+		candidates.add(new BTParseStep(input, NoopParser.singleton, ParseResult.success(input), null));
 		outer: while (System.currentTimeMillis() < context.terminateTime) {
-			if (candidates.isEmpty()) {
-				final ParseStep nextStep = picker.pickNext(input, context);
-				if (nextStep == null)
-					return Lists.newLinkedList();
-				else {
-					candidates.add(new BTParseStep(nextStep, null));
-				}
-			}
 			if (candidates.first().result.output.size() == 1) {
 				// Can't do better than this
 				break outer;
 			}
 			for (final BTParseStep candidateStep : candidates) {
 				final ParseStep nextStep = picker.pickNext(candidateStep.result.output, context);
+
 				if (nextStep != null && nextStep.result.isSuccess()) {
-					candidates.add(new BTParseStep(nextStep, candidateStep));
+
+					// System.out.println(nextStep);
+					candidates.add(new BTParseStep(nextStep, candidateStep, createOrder++));
 					continue outer;
 				}
 			}
@@ -58,7 +54,7 @@ public class BacktrackingParseEngine extends ParseEngine {
 
 		public final BTParseStep previous;
 
-		public BTParseStep(final ParseStep parseStep, final BTParseStep previous) {
+		public BTParseStep(final ParseStep parseStep, final BTParseStep previous, final int createOrder) {
 			super(parseStep.input, parseStep.parser, parseStep.result);
 			this.previous = previous;
 		}

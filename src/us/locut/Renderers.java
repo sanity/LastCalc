@@ -35,7 +35,7 @@ public class Renderers {
 				}
 
 			} else {
-				ret.appendChild(new TextNode(obj.toString() + " ", baseUri));
+				ret.appendChild(new TextNode(" " + obj.toString() + " ", baseUri));
 			}
 		}
 		return ret;

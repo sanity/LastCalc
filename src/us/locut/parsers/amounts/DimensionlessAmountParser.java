@@ -28,6 +28,11 @@ public class DimensionlessAmountParser extends Parser {
 	}
 
 	@Override
+	public String toString() {
+		return "";
+	}
+
+	@Override
 	public ArrayList<Object> getTemplate() {
 		return template;
 	}

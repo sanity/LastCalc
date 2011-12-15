@@ -34,6 +34,11 @@ public class AmountConverterParser extends Parser {
 	}
 
 	@Override
+	public String toString() {
+		return "";
+	}
+
+	@Override
 	public int hashCode() {
 		return "AmountConverterParser".hashCode();
 	}

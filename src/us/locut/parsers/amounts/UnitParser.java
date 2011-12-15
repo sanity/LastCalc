@@ -37,6 +37,10 @@ public class UnitParser extends Parser {
 		final Set<UnitParser> ret = Sets.newHashSet();
 		addParsers(ret, SI.class);
 		addParsers(ret, NonSI.class);
+		verboseNamesPlur.put(NonSI.FOOT, "feet");
+		ret.add(new UnitParser(NonSI.FOOT, Lists.<Object> newArrayList("feet")));
+		verboseNamesPlur.put(NonSI.INCH, "inches");
+		ret.add(new UnitParser(NonSI.INCH, Lists.<Object> newArrayList("inches")));
 		return ret;
 	}
 
@@ -79,8 +83,6 @@ public class UnitParser extends Parser {
 				}
 			}
 		}
-		verboseNamesPlur.put(NonSI.FOOT, "feet");
-		ret.add(new UnitParser(NonSI.FOOT, Lists.<Object> newArrayList("feet")));
 	}
 
 	@Override

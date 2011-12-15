@@ -1,6 +1,5 @@
 package us.locut.engines;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import us.locut.parsers.*;
@@ -21,6 +20,15 @@ public class ParseStep {
 
 	@Override
 	public String toString() {
-		return input + " -> " + parser.getClass().getSimpleName() + " -> " + result.output;
+		return alParse(input) + " -> " + parser.getClass().getSimpleName() + " : " + parser + " -> "
+				+ alParse(result.output);
+	}
+
+	private static String alParse(final ArrayList<Object> input) {
+		final StringBuilder sb = new StringBuilder();
+		for (final Object o : input) {
+			sb.append(o.getClass().getSimpleName() + "[" + o.toString() + "] ");
+		}
+		return sb.toString();
 	}
 }
