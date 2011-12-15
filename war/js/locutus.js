@@ -146,6 +146,8 @@ $(document).on("focusout", "div.editable", function(event) {
 		var qText = $.trim(question.find(".editable").text());
 		if (qText.length > 0) {
 			toSend.questions[$.trim(question.find(".question_no").text())] = qText;
+		} else {
+			question.find(".answer").html("");
 		}
 		question = question.next();
 	} while (question.length > 0);

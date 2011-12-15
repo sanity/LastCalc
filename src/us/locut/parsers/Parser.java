@@ -50,20 +50,26 @@ public abstract class Parser implements Serializable {
 			for (int x = 0; x < templateSize; x++) {
 				final Object templ = getTemplate().get(x);
 				final Object src = input.get(sPos + x);
-				if (templ instanceof Class) {
-					final Class<?> templC = (Class<?>) templ;
-					if (!templC.isAssignableFrom(src.getClass())) {
-						continue templateScan;
-					}
-				} else {
-					if (!templ.equals(src)) {
-						continue templateScan;
-					}
+				if (!match(templ, src)) {
+					continue templateScan;
 				}
 			}
 			return sPos;
 		}
 		return -1;
+	}
+
+	private final boolean match(final Object templ, final Object src) {
+		if (templ instanceof Class) {
+			final Class<?> templC = (Class<?>) templ;
+			return templC.isAssignableFrom(src.getClass());
+		} else if (templ instanceof Iterable<?>) {
+			for (final Object t : ((Iterable<?>) templ)) {
+				if (match(t, src))
+					return true;
+			}
+		}
+		return templ.equals(src);
 	}
 
 	public static final class ParseResult {

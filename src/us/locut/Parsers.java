@@ -18,12 +18,7 @@ public class Parsers {
 		parsers.addAll(UnitParser.getParsers());
 		parsers.add(new TrailingEqualsStripper());
 		parsers.add(new AmountParser());
-
-		parsers.add(new RewriteParser("to", "in"));
-		parsers.add(new RewriteParser("as", "in"));
-
 		parsers.add(new AmountConverterParser());
-
 		parsers.add(new RemoveBrackets());
 		parsers.add(new DimensionlessAmountParser());
 		parsers.addAll(AmountMathOp.getOps());

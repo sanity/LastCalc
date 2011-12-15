@@ -13,7 +13,8 @@ import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
 public class AmountConverterParser extends Parser {
 	private static final long serialVersionUID = -2549484003198615095L;
-	private static final ArrayList<Object> template = Lists.<Object> newArrayList(Amount.class, "in", Unit.class);
+	private static final ArrayList<Object> template = Lists.<Object> newArrayList(Amount.class,
+			Lists.newArrayList("in", "to", "as"), Unit.class);
 
 	@Override
 	public ArrayList<Object> getTemplate() {
