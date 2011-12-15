@@ -5,7 +5,7 @@ import java.util.regex.*;
 
 import org.jscience.mathematics.number.*;
 
-import us.locut.parsers.Parser;
+import us.locut.parsers.*;
 import us.locut.parsers.amounts.*;
 import us.locut.parsers.datastructures.lists.ListParser;
 
@@ -17,6 +17,7 @@ public class Parsers {
 
 	public static void getAll(final Collection<Parser> parsers) {
 		parsers.addAll(UnitParser.getParsers());
+		parsers.add(new TrailingEqualsStripper());
 		parsers.add(new AmountParser());
 		parsers.add(new DimensionlessAmountParser());
 		parsers.addAll(AmountMathOp.getOps());
@@ -81,7 +82,8 @@ public class Parsers {
 
 		final ParsedQuestion pq = new ParsedQuestion();
 
-		if (origTokens.get(1).equals("=") || origTokens.get(1).toString().equalsIgnoreCase("is")) {
+		if (origTokens.size() > 2
+				&& (origTokens.get(1).equals("=") || origTokens.get(1).toString().equalsIgnoreCase("is"))) {
 			pq.variableAssignment = origTokens.get(0).toString();
 			origTokens = origTokens.subList(2, origTokens.size());
 		}

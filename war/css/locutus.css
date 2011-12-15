@@ -1,3 +1,8 @@
+div.answer {
+	text-indent: 25px;
+	padding: 10px;
+}
+
 div.editable {
 	width: 98%;
 	border: 1px;

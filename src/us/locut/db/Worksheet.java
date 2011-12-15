@@ -17,12 +17,17 @@ public class Worksheet {
 
 	public Worksheet() {
 		id = Misc.randomString(7);
+		readOnlyId = Misc.randomString(8);
 		qaPairs = Lists.newArrayList();
 
 	}
 
 	@Id
 	public String id;
+
+	public String parentId;
+
+	public String readOnlyId;
 
 	@Serialized
 	public ArrayList<QAPair> qaPairs;

@@ -1,8 +1,8 @@
-var variables = {
-	"alphabet" : "variable blue",
-	"emu" : "variable green",
-	"andrew" : "variable red"
-};
+// TODO: Investigate selecting and copying an entry to the clipboard
+
+variables = {};
+
+recognizedWords = [];
 
 function highlightSyntax(element) {
 	if (element.length != 1) {
@@ -18,24 +18,33 @@ function highlightSyntax(element) {
 	element.html(element.html().replace(/[0-9\.]+|[a-zA-Z0-9]+|"(?:[^"\\]|\\.)*"/g, function(str) {
 		// We have to do this because of the <span> inserted by rangy which was tripping
 		// up the regexp.  Ugly but it works.
+		if (str.match(/nbsp|amp/)) {
+			return str;
+		}
 		if (str.match(/span/)) {
 			inSpan = !inSpan;
+			return str;
 		}
 		if (inSpan) {
 			return str;
 		}
-		if (str.match(/^"(?:[^"\\]|\\.)*"$/)) {
-			return "<span class=\"highlighted quoted\">"+str+"</span>";
-		}
+//		if (str.match(/^"(?:[^"\\]|\\.)*"$/)) {
+//			return "<span class=\"highlighted quoted\">"+str+"</span>";
+//		}
 		if (str.match(/^[0-9\.]+$/)) {
 			return "<span class=\"highlighted number\">"+str+"</span>";
 		}
-		nc = variables[str];
+		var nc = variables[str];
 		if (nc) {
-			return "<span class=\"highlighted "+nc+"\">"+str+"</span>";
+			var colors = ["red", "green", "blue", "orange", "rosy", "pink", "white", "gray", "black"];
+			var color = colors[nc % colors.length];
+			return "<span class=\"highlighted variable "+color+"\">"+str+"</span>";
+		} else if ($.inArray(str, recognizedWords) > -1) {
+			return "<span class=\"highlighted recognized\">"+str+"</span>";
 		} else {
 				return str;
-			}
+		}
+		
 		
 }));
 		
@@ -91,6 +100,14 @@ $(document).on("mousedown", ".variable", function(event) {
 	}
 });
 
+function tidyQuestions() {
+	$("div.question").each(function(ix) {
+		highlightSyntax($(this).find(".editable"));
+		highlightSyntax($(this).find(".answer"));
+		$(this).find(".question_no").text((ix+1).toString());
+	});
+}
+
 // Catch keyups within questions for highlighting
 $(document).on("keyup", "div.editable", function() {
 	highlightSyntax($(this));
@@ -99,18 +116,31 @@ $(document).on("keyup", "div.editable", function() {
 $(document).on("keydown", "div.editable", function(event) {
 	if (event.keyCode == 13) {
 		// Carriage return
-		console.log("Carriage return");
+		q = $(this).parent(".question").clone();
+		q.find(".editable").text("");
+		q.find(".answer").text("");
+		$(this).parent(".question").after(q);
+		q.find(".editable").focus();
+		tidyQuestions();
 		event.preventDefault();
 	} else if (event.keyCode == 38) {
+		// Up arrow
 		$(this).parent().prev().find(".editable").focus();
 		event.preventDefault();
 	} else if (event.keyCode == 40) {
+		// Down arrow
 		$(this).parent().next().find(".editable").focus();
 		event.preventDefault();
 	}
 });
 
 $(document).on("focusout", "div.editable", function(event) {
+	if (($.trim($(this).text()).length == 0) && 
+			($(this).parent().next(".question").length != 0)) {
+		// Its empty, delete it unless it is the last one
+		$(this).parent(".question").remove();
+	}
+
 	var toSend = {"worksheetId" : $("body").attr("data-worksheet-id"), "questions" : {}};
 	var question = $(this).parent();
 	do {
@@ -124,18 +154,34 @@ $(document).on("focusout", "div.editable", function(event) {
 		type: "POST",
 		url: "/ws",
 		data: JSON.stringify(toSend),
-		contentType: "application/json",
+		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: function(response) {
+			variables = response.variables;
 			$(".question").each(function(qIx) {
 				if (response.answers[(qIx+1).toString()]) {
 					$(this).find(".answer").html(response.answers[(qIx+1).toString()]);
 				}
 			});
+			tidyQuestions();
 		}
 	});
 });
 
-$(document).ready(function () {
-	$("#q1 div.editable").focus();
+$(window).load(function () {
+	// Grab a list of variables from the server
+	$.ajax({
+		type: "POST",
+		url: "/ws",
+		data: JSON.stringify({"worksheetId" : $("body").attr("data-worksheet-id"), "getRecognizedWords" : true}),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: function(response) {
+			recognizedWords = response.recognizedWords;
+			variables = response.variables;
+			tidyQuestions();
+		}
+	});
+	
+	$("div.editable").last().focus();
 });

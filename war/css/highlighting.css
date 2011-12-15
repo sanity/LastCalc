@@ -6,6 +6,10 @@
 	color: #229999;
 }
 
+.recognized {
+	color: #777777;
+}
+
 .variable {
   display: inline-block;
   outline: none;

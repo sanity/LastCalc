@@ -21,39 +21,56 @@ public class WorksheetServlet extends HttpServlet {
 
 	ParseEngine parseEngine;
 
+	Set<String> recognizedWords = Sets.newHashSet();
+
 	@Override
 	public void init() throws ServletException {
 		final LinkedList<Parser> parsers = Lists.newLinkedList();
 		us.locut.Parsers.getAll(parsers);
+		for (final Parser p : parsers) {
+			for (final Object i : p.getTemplate()) {
+				if (i instanceof String) {
+					recognizedWords.add((String) i);
+				}
+			}
+		}
 		final ParserPickerFactory ppf = new RecentFirstParserPickerFactory(parsers);
 		parseEngine = new BacktrackingParseEngine(ppf);
 	}
 
 	@Override
 	public void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
-		final Objectify obj = DAO.begin();
 		final WorksheetRequest request = Misc.gson.fromJson(req.getReader(), WorksheetRequest.class);
+		final WorksheetResponse response = new WorksheetResponse();
+		if (request.getRecognizedWords) {
+			response.recognizedWords = recognizedWords;
+		}
+		final Objectify obj = DAO.begin();
 		final Worksheet worksheet = obj.find(Worksheet.class, request.worksheetId);
 		if (worksheet == null) {
 			resp.sendError(404);
 			return;
 		}
-		int maxPos = 0;
-		for (final Entry<Integer, String> e : request.questions.entrySet()) {
-			final int pos = e.getKey() - 1;
-			maxPos = Math.max(pos, maxPos);
-			if (pos < worksheet.qaPairs.size()) {
-				final QAPair qaPair = worksheet.qaPairs.get(pos);
-				qaPair.question = e.getValue();
-				qaPair.answer = null; // Set to null to indicate that it must be
-				// recomputed
-			} else {
-				worksheet.qaPairs.add(pos, new QAPair(e.getValue(), null));
+		if (request.questions != null) {
+			final TreeMap<Integer, String> orderedQuestions = Maps.newTreeMap();
+			orderedQuestions.putAll(request.questions);
+			for (final Entry<Integer, String> e : orderedQuestions.entrySet()) {
+				final int pos = e.getKey() - 1;
+				if (pos < worksheet.qaPairs.size()) {
+					final QAPair qaPair = worksheet.qaPairs.get(pos);
+					qaPair.question = e.getValue();
+					qaPair.answer = null; // Set to null to indicate that it must be
+					// recomputed
+				} else {
+					worksheet.qaPairs.add(pos, new QAPair(e.getValue(), null));
+				}
 			}
-		}
-		// Remove any qaPairs that have been removed from the browser DOM
-		while (worksheet.qaPairs.size() > maxPos + 1) {
-			worksheet.qaPairs.remove(worksheet.qaPairs.size() - 1);
+			// Remove any qaPairs that have been removed from the browser DOM
+			if (!orderedQuestions.isEmpty()) {
+				while (worksheet.qaPairs.size() > orderedQuestions.lastKey() + 1) {
+					worksheet.qaPairs.remove(worksheet.qaPairs.size() - 1);
+				}
+			}
 		}
 
 		// Recompute worksheet
@@ -77,7 +94,6 @@ public class WorksheetServlet extends HttpServlet {
 
 		obj.put(worksheet);
 
-		final WorksheetResponse response = new WorksheetResponse();
 		response.answers = Maps.newHashMap();
 		response.variables = variableDefinitions;
 
@@ -90,12 +106,16 @@ public class WorksheetServlet extends HttpServlet {
 	}
 
 	public static class WorksheetRequest {
+		public boolean getRecognizedWords = false;
+
 		public String worksheetId;
 
 		public Map<Integer, String> questions;
 	}
 
 	public static class WorksheetResponse {
+		Set<String> recognizedWords;
+
 		Map<Integer, String> answers;
 
 		Map<String, Integer> variables;

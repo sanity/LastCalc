@@ -38,44 +38,68 @@ public class MainPageServlet extends HttpServlet {
 			resp.sendRedirect("/" + worksheet.id);
 		} else {
 
-			final Worksheet worksheet = obj.get(Worksheet.class, path.substring(1));
+			final String worksheetId = path.substring(1);
 
-			if (worksheet == null) {
-				resp.sendError(404);
-				return;
-			}
+			if (worksheetId.length() == 8) {
+				// This is readonly, dupilcate it and redirect to
+				// a new id
+				final Worksheet worksheet = new Worksheet();
 
-			final Document doc = Document.createShell(requestURL.toString());
-			doc.head().appendElement("title").text("LastCalc");
-			doc.head().appendElement("link").attr("rel", "stylesheet").attr("href", "/css/highlighting.css")
-			.attr("type", "text/css");
-			doc.head().appendElement("link").attr("rel", "stylesheet").attr("href", "/css/locutus.css")
-			.attr("type", "text/css");
-			doc.head().appendElement("script")
-			.attr("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
-			doc.head().appendElement("script").attr("src", "/js/rangy-core.js");
-			doc.head().appendElement("script").attr("src", "/js/rangy-selectionsaverestore.js");
-			doc.head().appendElement("script").attr("src", "/js/locutus.js");
-			doc.body().attr("data-worksheet-id", worksheet.id);
-			doc.body().appendElement("h3").text("LastCalc");
-			doc.body().appendElement("h5").text("The last calculator you'll ever need");
+				final Worksheet template = obj.query(Worksheet.class).filter("readOnlyId", worksheetId).get();
 
-			int x = 1;
-			for (final QAPair qa : worksheet.qaPairs) {
+				worksheet.parentId = worksheet.id;
+
+				worksheet.qaPairs = template.qaPairs;
+
+				obj.put(worksheet);
+
+				resp.sendRedirect("/" + worksheet.id);
+			} else {
+
+				final Worksheet worksheet = obj.get(Worksheet.class, worksheetId);
+
+				if (worksheet == null) {
+					resp.sendError(404);
+					return;
+				}
+
+				final Document doc = Document.createShell(requestURL.toString());
+				doc.head().appendElement("title").text("LastCalc");
+				doc.head().appendElement("link").attr("rel", "stylesheet").attr("href", "/css/highlighting.css")
+				.attr("type", "text/css");
+				doc.head().appendElement("link").attr("rel", "stylesheet").attr("href", "/css/locutus.css")
+				.attr("type", "text/css");
+				doc.head().appendElement("script")
+				.attr("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
+				doc.head().appendElement("script").attr("src", "/js/rangy-core.js");
+				doc.head().appendElement("script").attr("src", "/js/rangy-selectionsaverestore.js");
+				doc.head().appendElement("script").attr("src", "/js/locutus.js");
+				doc.head()
+				.appendElement("script")
+				.attr("type", "text/javascript")
+				.text("function woopraReady(tracker) {tracker.setDomain('lastcalc-upr.appspot.com');tracker.setIdleTimeout(300000);tracker.track();return false;}(function(){var wsc = document.createElement('script');wsc.src = document.location.protocol+'//static.woopra.com/js/woopra.js';wsc.type = 'text/javascript';wsc.async = true;var ssc = document.getElementsByTagName('script')[0];ssc.parentNode.insertBefore(wsc, ssc);})();");
+				doc.body().attr("data-worksheet-id", worksheet.id);
+				doc.body().attr("data-worksheet-ro-id", worksheet.readOnlyId);
+				doc.body().appendElement("h3").text("LastCalc");
+				doc.body().appendElement("h5").text("The last calculator you'll ever need");
+
+				int x = 1;
+				for (final QAPair qa : worksheet.qaPairs) {
+					final Element question = doc.body().appendElement("div").attr("class", "question");
+					question.appendElement("div").attr("class", "question_no").text(Integer.toString(x));
+					question.appendElement("div").attr("class", "editable").attr("contentEditable", "true")
+					.text(qa.question);
+					question.appendElement("div").attr("class", "answer").text(Parsers.toHtml(qa.answer));
+					x++;
+				}
 				final Element question = doc.body().appendElement("div").attr("class", "question");
 				question.appendElement("div").attr("class", "question_no").text(Integer.toString(x));
-				question.appendElement("div").attr("class", "editable").attr("contentEditable", "true")
-				.text(qa.question);
-				question.appendElement("div").attr("class", "answer").text(Parsers.toHtml(qa.answer));
-				x++;
+				question.appendElement("div").attr("class", "editable").attr("contentEditable", "true");
+				question.appendElement("div").attr("class", "answer");
+				resp.setContentType("text/html");
+				resp.getWriter().append(doc.toString());
 			}
-			final Element question = doc.body().appendElement("div").attr("class", "question");
-			question.appendElement("div").attr("class", "question_no").text(Integer.toString(x));
-			question.appendElement("div").attr("class", "editable").attr("contentEditable", "true");
-			question.appendElement("div").attr("class", "answer");
-			resp.setContentType("text/html");
-			resp.getWriter().append(doc.toString());
-		}
-	};
+		};
 
+	}
 }
