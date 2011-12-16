@@ -19,9 +19,7 @@ public class Parsers {
 		parsers.add(new TrailingEqualsStripper());
 		parsers.add(new AmountParser());
 		parsers.add(new AmountConverterParser());
-		parsers.add(new RemoveBrackets());
 		parsers.add(new DimensionlessAmountParser());
-		parsers.addAll(AmountMathOp.getOps());
 		parsers.add(new ListParser());
 	}
 
@@ -71,37 +69,6 @@ public class Parsers {
 		return ret;
 	}
 
-	public static ParsedQuestion parseQuestion(final String question, final Map<String, ArrayList<Object>> variables) {
-
-		List<Object> origTokens = tokenize(question);
-
-		final ParsedQuestion pq = new ParsedQuestion();
-
-		if (origTokens.size() > 2
-				&& (origTokens.get(1).equals("=") || origTokens.get(1).toString().equalsIgnoreCase("is"))) {
-			pq.variableAssignment = origTokens.get(0).toString();
-			origTokens = origTokens.subList(2, origTokens.size());
-		}
-
-		pq.question = Lists.newArrayListWithCapacity(origTokens.size() * 2);
-		for (final Object token : origTokens) {
-			if (token instanceof String) {
-				final ArrayList<Object> repl = variables.get(token);
-				if (repl != null) {
-					pq.question.addAll(repl);
-					continue;
-				}
-			}
-			pq.question.add(token);
-		}
-		return pq;
-	}
-
-	public static class ParsedQuestion {
-		public String variableAssignment;
-
-		public ArrayList<Object> question;
-	}
 
 	public static class QuotedString {
 		public final String value;

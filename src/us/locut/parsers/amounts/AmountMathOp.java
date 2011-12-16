@@ -8,7 +8,7 @@ import org.jscience.physics.amount.Amount;
 
 import us.locut.parsers.*;
 
-import com.google.appengine.repackaged.com.google.common.collect.*;
+import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
 public abstract class AmountMathOp extends Parser {
 	private static final long serialVersionUID = -2510157348504286501L;
@@ -43,25 +43,20 @@ public abstract class AmountMathOp extends Parser {
 		return template;
 	}
 
-	public static Set<Parser> getOps() {
-		final Set<Parser> ops = Sets.newHashSet();
-		ops.add(new AmountMathOp("+", "Add") {
-			private static final long serialVersionUID = 8999743708212969031L;
+	public static List<Parser> getOps() {
+		final List<Parser> ops = Lists.newLinkedList();
+
+		ops.add(new AmountMathOp("^", "Raise to Power") {
+			private static final long serialVersionUID = 4974989053479508332L;
 
 			@Override
 			protected Amount<?> operation(final Amount<?> a, final Amount<?> b) throws ConversionException {
-				return a.plus(b);
+				if (b.getEstimatedValue() != b.getExactValue())
+					throw new ConversionException("Can only raise to an integer power");
+				return a.pow((int) b.getExactValue());
 			}
 		});
-		ops.add(new AmountMathOp("-", "Subtract") {
 
-			private static final long serialVersionUID = 7206664452245347470L;
-
-			@Override
-			protected Amount<?> operation(final Amount<?> a, final Amount<?> b) throws ConversionException {
-				return a.minus(b);
-			}
-		});
 		ops.add(new AmountMathOp("*", "Multiply") {
 
 			private static final long serialVersionUID = 9166899968748997536L;
@@ -79,16 +74,25 @@ public abstract class AmountMathOp extends Parser {
 				return a.divide(b);
 			}
 		});
-		ops.add(new AmountMathOp("^", "Raise to Power") {
-			private static final long serialVersionUID = 4974989053479508332L;
+
+		ops.add(new AmountMathOp("+", "Add") {
+			private static final long serialVersionUID = 8999743708212969031L;
 
 			@Override
 			protected Amount<?> operation(final Amount<?> a, final Amount<?> b) throws ConversionException {
-				if (b.getEstimatedValue() != b.getExactValue())
-					throw new ConversionException("Can only raise to an integer power");
-				return a.pow((int) b.getExactValue());
+				return a.plus(b);
 			}
 		});
+		ops.add(new AmountMathOp("-", "Subtract") {
+
+			private static final long serialVersionUID = 7206664452245347470L;
+
+			@Override
+			protected Amount<?> operation(final Amount<?> a, final Amount<?> b) throws ConversionException {
+				return a.minus(b);
+			}
+		});
+
 
 		ops.add(new RewriteParser("plus", "+"));
 		ops.add(new RewriteParser("x", "+"));

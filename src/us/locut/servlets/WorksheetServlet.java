@@ -8,10 +8,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
 import us.locut.*;
-import us.locut.Parsers.ParsedQuestion;
 import us.locut.db.*;
 import us.locut.engines.*;
 import us.locut.parsers.*;
+import us.locut.parsers.amounts.AmountMathOp;
 
 import com.google.appengine.repackaged.com.google.common.collect.*;
 import com.googlecode.objectify.Objectify;
@@ -19,9 +19,9 @@ import com.googlecode.objectify.Objectify;
 @SuppressWarnings("serial")
 public class WorksheetServlet extends HttpServlet {
 
-	ParseEngine parseEngine;
-
 	Set<String> recognizedWords = Sets.newHashSet();
+
+	private ParserPickerFactory globalParserPickerFactory;
 
 	@Override
 	public void init() throws ServletException {
@@ -34,8 +34,12 @@ public class WorksheetServlet extends HttpServlet {
 				}
 			}
 		}
-		final ParserPickerFactory ppf = new RecentFirstParserPickerFactory(parsers);
-		parseEngine = new BacktrackingParseEngine(ppf);
+		final LinkedList<Parser> priorityParsers = Lists.newLinkedList();
+		priorityParsers.add(new BracketsParser());
+		priorityParsers.addAll(AmountMathOp.getOps());
+		final FixedOrderParserPickerFactory priorityPPF = new FixedOrderParserPickerFactory(priorityParsers);
+		final RecentFirstParserPickerFactory catchAllPPF = new RecentFirstParserPickerFactory(parsers);
+		globalParserPickerFactory = new CombinedParserPickerFactory(priorityPPF, catchAllPPF);
 	}
 
 	@Override
@@ -74,8 +78,8 @@ public class WorksheetServlet extends HttpServlet {
 		}
 
 		// Recompute worksheet
-		final Map<String, ArrayList<Object>> variables = Maps.newHashMap();
-		final Map<String, Integer> variableDefinitions = Maps.newHashMap();
+		final List<Parser> localParsers = Lists.newLinkedList();
+		final Map<String, Integer> userDefinedKeywords = Maps.newHashMap();
 		int pos = 0;
 		for (final QAPair qap : worksheet.qaPairs) {
 			final ParsedQuestion pq = Parsers.parseQuestion(qap.question, variables);
@@ -86,7 +90,7 @@ public class WorksheetServlet extends HttpServlet {
 			}
 
 			if (pq.variableAssignment != null) {
-				variableDefinitions.put(pq.variableAssignment, pos + 1);
+				userDefinedKeywords.put(pq.variableAssignment, pos + 1);
 				variables.put(pq.variableAssignment, qap.answer);
 			}
 			pos++;
@@ -95,7 +99,7 @@ public class WorksheetServlet extends HttpServlet {
 		obj.put(worksheet);
 
 		response.answers = Maps.newHashMap();
-		response.variables = variableDefinitions;
+		response.variables = userDefinedKeywords;
 
 		for (int x = 0; x < worksheet.qaPairs.size(); x++) {
 			response.answers.put(x + 1, Renderers.toHtml(req.getRequestURI(), worksheet.qaPairs.get(x).answer)
