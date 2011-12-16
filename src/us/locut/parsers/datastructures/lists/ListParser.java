@@ -14,7 +14,7 @@ public class ListParser extends Parser {
 	private static final long serialVersionUID = -6139442762692766674L;
 
 	@Override
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos) {
 		final LinkedList<Object> list = Lists.newLinkedList();
 		int pos = templatePos;
 		while (true) {

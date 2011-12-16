@@ -1,6 +1,6 @@
 package us.locut.parsers;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
@@ -14,7 +14,7 @@ public class UserDefinedParserParser extends Parser {
 	}
 
 	@Override
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos, final ParserContext context) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos, final ParserContext context) {
 		// Walk backwards to find start
 		int depth = 0, start;
 		for (start = templatePos; start > -1; start--) {
@@ -41,6 +41,7 @@ public class UserDefinedParserParser extends Parser {
 			}
 		}
 		end--;
+
 		return null;
 	}
 

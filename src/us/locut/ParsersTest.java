@@ -6,8 +6,6 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import us.locut.Parsers.ParsedQuestion;
-
 import com.google.appengine.repackaged.com.google.common.collect.Maps;
 
 public class ParsersTest {

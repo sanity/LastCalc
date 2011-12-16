@@ -1,6 +1,6 @@
 package us.locut.parsers;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
@@ -13,7 +13,7 @@ public class BracketsParser extends Parser {
 	}
 
 	@Override
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos, final ParserContext context) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos, final ParserContext context) {
 		return ParseResult.success(createResponse(tokens, templatePos, tokens.get(templatePos - 1)));
 	}
 

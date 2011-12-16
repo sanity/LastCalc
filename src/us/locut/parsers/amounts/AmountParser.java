@@ -1,6 +1,6 @@
 package us.locut.parsers.amounts;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import javax.measure.unit.Unit;
 
@@ -15,7 +15,7 @@ public class AmountParser extends Parser {
 	private static final ArrayList<Object> template = Lists.<Object> newArrayList(Number.class, Unit.class);
 
 	@Override
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos) {
 		final Number number = (Number) tokens.get(templatePos);
 		final Unit<?> unit = (Unit<?>) tokens.get(templatePos + 1);
 		if (number.longValue() == number.doubleValue())

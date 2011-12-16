@@ -1,6 +1,6 @@
 package us.locut.parsers;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class NoopParser extends Parser {
 
@@ -12,7 +12,7 @@ public class NoopParser extends Parser {
 	}
 
 	@Override
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos) {
 		return ParseResult.success(tokens);
 	}
 

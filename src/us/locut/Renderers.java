@@ -1,6 +1,6 @@
 package us.locut;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.measure.unit.Unit;
 
@@ -13,7 +13,7 @@ import us.locut.parsers.amounts.UnitParser;
 public class Renderers {
 
 
-	public static Element toHtml(final String baseUri, final ArrayList<Object> tokens) {
+	public static Element toHtml(final String baseUri, final List<Object> tokens) {
 		final Element ret = new Element(Tag.valueOf("span"), baseUri);
 		for (final Object obj : tokens) {
 			if (obj instanceof Amount) {

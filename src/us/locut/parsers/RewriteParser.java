@@ -1,6 +1,6 @@
 package us.locut.parsers;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
@@ -29,7 +29,7 @@ public class RewriteParser extends Parser {
 	}
 
 	@Override
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos) {
 		return ParseResult.success(createResponse(tokens, templatePos, to.toArray()));
 	}
 

@@ -1,6 +1,6 @@
 package us.locut.parsers;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ public class UserDefinedParserParserTest {
 	public void test() {
 		final UserDefinedParserParser udpp = new UserDefinedParserParser();
 
-		final ArrayList<Object> tokens = Lists.<Object> newArrayList(1, 2, "(", 3, "(", "5", ")", "8", "=", "(", 9,
+		final List<Object> tokens = Lists.<Object> newArrayList(1, 2, "(", 3, "(", "5", ")", "8", "=", "(", 9,
 				")", ")", 10);
 
 		udpp.parse(tokens, tokens.indexOf("="), null);

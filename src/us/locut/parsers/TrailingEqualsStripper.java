@@ -1,6 +1,6 @@
 package us.locut.parsers;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
@@ -18,7 +18,7 @@ public class TrailingEqualsStripper extends Parser {
 	}
 
 	@Override
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos) {
 		if (templatePos == tokens.size()-1)
 			return ParseResult.success(createResponse(tokens, templatePos));
 		else

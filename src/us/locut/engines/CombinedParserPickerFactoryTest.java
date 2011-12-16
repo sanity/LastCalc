@@ -1,6 +1,6 @@
 package us.locut.engines;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.*;
 
@@ -24,7 +24,7 @@ public class CombinedParserPickerFactoryTest {
 		final BacktrackingParseEngine pe = new BacktrackingParseEngine(f);
 
 		final ParserContext context = new ParserContext(pe, Long.MAX_VALUE);
-		final ArrayList<Object> result = pe.parseAndGetLastStep(
+		final List<Object> result = pe.parseAndGetLastStep(
 				Lists.<Object> newArrayList("1", "1", "2", "2", "3", "3", "4", "4"),
 				context);
 

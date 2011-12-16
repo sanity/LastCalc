@@ -1,6 +1,5 @@
 package us.locut.engines;
 
-import java.io.Serializable;
 import java.util.*;
 
 import us.locut.engines.ParserPickerFactory.ParserPicker;
@@ -21,12 +20,12 @@ public class SimpleParseEngine extends ParseEngine {
 	 * @see us.locut.engines.ParseEngine#parse(java.util.ArrayList, long)
 	 */
 	@Override
-	public LinkedList<ParseStep> parse(final ArrayList<Object> input,
+	public LinkedList<ParseStep> parse(final List<Object> input,
 			final ParserContext context) {
 		final long startTime = System.currentTimeMillis();
 		final ParserPicker picker = ppf.getPicker();
 		final LinkedList<ParseStep> steps = Lists.newLinkedList();
-		ArrayList<Object> current = input;
+		List<Object> current = input;
 		while (System.currentTimeMillis() < context.terminateTime) {
 			final ParseStep nextStep = picker.pickNext(current, context);
 			if (nextStep == null) {

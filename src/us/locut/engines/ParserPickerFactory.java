@@ -29,9 +29,9 @@ public abstract class ParserPickerFactory implements Serializable {
 
 		}
 
-		public abstract ParseStep pickNext(ArrayList<Object> input, ParserContext context);
+		public abstract ParseStep pickNext(List<Object> input, ParserContext context);
 
-		protected ParseStep getNext(final ArrayList<Object> input, final ParserContext context,
+		protected ParseStep getNext(final List<Object> input, final ParserContext context,
 				final Iterable<Parser> parsers) {
 			for (final Parser candidate : parsers) {
 				int sPos = -1;
@@ -71,10 +71,10 @@ public abstract class ParserPickerFactory implements Serializable {
 	}
 
 	public static class Attempt {
-		public ArrayList<Object> input;
+		public List<Object> input;
 		public Parser parser;
 
-		public Attempt(final ArrayList<Object> input, final Parser parser) {
+		public Attempt(final List<Object> input, final Parser parser) {
 			this.input = input;
 			this.parser = parser;
 		}

@@ -21,7 +21,7 @@ public abstract class AmountMathOp extends Parser {
 	}
 
 	@Override
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos) {
 		final Amount<?> a = (Amount<?>) tokens.get(templatePos);
 		final Amount<?> b = (Amount<?>) tokens.get(templatePos + 2);
 		try {

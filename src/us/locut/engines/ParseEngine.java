@@ -8,7 +8,7 @@ import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
 public abstract class ParseEngine {
 
-	public ArrayList<Object> parseAndGetLastStep(final ArrayList<Object> input,
+	public List<Object> parseAndGetLastStep(final List<Object> input,
 			final ParserContext context) {
 		final LinkedList<ParseStep> parse = parse(input, context);
 		if (parse.isEmpty())
@@ -16,7 +16,7 @@ public abstract class ParseEngine {
 		return parse.getLast().result.output;
 	}
 
-	public abstract LinkedList<ParseStep> parse(final ArrayList<Object> input,
+	public abstract LinkedList<ParseStep> parse(final List<Object> input,
 			ParserContext context);
 
 }

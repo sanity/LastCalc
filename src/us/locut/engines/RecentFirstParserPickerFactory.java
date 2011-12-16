@@ -51,7 +51,7 @@ public class RecentFirstParserPickerFactory extends ParserPickerFactory {
 		return new ParserPicker(prevAttemptPos) {
 
 			@Override
-			public ParseStep pickNext(final ArrayList<Object> input, final ParserContext context) {
+			public ParseStep pickNext(final List<Object> input, final ParserContext context) {
 				// matchTemplate
 				rwl.readLock().lock();
 				final ParseStep nextParseStep = getNext(input, context, parsers);

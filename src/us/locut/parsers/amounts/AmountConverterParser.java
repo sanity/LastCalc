@@ -1,6 +1,6 @@
 package us.locut.parsers.amounts;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import javax.measure.converter.ConversionException;
 import javax.measure.unit.Unit;
@@ -22,7 +22,7 @@ public class AmountConverterParser extends Parser {
 	}
 
 	@Override
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos) {
 		final Amount<?> amount = (Amount<?>) tokens.get(templatePos);
 		final Unit<?> unit = (Unit<?>) tokens.get(templatePos + 2);
 		try {

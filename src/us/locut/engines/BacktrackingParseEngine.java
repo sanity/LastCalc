@@ -18,7 +18,7 @@ public class BacktrackingParseEngine extends ParseEngine {
 	}
 
 	@Override
-	public LinkedList<ParseStep> parse(final ArrayList<Object> input,
+	public LinkedList<ParseStep> parse(final List<Object> input,
 			final ParserContext context) {
 		final TreeSet<BTParseStep> candidates = Sets.newTreeSet();
 		final ParserPicker picker = ppf.getPicker();
@@ -59,7 +59,7 @@ public class BacktrackingParseEngine extends ParseEngine {
 			this.previous = previous;
 		}
 
-		public BTParseStep(final ArrayList<Object> input, final Parser parser, final ParseResult result,
+		public BTParseStep(final List<Object> input, final Parser parser, final ParseResult result,
 				final BTParseStep previous) {
 			super(input, parser, result);
 			this.previous = previous;

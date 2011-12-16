@@ -45,7 +45,7 @@ public class CombinedParserPickerFactory extends ParserPickerFactory {
 		}
 
 		@Override
-		public ParseStep pickNext(final ArrayList<Object> input, final ParserContext context) {
+		public ParseStep pickNext(final List<Object> input, final ParserContext context) {
 			if (current == null)
 				return null;
 			while (true) {

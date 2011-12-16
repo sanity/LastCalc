@@ -1,18 +1,18 @@
 package us.locut.parsers;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.*;
 
 public abstract class Parser implements Serializable {
 	private static final long serialVersionUID = -6533682381337736230L;
 
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos, final ParserContext context) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos, final ParserContext context) {
 		if (context == null)
 			throw new IllegalArgumentException("context is null");
 		return parse(tokens, templatePos);
 	}
 
-	public ParseResult parse(final ArrayList<Object> tokens, final int templatePos) {
+	public ParseResult parse(final List<Object> tokens, final int templatePos) {
 		return parse(tokens, templatePos, null);
 	}
 
@@ -24,7 +24,7 @@ public abstract class Parser implements Serializable {
 	@Override
 	public abstract boolean equals(Object obj);
 
-	protected final ArrayList<Object> createResponse(final ArrayList<Object> input, final int templatePos,
+	protected final ArrayList<Object> createResponse(final List<Object> input, final int templatePos,
 			final Object... values) {
 		final int tSize = getTemplate().size();
 		final ArrayList<Object> response = new ArrayList<Object>(input.size() + values.length - tSize);
@@ -40,11 +40,11 @@ public abstract class Parser implements Serializable {
 		return response;
 	}
 
-	public final int matchTemplate(final ArrayList<Object> input) {
+	public final int matchTemplate(final List<Object> input) {
 		return matchTemplate(input, 0);
 	}
 
-	public final int matchTemplate(final ArrayList<Object> input, final int startPos) {
+	public final int matchTemplate(final List<Object> input, final int startPos) {
 		final int templateSize = getTemplate().size();
 		templateScan: for (int sPos = startPos; sPos < 1 + input.size() - templateSize; sPos++) {
 			for (int x = 0; x < templateSize; x++) {
@@ -82,20 +82,20 @@ public abstract class Parser implements Serializable {
 			return new ParseResult(null, null);
 		}
 
-		public static ParseResult success(final ArrayList<Object> output) {
-			return new ParseResult(output, null);
+		public static ParseResult success(final List<Object> tokens) {
+			return new ParseResult(tokens, null);
 		}
 
-		public static ParseResult success(final ArrayList<Object> output, final String explanation) {
-			return new ParseResult(output, explanation);
+		public static ParseResult success(final List<Object> tokens, final String explanation) {
+			return new ParseResult(tokens, explanation);
 		}
 
-		private ParseResult(final ArrayList<Object> output, final String explanation) {
+		private ParseResult(final List<Object> output, final String explanation) {
 			this.output = output;
 			this.explanation = explanation;
 		}
 
-		public final ArrayList<Object> output;
+		public final List<Object> output;
 		public final String explanation;
 
 		public boolean isSuccess() {
