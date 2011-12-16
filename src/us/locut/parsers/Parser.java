@@ -24,6 +24,22 @@ public abstract class Parser implements Serializable {
 	@Override
 	public abstract boolean equals(Object obj);
 
+	protected final ArrayList<Object> createResponseWithCollection(final List<Object> input, final int templatePos,
+			final Collection<Object> values) {
+		final int tSize = getTemplate().size();
+		final ArrayList<Object> response = new ArrayList<Object>(input.size() + values.size() - tSize);
+		for (final Object x : input.subList(0, templatePos)) {
+			response.add(x);
+		}
+		for (final Object x : values) {
+			response.add(x);
+		}
+		for (final Object x : input.subList(templatePos + tSize, input.size())) {
+			response.add(x);
+		}
+		return response;
+	}
+
 	protected final ArrayList<Object> createResponse(final List<Object> input, final int templatePos,
 			final Object... values) {
 		final int tSize = getTemplate().size();
