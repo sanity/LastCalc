@@ -49,9 +49,9 @@ public class UserDefinedParserParser extends Parser {
 
 		final List<Object> response = Lists.newArrayListWithCapacity(tokens.size() + 1 + (end - start));
 
-		response.addAll(tokens.subList(0, start));
+		response.addAll(tokens.subList(0, start - 1));
 		response.add(new UserDefinedParser(before, after));
-		response.addAll(tokens.subList(end, tokens.size()));
+		response.addAll(tokens.subList(end + 1, tokens.size()));
 
 		return ParseResult.success(response);
 	}

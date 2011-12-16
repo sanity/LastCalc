@@ -16,10 +16,10 @@ public class UserDefinedParserParserTest {
 	public void test() {
 		final UserDefinedParserParser udpp = new UserDefinedParserParser();
 
-		final List<Object> tokens = Parsers.tokenize("X squared = X * X");
+		final List<Object> tokens = Parsers.tokenize("1 2 (X squared = X * X) 5 6");
 		final ParseResult result = udpp.parse(tokens, tokens.indexOf("="), null);
 
-		final UserDefinedParserParser.UserDefinedParser udp = (UserDefinedParser) result.output.get(0);
+		final UserDefinedParserParser.UserDefinedParser udp = (UserDefinedParser) result.output.get(2);
 
 		final List<Object> input = Parsers.tokenize("15 squared");
 
