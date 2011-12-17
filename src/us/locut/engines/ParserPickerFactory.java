@@ -3,10 +3,10 @@ package us.locut.engines;
 import java.io.Serializable;
 import java.util.*;
 
+import com.google.common.collect.Maps;
+
 import us.locut.parsers.*;
 import us.locut.parsers.Parser.ParseResult;
-
-import com.google.appengine.repackaged.com.google.common.collect.Maps;
 
 public abstract class ParserPickerFactory implements Serializable {
 
@@ -29,10 +29,12 @@ public abstract class ParserPickerFactory implements Serializable {
 
 		}
 
-		public abstract ParseStep pickNext(List<Object> input, ParserContext context);
+		public abstract ParseStep pickNext(ParserContext context, ParseStep previous,
+				int createOrder);
 
-		protected ParseStep getNext(final List<Object> input, final ParserContext context,
-				final Iterable<Parser> parsers) {
+		protected ParseStep getNext(final ParserContext context,
+				final Iterable<Parser> parsers, final ParseStep previous, final int createOrder) {
+			final List<Object> input = previous.result.output;
 			for (final Parser candidate : parsers) {
 				int sPos = -1;
 				final Attempt attempt = new Attempt(input, candidate);
@@ -55,10 +57,9 @@ public abstract class ParserPickerFactory implements Serializable {
 					sPos = candidate.matchTemplate(input, sPos + 1);
 					if (sPos != -1) {
 						final ParseResult parseResult = candidate.parse(input, sPos, context);
-						if (parseResult.isSuccess() || parseResult.isError()) {
-							prevAttemptPos.put(attempt, sPos);
-							return new ParseStep(input, candidate, parseResult);
-						}
+						prevAttemptPos.put(attempt, sPos);
+						if (parseResult.isSuccess() || parseResult.isError())
+							return new ParseStep(input, candidate, parseResult, previous, createOrder);
 					} else {
 						prevAttemptPos.put(attempt, -2);
 						break templateScan;

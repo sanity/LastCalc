@@ -7,13 +7,15 @@ import java.util.Map.Entry;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
+import com.google.common.collect.*;
+
 import us.locut.*;
 import us.locut.db.*;
 import us.locut.engines.*;
 import us.locut.parsers.*;
+import us.locut.parsers.UserDefinedParserParser.UserDefinedParser;
 import us.locut.parsers.amounts.AmountMathOp;
 
-import com.google.appengine.repackaged.com.google.common.collect.*;
 import com.googlecode.objectify.Objectify;
 
 @SuppressWarnings("serial")
@@ -37,6 +39,7 @@ public class WorksheetServlet extends HttpServlet {
 		final LinkedList<Parser> priorityParsers = Lists.newLinkedList();
 		priorityParsers.add(new BracketsParser());
 		priorityParsers.addAll(AmountMathOp.getOps());
+		parsers.add(new UserDefinedParserParser());
 		final FixedOrderParserPickerFactory priorityPPF = new FixedOrderParserPickerFactory(priorityParsers);
 		final RecentFirstParserPickerFactory catchAllPPF = new RecentFirstParserPickerFactory(parsers);
 		globalParserPickerFactory = new CombinedParserPickerFactory(priorityPPF, catchAllPPF);
@@ -78,20 +81,30 @@ public class WorksheetServlet extends HttpServlet {
 		}
 
 		// Recompute worksheet
-		final List<Parser> localParsers = Lists.newLinkedList();
+		final FixedOrderParserPickerFactory userDefinedParsers = new FixedOrderParserPickerFactory();
+		final CombinedParserPickerFactory ppf = new CombinedParserPickerFactory(userDefinedParsers,
+				globalParserPickerFactory);
+		final BacktrackingParseEngine parseEngine = new BacktrackingParseEngine(ppf);
 		final Map<String, Integer> userDefinedKeywords = Maps.newHashMap();
 		int pos = 0;
 		for (final QAPair qap : worksheet.qaPairs) {
-			final ParsedQuestion pq = Parsers.parseQuestion(qap.question, variables);
+			if (qap.question.trim().length() == 0) {
+				qap.answer = Lists.newArrayList();
+			} else {
+				if (qap.answer == null) {
+					final ParserContext context = new ParserContext(parseEngine, System.currentTimeMillis() + 700);
+					qap.answer = parseEngine.parseAndGetLastStep(Parsers.tokenize(qap.question), context);
+				}
 
-			if (qap.answer == null) {
-				final ParserContext context = new ParserContext(parseEngine, System.currentTimeMillis() + 1500);
-				qap.answer = parseEngine.parseAndGetLastStep(pq.question, context);
-			}
-
-			if (pq.variableAssignment != null) {
-				userDefinedKeywords.put(pq.variableAssignment, pos + 1);
-				variables.put(pq.variableAssignment, qap.answer);
+				if (qap.answer.size() == 1 && qap.answer.get(0) instanceof UserDefinedParser) {
+					final UserDefinedParser udp = (UserDefinedParser) qap.answer.get(0);
+					for (final Object o : udp.getTemplate()) {
+						if (o instanceof String) {
+							userDefinedKeywords.put(o.toString(), pos + 1);
+						}
+					}
+					userDefinedParsers.addParser(udp);
+				}
 			}
 			pos++;
 		}

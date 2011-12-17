@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 import us.locut.Misc;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 import com.googlecode.objectify.annotation.*;
 
 @Cached

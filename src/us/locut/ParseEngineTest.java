@@ -2,12 +2,13 @@ package us.locut;
 
 import java.util.LinkedList;
 
+import com.google.common.collect.Lists;
+
 import org.junit.Test;
 
 import us.locut.engines.*;
 import us.locut.parsers.*;
-
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import us.locut.parsers.amounts.AmountMathOp;
 
 public class ParseEngineTest {
 
@@ -15,12 +16,16 @@ public class ParseEngineTest {
 	public void test() {
 
 		final LinkedList<Parser> parsers = Lists.newLinkedList();
-		Parsers.getAll(parsers);
-		final RecentFirstParserPickerFactory rfppf = new RecentFirstParserPickerFactory(parsers);
-		final ParseEngine st = new BacktrackingParseEngine(rfppf);
-		// final ParseEngine st = new SimpleParseEngine(rfppf);
+		us.locut.Parsers.getAll(parsers);
+		final LinkedList<Parser> priorityParsers = Lists.newLinkedList();
+		priorityParsers.add(new BracketsParser());
+		priorityParsers.addAll(AmountMathOp.getOps());
+		priorityParsers.add(new UserDefinedParserParser());
+		final FixedOrderParserPickerFactory priorityPPF = new FixedOrderParserPickerFactory(priorityParsers);
+		final RecentFirstParserPickerFactory catchAllPPF = new RecentFirstParserPickerFactory(parsers);
+		final ParseEngine st = new BacktrackingParseEngine(new CombinedParserPickerFactory(priorityPPF, catchAllPPF));
 
-		final ParserContext context = new ParserContext(st, System.currentTimeMillis() + 2000);
+		final ParserContext context = new ParserContext(st, Long.MAX_VALUE);
 		final LinkedList<ParseStep> res = st.parse(Parsers.tokenize("2 miles *5"),
 				context);
 		for (final ParseStep ps : res) {

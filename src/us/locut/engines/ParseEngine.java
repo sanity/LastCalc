@@ -4,7 +4,7 @@ import java.util.*;
 
 import us.locut.parsers.ParserContext;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 public abstract class ParseEngine {
 

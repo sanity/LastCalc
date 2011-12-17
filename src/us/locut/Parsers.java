@@ -9,7 +9,7 @@ import us.locut.parsers.*;
 import us.locut.parsers.amounts.*;
 import us.locut.parsers.datastructures.lists.ListParser;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 public class Parsers {
 	private static Pattern p;
@@ -51,7 +51,7 @@ public class Parsers {
 			}
 			if (pureNum != null && digits) {
 				if (decimal) {
-					ret.add(FloatingPoint.valueOf(pureNum));
+					ret.add(Real.valueOf(pureNum));
 				} else {
 					ret.add(LargeInteger.valueOf(pureNum));
 				}

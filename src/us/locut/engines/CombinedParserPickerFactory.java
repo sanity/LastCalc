@@ -1,10 +1,10 @@
 package us.locut.engines;
 
-import java.util.*;
+import java.util.Map;
+
+import com.google.common.collect.Lists;
 
 import us.locut.parsers.ParserContext;
-
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
 public class CombinedParserPickerFactory extends ParserPickerFactory {
 	private static final long serialVersionUID = -9047872184877535738L;
@@ -20,7 +20,7 @@ public class CombinedParserPickerFactory extends ParserPickerFactory {
 
 	@Override
 	public ParserPicker getPicker(final Map<Attempt, Integer> prevAttemptPos) {
-		return new CombinedParserPicker(prevAttemptPos, factories.iterator());
+		return new CombinedParserPicker(prevAttemptPos, factories);
 	}
 
 	@Override
@@ -31,31 +31,22 @@ public class CombinedParserPickerFactory extends ParserPickerFactory {
 	}
 
 	public static class CombinedParserPicker extends ParserPicker {
-		private final Iterator<ParserPickerFactory> ppfs;
-		private ParserPicker current;
+		private final Iterable<ParserPickerFactory> ppfs;
 
-		public CombinedParserPicker(final Map<Attempt, Integer> prevAttemptPos, final Iterator<ParserPickerFactory> ppfs) {
+		public CombinedParserPicker(final Map<Attempt, Integer> prevAttemptPos, final Iterable<ParserPickerFactory> ppfs) {
 			super(prevAttemptPos);
 			this.ppfs = ppfs;
-			if (ppfs.hasNext()) {
-				current = ppfs.next().getPicker(prevAttemptPos);
-			} else {
-				current = null;
-			}
 		}
 
 		@Override
-		public ParseStep pickNext(final List<Object> input, final ParserContext context) {
-			if (current == null)
-				return null;
-			while (true) {
-				final ParseStep next = current.pickNext(input, context);
-				if (next != null)
-					return next;
-				if (!ppfs.hasNext())
-					return null;
-				current = ppfs.next().getPicker(prevAttemptPos);
+		public ParseStep pickNext(final ParserContext context, final ParseStep previous,
+				final int createOrder) {
+			for (final ParserPickerFactory ppf : ppfs) {
+				final ParseStep ps = ppf.getPicker(prevAttemptPos).pickNext(context, previous, createOrder);
+				if (ps != null)
+					return ps;
 			}
+			return null;
 		}
 
 	}

@@ -1,7 +1,7 @@
 package us.locut.db;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import com.googlecode.objectify.annotation.Unindexed;
 
@@ -19,5 +19,5 @@ public class QAPair implements Serializable {
 	public String question;
 
 	@Unindexed
-	public ArrayList<Object> answer;
+	public List<Object> answer;
 }

@@ -122,4 +122,8 @@ public abstract class Parser implements Serializable {
 			return explanation != null;
 		}
 	}
+
+	public double getScoreBias() {
+		return 0;
+	}
 }

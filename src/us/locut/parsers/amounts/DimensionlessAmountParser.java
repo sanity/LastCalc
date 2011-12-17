@@ -8,7 +8,7 @@ import org.jscience.physics.amount.Amount;
 
 import us.locut.parsers.Parser;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 public class DimensionlessAmountParser extends Parser {
 	private static final long serialVersionUID = 5612612660090224236L;

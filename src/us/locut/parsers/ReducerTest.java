@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import us.locut.parsers.Parser.ParseResult;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 public class ReducerTest {
 

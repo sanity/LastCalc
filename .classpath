@@ -11,6 +11,7 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gson-2.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jsoup-1.6.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-3.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-10.0.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

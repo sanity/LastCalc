@@ -6,7 +6,7 @@ import org.junit.*;
 
 import us.locut.parsers.*;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 public class CombinedParserPickerFactoryTest {
 

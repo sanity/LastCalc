@@ -21,6 +21,8 @@ public class UserDefinedParserParserTest {
 
 		final UserDefinedParserParser.UserDefinedParser udp = (UserDefinedParser) result.output.get(2);
 
+		System.out.println(udp);
+
 		final List<Object> input = Parsers.tokenize("15 squared");
 
 		final ParseResult parseResult2 = udp.parse(input, 0);

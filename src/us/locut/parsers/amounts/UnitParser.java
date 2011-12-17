@@ -5,11 +5,11 @@ import java.util.*;
 
 import javax.measure.unit.*;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.*;
+
 import us.locut.Parsers;
 import us.locut.parsers.Parser;
-
-import com.google.appengine.repackaged.com.google.common.base.Joiner;
-import com.google.appengine.repackaged.com.google.common.collect.*;
 
 public class UnitParser extends Parser {
 
@@ -48,6 +48,7 @@ public class UnitParser extends Parser {
 
 	public static Map<Unit<?>, String> verboseNamesPlur = Maps.newHashMap();
 
+	private static Set<String> dontUse = Sets.newHashSet("in");
 
 	private static void addParsers(final Set<UnitParser> ret, final Class<? extends SystemOfUnits> cls) {
 		final Joiner joiner = Joiner.on(' ');
@@ -58,6 +59,11 @@ public class UnitParser extends Parser {
 			final Class<?> fieldType = f.getType();
 			if (Unit.class.isAssignableFrom(fieldType)) {
 				final Object[] longName = f.getName().toLowerCase().split("_");
+				// Don't do this if its a single word of less than 3 characters,
+				// it's too easily misinterpreted
+				if (longName.length == 1 && longName[0].toString().length() < 3) {
+					continue;
+				}
 				try {
 					final Unit<?> unit = (Unit<?>) f.get(null);
 					if (longName.length > 0) {
@@ -72,7 +78,11 @@ public class UnitParser extends Parser {
 						}
 					}
 					final ArrayList<Object> shortName = Parsers.tokenize(unit.toString());
-					if (!shortName.isEmpty()) {
+					// Don't use it if it is only one character, or if its in a
+					// list of confusing values like "in"
+					if ((!shortName.isEmpty())
+							&& ((shortName.size() > 1) || ((shortName.get(0).toString().length() > 1) && (!dontUse
+									.contains(shortName.get(0)))))) {
 						ret.add(new UnitParser(unit, shortName));
 					}
 				} catch (final IllegalArgumentException e) {

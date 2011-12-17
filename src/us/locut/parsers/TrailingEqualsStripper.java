@@ -2,7 +2,7 @@ package us.locut.parsers;
 
 import java.util.*;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 public class TrailingEqualsStripper extends Parser {
 	private static final long serialVersionUID = 2340131974673871340L;

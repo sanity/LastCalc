@@ -9,7 +9,7 @@ import org.jscience.physics.amount.Amount;
 
 import us.locut.parsers.Parser;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 public class AmountConverterParser extends Parser {
 	private static final long serialVersionUID = -2549484003198615095L;

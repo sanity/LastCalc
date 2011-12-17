@@ -4,7 +4,8 @@ import java.util.*;
 
 import us.locut.parsers.Parser;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
+
 
 public class ListParser extends Parser {
 

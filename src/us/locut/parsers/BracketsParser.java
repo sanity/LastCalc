@@ -2,7 +2,7 @@ package us.locut.parsers;
 
 import java.util.*;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 public class BracketsParser extends Parser {
 	private static final long serialVersionUID = 3705611710430408505L;
@@ -14,7 +14,7 @@ public class BracketsParser extends Parser {
 
 	@Override
 	public ParseResult parse(final List<Object> tokens, final int templatePos, final ParserContext context) {
-		return ParseResult.success(createResponse(tokens, templatePos, tokens.get(templatePos - 1)));
+		return ParseResult.success(createResponse(tokens, templatePos, tokens.get(templatePos + 1)));
 	}
 
 	@Override

@@ -8,10 +8,10 @@ import org.jscience.physics.amount.Amount;
 
 import us.locut.parsers.Parser;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 public class AmountParser extends Parser {
-
+	private static final long serialVersionUID = 9120544485351922021L;
 	private static final ArrayList<Object> template = Lists.<Object> newArrayList(Number.class, Unit.class);
 
 	@Override

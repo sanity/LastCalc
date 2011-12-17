@@ -2,11 +2,11 @@ package us.locut.engines;
 
 import java.util.*;
 
+import com.google.common.collect.*;
+
 import us.locut.engines.ParserPickerFactory.ParserPicker;
 import us.locut.parsers.*;
 import us.locut.parsers.Parser.ParseResult;
-
-import com.google.appengine.repackaged.com.google.common.collect.*;
 
 public class BacktrackingParseEngine extends ParseEngine {
 
@@ -20,79 +20,28 @@ public class BacktrackingParseEngine extends ParseEngine {
 	@Override
 	public LinkedList<ParseStep> parse(final List<Object> input,
 			final ParserContext context) {
-		final TreeSet<BTParseStep> candidates = Sets.newTreeSet();
+		final TreeSet<ParseStep> candidates = Sets.<ParseStep> newTreeSet();
 		final ParserPicker picker = ppf.getPicker();
-		int createOrder = 0;
-		candidates.add(new BTParseStep(input, NoopParser.singleton, ParseResult.success(input), null));
+		final int createOrder = 0;
+		candidates.add(new ParseStep(input, NoopParser.singleton, ParseResult.success(input), null, createOrder));
 		outer: while (System.currentTimeMillis() < context.terminateTime) {
-			if (candidates.first().result.output.size() == 1) {
-				// Can't do better than this
-				break outer;
-			}
-			for (final BTParseStep candidateStep : candidates) {
-				final ParseStep nextStep = picker.pickNext(candidateStep.result.output, context);
-
+			for (final ParseStep candidateStep : candidates) {
+				final ParseStep nextStep = picker.pickNext(context, candidateStep,
+						createOrder);
 				if (nextStep != null && nextStep.result.isSuccess()) {
-
-					// System.out.println(nextStep);
-					candidates.add(new BTParseStep(nextStep, candidateStep, createOrder++));
+					candidates.add(nextStep);
 					continue outer;
 				}
 			}
 			break outer;
 		}
 		final LinkedList<ParseStep> steps = Lists.newLinkedList();
-		BTParseStep bestStep = candidates.first();
-		while (bestStep != null) {
+		ParseStep bestStep = candidates.first();
+		while (!(bestStep.parser instanceof NoopParser)) {
 			steps.addFirst(bestStep);
 			bestStep = bestStep.previous;
 		}
 		return steps;
 	}
-
-	public static class BTParseStep extends ParseStep implements Comparable<BTParseStep> {
-
-		public final BTParseStep previous;
-
-		public BTParseStep(final ParseStep parseStep, final BTParseStep previous, final int createOrder) {
-			super(parseStep.input, parseStep.parser, parseStep.result);
-			this.previous = previous;
-		}
-
-		public BTParseStep(final List<Object> input, final Parser parser, final ParseResult result,
-				final BTParseStep previous) {
-			super(input, parser, result);
-			this.previous = previous;
-		}
-
-		@Override
-		public int compareTo(final BTParseStep o) {
-			if (result.output.size() < o.result.output.size())
-				return -1;
-			else if (result.output.size() > o.result.output.size())
-				return 1;
-			else {
-				// Go with whichever has fewer strings since they
-				// often indicate a failure to parse
-				int myStringCount = 0, otherStringCount = 0;
-				for (final Object ob : result.output) {
-					if (ob instanceof String) {
-						myStringCount++;
-					}
-				}
-				for (final Object ob : o.result.output) {
-					if (ob instanceof String) {
-						otherStringCount++;
-					}
-				}
-				if (myStringCount < otherStringCount)
-					return -1;
-				else if (myStringCount > otherStringCount)
-					return 1;
-				else
-					return Double.compare(result.output.hashCode(), o.result.output.hashCode());
-			}
-		}
-
-	}
 }
+

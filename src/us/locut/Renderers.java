@@ -8,6 +8,7 @@ import org.jscience.physics.amount.Amount;
 import org.jsoup.nodes.*;
 import org.jsoup.parser.Tag;
 
+import us.locut.parsers.UserDefinedParserParser.UserDefinedParser;
 import us.locut.parsers.amounts.UnitParser;
 
 public class Renderers {
@@ -33,7 +34,8 @@ public class Renderers {
 						unitSpan.text(amount.getUnit().toString());
 					}
 				}
-
+			} else if (obj instanceof UserDefinedParser) {
+				ret.appendChild(toHtml(baseUri, ((UserDefinedParser) obj).after));
 			} else {
 				ret.appendChild(new TextNode(" " + obj.toString() + " ", baseUri));
 			}

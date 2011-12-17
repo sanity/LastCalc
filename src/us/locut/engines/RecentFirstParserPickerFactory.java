@@ -3,9 +3,9 @@ package us.locut.engines;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import us.locut.parsers.*;
+import com.google.common.collect.Iterables;
 
-import com.google.appengine.repackaged.com.google.common.collect.Iterables;
+import us.locut.parsers.*;
 
 public class RecentFirstParserPickerFactory extends ParserPickerFactory {
 
@@ -51,10 +51,11 @@ public class RecentFirstParserPickerFactory extends ParserPickerFactory {
 		return new ParserPicker(prevAttemptPos) {
 
 			@Override
-			public ParseStep pickNext(final List<Object> input, final ParserContext context) {
+			public ParseStep pickNext(final ParserContext context, final ParseStep previous,
+					final int createOrder) {
 				// matchTemplate
 				rwl.readLock().lock();
-				final ParseStep nextParseStep = getNext(input, context, parsers);
+				final ParseStep nextParseStep = getNext(context, parsers, previous, createOrder);
 				rwl.readLock().unlock();
 				return nextParseStep;
 			}

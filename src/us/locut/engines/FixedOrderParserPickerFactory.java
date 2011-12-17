@@ -2,20 +2,24 @@ package us.locut.engines;
 
 import java.util.*;
 
-import us.locut.parsers.*;
+import com.google.common.collect.Lists;
 
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
+import us.locut.parsers.*;
 
 public class FixedOrderParserPickerFactory extends ParserPickerFactory {
 	private static final long serialVersionUID = -2346529366052255216L;
-	private final Iterable<Parser> parsers;
+	private final LinkedList<Parser> parsers;
 
 	public FixedOrderParserPickerFactory(final Parser... parsers) {
-		this.parsers = Lists.newArrayList(parsers);
+		this.parsers = Lists.newLinkedList(Lists.newArrayList(parsers));
 	}
 
-	public FixedOrderParserPickerFactory(final Iterable<Parser> parsers) {
+	public FixedOrderParserPickerFactory(final LinkedList<Parser> parsers) {
 		this.parsers = parsers;
+	}
+
+	public void addParser(final Parser parser) {
+		parsers.add(parser);
 	}
 
 	@Override
@@ -38,8 +42,9 @@ public class FixedOrderParserPickerFactory extends ParserPickerFactory {
 		}
 
 		@Override
-		public ParseStep pickNext(final List<Object> input, final ParserContext context) {
-			final ParseStep next = getNext(input, context, parsers);
+		public ParseStep pickNext(final ParserContext context, final ParseStep previous,
+				final int createOrder) {
+			final ParseStep next = getNext(context, parsers, previous, createOrder);
 			return next;
 		}
 

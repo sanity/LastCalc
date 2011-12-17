@@ -3,6 +3,8 @@ package us.locut;
 import java.text.NumberFormat;
 import java.util.Random;
 
+import com.google.common.base.Joiner;
+
 import com.google.gson.*;
 
 public class Misc {
@@ -10,6 +12,14 @@ public class Misc {
 
 	private static final String randStrChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz"
 			+ "0123456789";
+
+	public static String toString(final Iterable<Object> o) {
+		final StringBuilder sb = new StringBuilder();
+		for (final Object io : o) {
+			sb.append(io.getClass().getSimpleName() + " " + io + ", ");
+		}
+		return sb.toString();
+	}
 
 	public static String randomString(final int digits) {
 		final StringBuilder sb = new StringBuilder(digits);
@@ -26,4 +36,6 @@ public class Misc {
 		numberFormat = NumberFormat.getInstance();
 		numberFormat.setParseIntegerOnly(false);
 	}
+
+	public static final Joiner joiner = Joiner.on(' ');
 }

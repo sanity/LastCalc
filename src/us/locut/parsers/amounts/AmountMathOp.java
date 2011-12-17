@@ -4,11 +4,11 @@ import java.util.*;
 
 import javax.measure.converter.ConversionException;
 
+import com.google.common.collect.Lists;
+
 import org.jscience.physics.amount.Amount;
 
 import us.locut.parsers.*;
-
-import com.google.appengine.repackaged.com.google.common.collect.Lists;
 
 public abstract class AmountMathOp extends Parser {
 	private static final long serialVersionUID = -2510157348504286501L;
@@ -95,13 +95,13 @@ public abstract class AmountMathOp extends Parser {
 
 
 		ops.add(new RewriteParser("plus", "+"));
-		ops.add(new RewriteParser("x", "+"));
 		ops.add(new RewriteParser("minus", "-"));
 		ops.add(new RewriteParser("multiply", "*"));
 		ops.add(new RewriteParser(Lists.newArrayList("multiplied", "by"), "*"));
 		ops.add(new RewriteParser("divide", "/"));
 		ops.add(new RewriteParser(Lists.newArrayList("divided", "by"), "/"));
 		ops.add(new RewriteParser(Lists.newArrayList("to", "the", "power", "of"), "^"));
+		ops.add(new UnitStripper());
 
 		return ops;
 	}
