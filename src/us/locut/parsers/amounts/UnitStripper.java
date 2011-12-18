@@ -25,19 +25,12 @@ public class UnitStripper extends Parser {
 		if (amount.getUnit().equals(Unit.ONE))
 			return ParseResult.fail();
 		return ParseResult.success(createResponse(tokens, templatePos,
-				Amount.valueOf(amount.getEstimatedValue(), Unit.ONE)));
+ Amount.valueOf(amount.getEstimatedValue(), Unit.ONE)), 1);
 	}
 
 	@Override
 	public int hashCode() {
 		return "UnitStripper".hashCode();
-	}
-
-	@Override
-	public double getScoreBias() {
-		// Apply a little punishment for using this as it causes
-		// us to lose data
-		return 1;
 	}
 
 	@Override

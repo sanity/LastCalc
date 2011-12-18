@@ -69,7 +69,7 @@ public class WorksheetServlet extends HttpServlet {
 					qaPair.answer = null; // Set to null to indicate that it must be
 					// recomputed
 				} else {
-					worksheet.qaPairs.add(pos, new QAPair(e.getValue(), null));
+					worksheet.qaPairs.add(new QAPair(e.getValue(), null));
 				}
 			}
 			// Remove any qaPairs that have been removed from the browser DOM
@@ -92,7 +92,7 @@ public class WorksheetServlet extends HttpServlet {
 				qap.answer = Lists.newArrayList();
 			} else {
 				if (qap.answer == null) {
-					final ParserContext context = new ParserContext(parseEngine, System.currentTimeMillis() + 700);
+					final ParserContext context = new ParserContext(parseEngine, System.currentTimeMillis() + 200000);
 					qap.answer = parseEngine.parseAndGetLastStep(Parsers.tokenize(qap.question), context);
 				}
 

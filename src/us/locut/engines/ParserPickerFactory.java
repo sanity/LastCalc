@@ -58,8 +58,9 @@ public abstract class ParserPickerFactory implements Serializable {
 					if (sPos != -1) {
 						final ParseResult parseResult = candidate.parse(input, sPos, context);
 						prevAttemptPos.put(attempt, sPos);
-						if (parseResult.isSuccess() || parseResult.isError())
-							return new ParseStep(input, candidate, parseResult, previous, createOrder);
+						if (parseResult.isSuccess())
+							return new ParseStep(input, candidate, parseResult, previous, createOrder,
+									parseResult.scoreBias);
 					} else {
 						prevAttemptPos.put(attempt, -2);
 						break templateScan;

@@ -62,7 +62,7 @@ public class UserDefinedParserParser extends Parser {
 		response.add(new UserDefinedParser(before, after));
 		response.addAll(tokens.subList(Math.min(end + 1, tokens.size()), tokens.size()));
 
-		return ParseResult.success(response);
+		return ParseResult.success(response, after.size() / 100.0);
 	}
 
 	public static class UserDefinedParser extends Parser {
@@ -127,17 +127,7 @@ public class UserDefinedParserParser extends Parser {
 				}
 			}
 
-			return ParseResult.success(createResponseWithCollection(tokens, templatePos, result));
-		}
-
-		@Override
-		public double getScoreBias() {
-			// We don't want to get punished if the result is longer than the
-			// input, so counteract this with a bias
-			if (after.size() > template.size())
-				return template.size() - after.size();
-			else
-				return 0;
+			return ParseResult.success(createResponseWithCollection(tokens, templatePos, result), -result.size());
 		}
 
 		@Override

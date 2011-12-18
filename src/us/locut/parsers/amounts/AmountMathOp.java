@@ -25,7 +25,7 @@ public abstract class AmountMathOp extends Parser {
 		final Amount<?> a = (Amount<?>) tokens.get(templatePos);
 		final Amount<?> b = (Amount<?>) tokens.get(templatePos + 2);
 		try {
-			return Parser.ParseResult.success(createResponse(tokens, templatePos, operation(a, b)), description);
+			return Parser.ParseResult.success(createResponse(tokens, templatePos, operation(a, b)));
 		} catch (final ConversionException ce) {
 			return Parser.ParseResult.fail();
 		}

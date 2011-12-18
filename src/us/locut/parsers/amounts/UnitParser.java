@@ -24,7 +24,7 @@ public class UnitParser extends Parser {
 
 	@Override
 	public ParseResult parse(final List<Object> tokens, final int templatePos) {
-		return ParseResult.success(createResponse(tokens, templatePos, unit), null);
+		return ParseResult.success(createResponse(tokens, templatePos, unit));
 	}
 
 

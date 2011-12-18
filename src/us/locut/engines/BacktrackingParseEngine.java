@@ -23,7 +23,7 @@ public class BacktrackingParseEngine extends ParseEngine {
 		final TreeSet<ParseStep> candidates = Sets.<ParseStep> newTreeSet();
 		final ParserPicker picker = ppf.getPicker();
 		final int createOrder = 0;
-		candidates.add(new ParseStep(input, NoopParser.singleton, ParseResult.success(input), null, createOrder));
+		candidates.add(new ParseStep(input, NoopParser.singleton, ParseResult.success(input), null, createOrder, 0));
 		outer: while (System.currentTimeMillis() < context.terminateTime) {
 			for (final ParseStep candidateStep : candidates) {
 				final ParseStep nextStep = picker.pickNext(context, candidateStep,

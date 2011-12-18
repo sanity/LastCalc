@@ -77,12 +77,10 @@ public class MainPageServlet extends HttpServlet {
 				doc.head()
 				.appendElement("script")
 				.attr("type", "text/javascript")
-				.text("function woopraReady(tracker) {tracker.setDomain('lastcalc-upr.appspot.com');tracker.setIdleTimeout(300000);tracker.track();return false;}(function(){var wsc = document.createElement('script');wsc.src = document.location.protocol+'//static.woopra.com/js/woopra.js';wsc.type = 'text/javascript';wsc.async = true;var ssc = document.getElementsByTagName('script')[0];ssc.parentNode.insertBefore(wsc, ssc);})();");
+						.text("function woopraReady(tracker) {tracker.setDomain('lastcalc.com');tracker.setIdleTimeout(300000);tracker.track();return false;}(function(){var wsc = document.createElement('script');wsc.src = document.location.protocol+'//static.woopra.com/js/woopra.js';wsc.type = 'text/javascript';wsc.async = true;var ssc = document.getElementsByTagName('script')[0];ssc.parentNode.insertBefore(wsc, ssc);})();");
 				doc.body().attr("data-worksheet-id", worksheet.id);
 				doc.body().attr("data-worksheet-ro-id", worksheet.readOnlyId);
 				doc.body().appendElement("h3").text("LastCalc");
-				doc.body().appendElement("h5").text("The last calculator you'll ever need");
-
 				int x = 1;
 				for (final QAPair qa : worksheet.qaPairs) {
 					final Element question = doc.body().appendElement("div").attr("class", "question");
@@ -90,7 +88,7 @@ public class MainPageServlet extends HttpServlet {
 					question.appendElement("div").attr("class", "editable").attr("contentEditable", "true")
 					.text(qa.question);
 					question.appendElement("div").attr("class", "answer")
-							.html(Renderers.toHtml(requestURL.toString(), qa.answer).toString());
+					.html(Renderers.toHtml(requestURL.toString(), qa.answer).toString());
 					x++;
 				}
 				final Element question = doc.body().appendElement("div").attr("class", "question");

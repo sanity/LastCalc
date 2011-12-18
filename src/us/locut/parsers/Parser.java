@@ -3,8 +3,12 @@ package us.locut.parsers;
 import java.io.Serializable;
 import java.util.*;
 
+import com.google.common.collect.Sets;
+
 public abstract class Parser implements Serializable {
 	private static final long serialVersionUID = -6533682381337736230L;
+
+	public static Set<String> reservedTokens = Sets.newHashSet("(", ")", "[", "]", ",", "{", "}", "=", "is");
 
 	public ParseResult parse(final List<Object> tokens, final int templatePos, final ParserContext context) {
 		if (context == null)
@@ -78,7 +82,7 @@ public abstract class Parser implements Serializable {
 	private final boolean match(final Object templ, final Object src) {
 		if (templ instanceof Class) {
 			final Class<?> templC = (Class<?>) templ;
-			return templC.isAssignableFrom(src.getClass());
+			return !reservedTokens.contains(src) && templC.isAssignableFrom(src.getClass());
 		} else if (templ instanceof Iterable<?>) {
 			for (final Object t : ((Iterable<?>) templ)) {
 				if (match(t, src))
@@ -90,40 +94,28 @@ public abstract class Parser implements Serializable {
 
 	public static final class ParseResult {
 
-		public static ParseResult error(final String explanation) {
-			return new ParseResult(null, explanation);
-		}
-
 		public static ParseResult fail() {
-			return new ParseResult(null, null);
+			return new ParseResult(null, 0);
 		}
 
 		public static ParseResult success(final List<Object> tokens) {
-			return new ParseResult(tokens, null);
+			return new ParseResult(tokens, 0);
 		}
 
-		public static ParseResult success(final List<Object> tokens, final String explanation) {
-			return new ParseResult(tokens, explanation);
+		public static ParseResult success(final List<Object> tokens, final double scoreBias) {
+			return new ParseResult(tokens, scoreBias);
 		}
 
-		private ParseResult(final List<Object> output, final String explanation) {
+		private ParseResult(final List<Object> output, final double scoreBias) {
 			this.output = output;
-			this.explanation = explanation;
+			this.scoreBias = scoreBias;
 		}
+
+		public final double scoreBias;
 
 		public final List<Object> output;
-		public final String explanation;
-
 		public boolean isSuccess() {
 			return output != null;
 		}
-
-		public boolean isError() {
-			return explanation != null;
-		}
-	}
-
-	public double getScoreBias() {
-		return 0;
 	}
 }

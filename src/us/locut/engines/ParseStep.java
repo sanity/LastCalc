@@ -22,10 +22,10 @@ public class ParseStep implements Comparable<ParseStep> {
 	public final double scoreBias;
 
 	public ParseStep(final List<Object> input, final Parser parser, final ParseResult result, final ParseStep previous,
-			final int createOrder) {
+			final int createOrder, final double score) {
 		this.input = input;
 		this.parser = parser;
-		scoreBias = (previous == null ? 0 : previous.scoreBias) + parser.getScoreBias();
+		scoreBias = (previous == null ? 0 : previous.scoreBias) + score;
 		this.result = result;
 		this.previous = previous;
 		this.createOrder = createOrder;

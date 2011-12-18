@@ -4,11 +4,11 @@ import java.util.*;
 
 import javax.measure.unit.Unit;
 
+import com.google.common.collect.Lists;
+
 import org.jscience.physics.amount.Amount;
 
 import us.locut.parsers.Parser;
-
-import com.google.common.collect.Lists;
 
 public class AmountParser extends Parser {
 	private static final long serialVersionUID = 9120544485351922021L;
@@ -19,11 +19,9 @@ public class AmountParser extends Parser {
 		final Number number = (Number) tokens.get(templatePos);
 		final Unit<?> unit = (Unit<?>) tokens.get(templatePos + 1);
 		if (number.longValue() == number.doubleValue())
-			return ParseResult.success(createResponse(tokens, templatePos, Amount.valueOf(number.longValue(), unit)),
-					null);
+			return ParseResult.success(createResponse(tokens, templatePos, Amount.valueOf(number.longValue(), unit)));
 		else
-			return ParseResult.success(createResponse(tokens, templatePos, Amount.valueOf(number.doubleValue(), unit)),
-					null);
+			return ParseResult.success(createResponse(tokens, templatePos, Amount.valueOf(number.doubleValue(), unit)));
 	}
 
 	@Override
