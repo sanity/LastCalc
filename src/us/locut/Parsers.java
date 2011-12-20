@@ -3,13 +3,14 @@ package us.locut;
 import java.util.*;
 import java.util.regex.*;
 
+import com.google.common.collect.Lists;
+
 import org.jscience.mathematics.number.*;
 
 import us.locut.parsers.*;
 import us.locut.parsers.amounts.*;
+import us.locut.parsers.collections.*;
 import us.locut.parsers.datastructures.lists.ListParser;
-
-import com.google.common.collect.Lists;
 
 public class Parsers {
 	private static Pattern p;
@@ -21,10 +22,13 @@ public class Parsers {
 		parsers.add(new AmountConverterParser());
 		parsers.add(new DimensionlessAmountParser());
 		parsers.add(new ListParser());
+		parsers.add(new GetFromMap());
+		parsers.add(new MapToParser());
+
 	}
 
 	static {
-		p = Pattern.compile("[0-9.]+|[a-zA-Z0-9]+|[\\+-/*=()\\[\\]]|\"(?:[^\"\\\\]|\\\\.)*\"");
+		p = Pattern.compile("[0-9.]+|[a-zA-Z0-9]+|[\\+-/*=()\\[\\]\\{\\}\\:]|\"(?:[^\"\\\\]|\\\\.)*\"");
 	}
 
 	public static ArrayList<Object> tokenize(final String orig) {

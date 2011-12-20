@@ -24,9 +24,18 @@ public class BacktrackingParseEngine extends ParseEngine {
 		final ParserPicker picker = ppf.getPicker();
 		final int createOrder = 0;
 		candidates.add(new ParseStep(input, NoopParser.singleton, ParseResult.success(input), null, createOrder, 0));
-		outer: while (System.currentTimeMillis() < context.terminateTime) {
+		final long startTime = System.currentTimeMillis();
+		ParserContext subContext;
+		try {
+			subContext = (ParserContext) context.clone();
+		} catch (final CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+		subContext.timeout = context.timeout / 5;
+		outer: while (System.currentTimeMillis() - startTime < context.timeout
+				&& candidates.first().result.output.size() > 1) {
 			for (final ParseStep candidateStep : candidates) {
-				final ParseStep nextStep = picker.pickNext(context, candidateStep,
+				final ParseStep nextStep = picker.pickNext(subContext, candidateStep,
 						createOrder);
 				if (nextStep != null && nextStep.result.isSuccess()) {
 					candidates.add(nextStep);
@@ -37,7 +46,7 @@ public class BacktrackingParseEngine extends ParseEngine {
 		}
 		final LinkedList<ParseStep> steps = Lists.newLinkedList();
 		ParseStep bestStep = candidates.first();
-		while (!(bestStep.parser instanceof NoopParser)) {
+		while (bestStep != null) {
 			steps.addFirst(bestStep);
 			bestStep = bestStep.previous;
 		}

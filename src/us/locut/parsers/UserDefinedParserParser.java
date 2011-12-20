@@ -19,48 +19,22 @@ public class UserDefinedParserParser extends Parser {
 
 	@Override
 	public ParseResult parse(final List<Object> tokens, final int templatePos, final ParserContext context) {
-		// Walk backwards to find start
-		int depth = 0, start;
-		for (start = templatePos; start > -1; start--) {
-			if (tokens.get(start).equals(")")) {
-				depth++;
-			} else if (tokens.get(start).equals("(")) {
-				depth--;
-			}
-			if (depth < 0) {
-				break;
-			}
-		}
-		start++;
 
-		final List<Object> before = Lists.newArrayList(tokens.subList(start, templatePos));
+		final List<Object> before = Lists.newArrayList(tokens.subList(0, templatePos));
 
-		// Ensure that we only have Strings before the = or "is"
+		// Ensure that we only have Strings and non-reserved tokens before
+		// the = or "is"
 		for (final Object b : before) {
-			if (!(b instanceof String))
+			if (!(b instanceof String) || PreParser.reserved.contains(b))
 				return ParseResult.fail();
 		}
 
-		depth = 0;
-		int end;
-		for (end = templatePos; end < tokens.size(); end++) {
-			if (tokens.get(end).equals("(")) {
-				depth++;
-			} else if (tokens.get(end).equals(")")) {
-				depth--;
-			}
-			if (depth < 0) {
-				break;
-			}
-		}
+		final List<Object> after = PreParser
+				.flatten(Lists.newArrayList(tokens.subList(templatePos + 1, tokens.size())));
 
-		final List<Object> after = Lists.newArrayList(tokens.subList(templatePos + 1, end));
+		final List<Object> response = Lists.newArrayListWithCapacity(tokens.size() + 1 + tokens.size());
 
-		final List<Object> response = Lists.newArrayListWithCapacity(tokens.size() + 1 + (end - start));
-
-		response.addAll(tokens.subList(0, Math.max(0, start - 1)));
 		response.add(new UserDefinedParser(before, after));
-		response.addAll(tokens.subList(Math.min(end + 1, tokens.size()), tokens.size()));
 
 		return ParseResult.success(response, after.size() / 100.0);
 	}
@@ -114,6 +88,19 @@ public class UserDefinedParserParser extends Parser {
 				}
 				template.add(s);
 			}
+		}
+
+		public List<Object> apply(final Object... variables) {
+			if (variables.length != this.variables.size())
+				throw new RuntimeException();
+			final List<Object> ret = Lists.newArrayList(after);
+			for (int x = 0; x < variables.length; x++) {
+				final Variable v = this.variables.get(x);
+				for (final int pos : v.replacePositions) {
+					ret.set(pos, variables[x]);
+				}
+			}
+			return ret;
 		}
 
 		@Override

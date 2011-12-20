@@ -18,11 +18,10 @@ public class ParseEngineTest {
 
 	@Test
 	public void userDefinedParsersTest() {
-
 		final LinkedList<Parser> parsers = Lists.newLinkedList();
 		us.locut.Parsers.getAll(parsers);
 		final LinkedList<Parser> priorityParsers = Lists.newLinkedList();
-		priorityParsers.add(new BracketsParser());
+		priorityParsers.add(new PreParser());
 		priorityParsers.addAll(AmountMathOp.getOps());
 		priorityParsers.add(new UserDefinedParserParser());
 		final FixedOrderParserPickerFactory priorityPPF = new FixedOrderParserPickerFactory(priorityParsers);

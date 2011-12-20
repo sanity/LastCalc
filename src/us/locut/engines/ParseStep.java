@@ -4,7 +4,6 @@ import java.util.List;
 
 import us.locut.parsers.*;
 import us.locut.parsers.Parser.ParseResult;
-import us.locut.parsers.UserDefinedParserParser.UserDefinedParser;
 
 public class ParseStep implements Comparable<ParseStep> {
 	public final List<Object> input;
@@ -65,10 +64,6 @@ public class ParseStep implements Comparable<ParseStep> {
 	}
 
 	private double getScore() {
-		if (parser instanceof UserDefinedParser) {
-			final UserDefinedParser udp = (UserDefinedParser) parser;
-			return scoreBias + udp.after.size();
-		} else
-			return scoreBias + result.output.size();
+		return scoreBias + result.output.size();
 	}
 }

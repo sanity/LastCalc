@@ -37,7 +37,7 @@ public class WorksheetServlet extends HttpServlet {
 			}
 		}
 		final LinkedList<Parser> priorityParsers = Lists.newLinkedList();
-		priorityParsers.add(new BracketsParser());
+		priorityParsers.add(new PreParser());
 		priorityParsers.addAll(AmountMathOp.getOps());
 		parsers.add(new UserDefinedParserParser());
 		final FixedOrderParserPickerFactory priorityPPF = new FixedOrderParserPickerFactory(priorityParsers);
@@ -92,7 +92,7 @@ public class WorksheetServlet extends HttpServlet {
 				qap.answer = Lists.newArrayList();
 			} else {
 				if (qap.answer == null) {
-					final ParserContext context = new ParserContext(parseEngine, System.currentTimeMillis() + 200000);
+					final ParserContext context = new ParserContext(parseEngine, 2000);
 					qap.answer = parseEngine.parseAndGetLastStep(Parsers.tokenize(qap.question), context);
 				}
 

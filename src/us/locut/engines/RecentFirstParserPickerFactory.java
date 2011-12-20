@@ -3,7 +3,7 @@ package us.locut.engines;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.*;
 
 import us.locut.parsers.*;
 
@@ -31,8 +31,10 @@ public class RecentFirstParserPickerFactory extends ParserPickerFactory {
 
 	@Override
 	public void teach(final Iterable<ParseStep> steps) {
+		final ArrayList<ParseStep> reversed = Lists.newArrayList(steps);
+		Collections.reverse(reversed);
 		rwl.writeLock().lock();
-		for (final ParseStep ps : steps) {
+		for (final ParseStep ps : reversed) {
 			// TODO: This is slow, probably need to use a better
 			// datastructure for parsers, perhaps LinkedHashMap
 			// or something

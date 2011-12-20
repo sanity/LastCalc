@@ -2,13 +2,18 @@ package us.locut.parsers;
 
 import us.locut.engines.ParseEngine;
 
-public class ParserContext {
+public class ParserContext implements Cloneable {
 	public final ParseEngine parseEngine;
 
-	public final long terminateTime;
+	public long timeout;
 
-	public ParserContext(final ParseEngine parseEngine, final long terminateTime) {
+	public ParserContext(final ParseEngine parseEngine, final long timeout) {
 		this.parseEngine = parseEngine;
-		this.terminateTime = terminateTime;
+		this.timeout = timeout;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 }
