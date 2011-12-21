@@ -113,8 +113,8 @@ public class UserDefinedParserParser extends Parser {
 					result.set(pos, val);
 				}
 			}
-
-			return ParseResult.success(createResponseWithCollection(tokens, templatePos, result), -result.size());
+			final List<Object> parsedResult = context.parseEngine.parseAndGetLastStep(result, context);
+			return ParseResult.success(createResponseWithCollection(tokens, templatePos, parsedResult), -result.size());
 		}
 
 		@Override

@@ -5,6 +5,8 @@ import java.util.*;
 
 import com.google.common.collect.Sets;
 
+import us.locut.parsers.amounts.AmountMathOp;
+
 public abstract class Parser implements Serializable {
 	private static final long serialVersionUID = -6533682381337736230L;
 
@@ -70,6 +72,8 @@ public abstract class Parser implements Serializable {
 			for (int x = 0; x < templateSize; x++) {
 				final Object templ = getTemplate().get(x);
 				final Object src = input.get(sPos + x);
+				if (this instanceof AmountMathOp) {
+				}
 				if (!match(templ, src)) {
 					continue templateScan;
 				}
@@ -116,6 +120,17 @@ public abstract class Parser implements Serializable {
 		public final List<Object> output;
 		public boolean isSuccess() {
 			return output != null;
+		}
+
+		@Override
+		public String toString() {
+			final StringBuilder builder = new StringBuilder();
+			builder.append("ParseResult [scoreBias=");
+			builder.append(scoreBias);
+			builder.append(", output=");
+			builder.append(output);
+			builder.append("]");
+			return builder.toString();
 		}
 	}
 }

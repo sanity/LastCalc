@@ -4,7 +4,7 @@ import java.util.*;
 
 import javax.measure.converter.ConversionException;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
 import org.jscience.physics.amount.Amount;
 
@@ -14,16 +14,23 @@ public abstract class AmountMathOp extends Parser {
 	private static final long serialVersionUID = -2510157348504286501L;
 	private final String description;
 	private final ArrayList<Object> template;
+	private final Set<String> subordinateTo;
 
-	public AmountMathOp(final String operator, final String description) {
+	public AmountMathOp(final Object operator, final String description, final Set<String> subordinateTo) {
 		this.description = description;
 		template = Lists.<Object> newArrayList(Amount.class, operator, Amount.class);
+		this.subordinateTo = subordinateTo;
 	}
 
 	@Override
 	public ParseResult parse(final List<Object> tokens, final int templatePos) {
 		final Amount<?> a = (Amount<?>) tokens.get(templatePos);
 		final Amount<?> b = (Amount<?>) tokens.get(templatePos + 2);
+		for (final Object token : tokens) {
+			if (subordinateTo.contains(token)) {
+				Parser.ParseResult.fail();
+			}
+		}
 		try {
 			return Parser.ParseResult.success(createResponse(tokens, templatePos, operation(a, b)));
 		} catch (final ConversionException ce) {
@@ -46,7 +53,7 @@ public abstract class AmountMathOp extends Parser {
 	public static List<Parser> getOps() {
 		final List<Parser> ops = Lists.newLinkedList();
 
-		ops.add(new AmountMathOp("^", "Raise to Power") {
+		ops.add(new AmountMathOp("^", "Raise to Power", Collections.<String> emptySet()) {
 			private static final long serialVersionUID = 4974989053479508332L;
 
 			@Override
@@ -57,7 +64,7 @@ public abstract class AmountMathOp extends Parser {
 			}
 		});
 
-		ops.add(new AmountMathOp("*", "Multiply") {
+		ops.add(new AmountMathOp(Lists.newArrayList("*", "for"), "Multiply", Collections.singleton("^")) {
 
 			private static final long serialVersionUID = 9166899968748997536L;
 
@@ -66,7 +73,7 @@ public abstract class AmountMathOp extends Parser {
 				return a.times(b);
 			}
 		});
-		ops.add(new AmountMathOp("/", "Divide") {
+		ops.add(new AmountMathOp(Lists.newArrayList("/", "at", "in"), "Divide", Sets.newHashSet("*", "^")) {
 			private static final long serialVersionUID = 4974989053479508332L;
 
 			@Override
@@ -74,8 +81,7 @@ public abstract class AmountMathOp extends Parser {
 				return a.divide(b);
 			}
 		});
-
-		ops.add(new AmountMathOp("+", "Add") {
+		ops.add(new AmountMathOp("+", "Add", Sets.newHashSet("^", "*", "/")) {
 			private static final long serialVersionUID = 8999743708212969031L;
 
 			@Override
@@ -83,7 +89,7 @@ public abstract class AmountMathOp extends Parser {
 				return a.plus(b);
 			}
 		});
-		ops.add(new AmountMathOp("-", "Subtract") {
+		ops.add(new AmountMathOp("-", "Subtract", Sets.newHashSet("^", "*", "/")) {
 
 			private static final long serialVersionUID = 7206664452245347470L;
 
