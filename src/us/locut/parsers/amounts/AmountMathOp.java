@@ -27,9 +27,8 @@ public abstract class AmountMathOp extends Parser {
 		final Amount<?> a = (Amount<?>) tokens.get(templatePos);
 		final Amount<?> b = (Amount<?>) tokens.get(templatePos + 2);
 		for (final Object token : tokens) {
-			if (subordinateTo.contains(token)) {
-				Parser.ParseResult.fail();
-			}
+			if (subordinateTo.contains(token))
+				return Parser.ParseResult.fail();
 		}
 		try {
 			return Parser.ParseResult.success(createResponse(tokens, templatePos, operation(a, b)));
@@ -89,7 +88,7 @@ public abstract class AmountMathOp extends Parser {
 				return a.plus(b);
 			}
 		});
-		ops.add(new AmountMathOp("-", "Subtract", Sets.newHashSet("^", "*", "/")) {
+		ops.add(new AmountMathOp("-", "Subtract", Sets.newHashSet("^", "*", "/", "+")) {
 
 			private static final long serialVersionUID = 7206664452245347470L;
 

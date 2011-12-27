@@ -36,13 +36,13 @@ public class WorksheetServlet extends HttpServlet {
 				}
 			}
 		}
-		final LinkedList<Parser> finalParsers = Lists.newLinkedList();
-		finalParsers.add(new PreParser());
-		finalParsers.addAll(AmountMathOp.getOps());
+		final LinkedList<Parser> priorityParsers = Lists.newLinkedList();
+		priorityParsers.add(new PreParser());
+		priorityParsers.addAll(AmountMathOp.getOps());
 		parsers.add(new UserDefinedParserParser());
+		final FixedOrderParserPickerFactory priorityPPF = new FixedOrderParserPickerFactory(priorityParsers);
 		final RecentFirstParserPickerFactory catchAllPPF = new RecentFirstParserPickerFactory(parsers);
-		final FixedOrderParserPickerFactory finalPPF = new FixedOrderParserPickerFactory(finalParsers);
-		globalParserPickerFactory = new CombinedParserPickerFactory(catchAllPPF, finalPPF);
+		globalParserPickerFactory = new CombinedParserPickerFactory(priorityPPF, catchAllPPF);
 	}
 
 	@Override

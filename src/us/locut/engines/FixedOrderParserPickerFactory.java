@@ -45,9 +45,6 @@ public class FixedOrderParserPickerFactory extends ParserPickerFactory {
 		public ParseStep pickNext(final ParserContext context, final ParseStep previous,
 				final int createOrder) {
 			final ParseStep next = getNext(context, parsers, previous, createOrder);
-			if (next != null) {
-				System.out.println("**" + next);
-			}
 			return next;
 		}
 

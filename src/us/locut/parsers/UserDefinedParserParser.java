@@ -9,6 +9,7 @@ import com.google.common.collect.*;
 import us.locut.Misc;
 
 public class UserDefinedParserParser extends Parser {
+
 	private static final long serialVersionUID = -6964937711038633291L;
 	private static ArrayList<Object> template;
 
@@ -29,8 +30,7 @@ public class UserDefinedParserParser extends Parser {
 				return ParseResult.fail();
 		}
 
-		final List<Object> after = PreParser
-				.flatten(Lists.newArrayList(tokens.subList(templatePos + 1, tokens.size())));
+		final List<Object> after = PreParser.flatten(tokens.subList(templatePos + 1, tokens.size()));
 
 		final List<Object> response = Lists.newArrayListWithCapacity(tokens.size() + 1 + tokens.size());
 
@@ -71,7 +71,8 @@ public class UserDefinedParserParser extends Parser {
 		}
 
 		public UserDefinedParser(final List<Object> before, final List<Object> after) {
-			this.after = after;
+			this.after = Lists.newArrayList(after); // Convert to ArrayList to
+			// ensure it's serializable
 			template = Lists.newArrayListWithCapacity(before.size());
 			for (int x = 0; x < before.size(); x++) {
 				final Object s = before.get(x);

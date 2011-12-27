@@ -20,7 +20,6 @@ public class BacktrackingParseEngine extends ParseEngine {
 	@Override
 	public LinkedList<ParseStep> parse(final List<Object> input,
 			final ParserContext context) {
-		System.out.println("Parsing: " + input);
 		final TreeSet<ParseStep> candidates = Sets.<ParseStep> newTreeSet();
 		final ParserPicker picker = ppf.getPicker();
 		final int createOrder = 0;
@@ -39,7 +38,6 @@ public class BacktrackingParseEngine extends ParseEngine {
 				final ParseStep nextStep = picker.pickNext(subContext, candidateStep,
 						createOrder);
 				if (nextStep != null && nextStep.result.isSuccess()) {
-					System.out.println("   " + nextStep.result.output);
 					candidates.add(nextStep);
 					continue outer;
 				}

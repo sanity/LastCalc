@@ -12,6 +12,11 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jsoup-1.6.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-3.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-10.0.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/functionaljava.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/Users/ian/java-libs/jscience-4.3/api/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

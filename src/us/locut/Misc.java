@@ -35,6 +35,7 @@ public class Misc {
 	static {
 		numberFormat = NumberFormat.getInstance();
 		numberFormat.setParseIntegerOnly(false);
+		numberFormat.setMaximumFractionDigits(20);
 	}
 
 	public static final Joiner joiner = Joiner.on(' ');

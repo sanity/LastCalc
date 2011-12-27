@@ -1,6 +1,6 @@
 package us.locut.parsers;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 import com.google.common.collect.*;
@@ -157,7 +157,7 @@ public class PreParser extends Parser {
 				if (tokens.get(x).equals("}"))
 					return ParseResult.fail();
 			}
-			final List<Object> inMapTokens = tokens.subList(x + 1, templatePos);
+			final List<Object> inMapTokens = Lists.newArrayList(tokens.subList(x + 1, templatePos));
 
 			final List<SubTokenSequence> sequenceList = Lists.newArrayListWithCapacity(tokens.size());
 
@@ -181,7 +181,8 @@ public class PreParser extends Parser {
 				if (mps == 1) {
 					key = sts.tokens.get(0);
 				} else {
-					key = new SubTokenSequence(context.parseEngine.parseAndGetLastStep(sts.tokens.subList(0, mps),
+					key = new SubTokenSequence(context.parseEngine.parseAndGetLastStep(
+							Lists.newArrayList(sts.tokens.subList(0, mps)),
 							context));
 				}
 				Object value;
@@ -211,7 +212,7 @@ public class PreParser extends Parser {
 	public static class SubTokenSequence implements Serializable {
 		private static final long serialVersionUID = -8924157711289740438L;
 
-		public final List<Object> tokens;
+		public List<Object> tokens;
 
 		public SubTokenSequence(final List<Object> tokens) {
 			this.tokens = tokens;
@@ -247,6 +248,24 @@ public class PreParser extends Parser {
 			return true;
 		}
 
+		private void writeObject(final ObjectOutputStream out) throws IOException {
+			out.writeInt(tokens.size());
+			for (final Object o : tokens) {
+				out.writeObject(o);
+			}
+		}
+
+		private void readObject(final ObjectInputStream in) throws IOException {
+			final int size = in.readInt();
+			tokens = Lists.newArrayListWithCapacity(size);
+			for (int x = 0; x < size; x++) {
+				try {
+					tokens.add(in.readObject());
+				} catch (final ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
 	}
 
 	@Override
