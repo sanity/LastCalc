@@ -65,16 +65,16 @@ public class ParseEngineTest {
 		final ParseEngine st = new BacktrackingParseEngine(new CombinedParserPickerFactory(priorityPPF, catchAllPPF));
 
 		final ParserContext context = new ParserContext(st, Long.MAX_VALUE);
-		final List<Object> squareUDPtokens = st.parseAndGetLastStep(Parsers.tokenize("square x = x*x"), context);
+		final List<Object> squareUDPtokens = st.parseAndGetLastStep(Parsers.tokenize("square X = X*X"), context);
 		Assert.assertEquals(squareUDPtokens.toString() + " is of size 1", squareUDPtokens.size(), 1);
 		Assert.assertTrue(squareUDPtokens.get(0) + " is a UserDefinedParser",
 				squareUDPtokens.get(0) instanceof UserDefinedParser);
 		final UserDefinedParser squareUDP = (UserDefinedParser) squareUDPtokens.get(0);
 		Assert.assertEquals("Validate squareUDP template", Lists.newArrayList("square", Object.class),
 				squareUDP.getTemplate());
-		Assert.assertEquals("Validate squareUDP after", Lists.newArrayList("x", "*", "x"), squareUDP.after);
+		Assert.assertEquals("Validate squareUDP after", Lists.newArrayList("X", "*", "X"), squareUDP.after);
 		priorityPPF.addParser(squareUDP);
-		final List<Object> quadUDPtokens = st.parseAndGetLastStep(Parsers.tokenize("quad x = square (square x)"),
+		final List<Object> quadUDPtokens = st.parseAndGetLastStep(Parsers.tokenize("quad X = square (square X)"),
 				context);
 		Assert.assertEquals(quadUDPtokens.toString() + " is of size 1", 1, quadUDPtokens.size());
 		Assert.assertTrue(quadUDPtokens.get(0) + " is a UserDefinedParser",

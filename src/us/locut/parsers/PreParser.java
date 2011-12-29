@@ -71,18 +71,18 @@ public class PreParser extends Parser {
 			}
 		} else if (obj instanceof List) {
 			final List<Object> list = (List<Object>) obj;
-			
-				output.add("[");
-				for (final Object lo : list) {
-					flattenTo(lo, output);
-					output.add(",");
-				}
-				if (list.isEmpty()) {
-					output.add("]");
-				} else {
+
+			output.add("[");
+			for (final Object lo : list) {
+				flattenTo(lo, output);
+				output.add(",");
+			}
+			if (list.isEmpty()) {
+				output.add("]");
+			} else {
 				// Overwrite last ","
 				output.set(output.size() - 1, "]");
-				}
+			}
 		} else if (obj instanceof Map) {
 			final Map<Object, Object> map = (Map<Object, Object>) obj;
 
@@ -163,30 +163,23 @@ public class PreParser extends Parser {
 
 			final List<SubTokenSequence> sequenceList = Lists.newArrayListWithCapacity(tokens.size());
 
-			Object retTail = null;
-			boolean nextIsTail = false;
+			SubTokenSequence tailSTS = null;
 
 			for (final Object o : inListTokens) {
 				if (sequenceList.isEmpty() || o.equals(",")) {
-					if (!nextIsTail) {
-						sequenceList.add(new SubTokenSequence(Lists.newArrayListWithCapacity(3)));
-					} else
-						// Can't have commas after ...
-						return ParseResult.fail();  // TODO: Should generate parse error
+					sequenceList.add(new SubTokenSequence(Lists.newArrayListWithCapacity(3)));
 				}
 				if (o.equals(",")) {
 					continue;
 				}
 				if (o.equals("...")) {
-					nextIsTail = true;
+					tailSTS = new SubTokenSequence(Lists.newArrayListWithCapacity(5));
 					continue;
 				}
-				if (!nextIsTail) {
+				if (tailSTS == null) {
 					sequenceList.get(sequenceList.size() - 1).tokens.add(o);
 				} else {
-					if (retTail != null) // Can't have multiple tokens after ...
-						return ParseResult.fail();
-					retTail = o;
+					tailSTS.tokens.add(o);
 				}
 
 			}
@@ -198,6 +191,16 @@ public class PreParser extends Parser {
 					retList.add(parsed.get(0));
 				} else {
 					retList.add(new SubTokenSequence(parsed));
+				}
+			}
+
+			Object retTail = null;
+			if (tailSTS != null) {
+				final List<Object> parsed = context.parseEngine.parseAndGetLastStep(tailSTS.tokens, context);
+				if (parsed.size() == 1) {
+					retTail = parsed.get(0);
+				} else {
+					retTail = new SubTokenSequence(parsed);
 				}
 			}
 
@@ -223,26 +226,21 @@ public class PreParser extends Parser {
 
 			final List<SubTokenSequence> sequenceList = Lists.newArrayListWithCapacity(tokens.size());
 
-			Object tail = null;
-			boolean nextIsTail = false;
+			SubTokenSequence tailSTS = null;
 
 			for (final Object o : inMapTokens) {
 				if (sequenceList.isEmpty() || o.equals(",")) {
-					if (nextIsTail)
-						return ParseResult.fail(); // TODO: Should be parse error
 					sequenceList.add(new SubTokenSequence(Lists.newArrayListWithCapacity(3)));
 				}
 				if (o.equals(",")) {
 					continue;
 				}
 				if (o.equals("...")) {
-					nextIsTail = true;
+					tailSTS = new SubTokenSequence(Lists.newArrayListWithCapacity(5));
 					continue;
 				}
-				if (nextIsTail) {
-					if (tail != null)
-						return ParseResult.fail();
-					tail = o;
+				if (tailSTS != null) {
+					tailSTS.tokens.add(o);
 				} else {
 					sequenceList.get(sequenceList.size() - 1).tokens.add(o);
 				}
@@ -258,31 +256,50 @@ public class PreParser extends Parser {
 				if (mps == 1) {
 					key = sts.tokens.get(0);
 				} else {
-					key = new SubTokenSequence(context.parseEngine.parseAndGetLastStep(
+					final List<Object> parsed = context.parseEngine.parseAndGetLastStep(
 							Lists.newArrayList(sts.tokens.subList(0, mps)),
-							context));
+							context);
+					if (parsed.size() == 1) {
+						key = parsed.get(0);
+					} else {
+						key = new SubTokenSequence(parsed);
+					}
+
 				}
 				Object value;
 				if (mps == sts.tokens.size() - 2) {
 					value = sts.tokens.get(sts.tokens.size() - 1);
 				} else {
-					value = new SubTokenSequence(context.parseEngine.parseAndGetLastStep(
-							sts.tokens.subList(mps + 1, sts.tokens.size()), context));
+					final List<Object> parsed = context.parseEngine.parseAndGetLastStep(
+							sts.tokens.subList(mps + 1, sts.tokens.size()), context);
+					if (parsed.size() == 1) {
+						value = parsed.get(0);
+					} else {
+						value = new SubTokenSequence(parsed);
+					}
 				}
 				retMap.put(key, value);
 			}
 
-			if (tail != null && tail instanceof Map) {
-				retMap.putAll((Map<Object, Object>) tail);
-				tail = null;
+			Object retTail = null;
+			if (tailSTS != null) {
+				final List<Object> parsed = context.parseEngine.parseAndGetLastStep(tailSTS.tokens, context);
+				if (parsed.size() == 1) {
+					retTail = parsed.get(0);
+				} else {
+					retTail = new SubTokenSequence(parsed);
+				}
 			}
 
 			final List<Object> result = Lists.newArrayListWithCapacity(tokens.size());
 			result.addAll(tokens.subList(0, x));
-			if (tail == null) {
+			if (retTail == null) {
+				result.add(retMap);
+			} else if (retTail instanceof Map) {
+				retMap.putAll((Map<Object, Object>) retTail);
 				result.add(retMap);
 			} else {
-				result.add(new MapWithTail(retMap, tail));
+				result.add(new MapWithTail(retMap, retTail));
 			}
 			result.addAll(tokens.subList(templatePos + 1, tokens.size()));
 			return ParseResult.success(result, result.size());
