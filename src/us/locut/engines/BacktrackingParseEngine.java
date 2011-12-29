@@ -32,8 +32,7 @@ public class BacktrackingParseEngine extends ParseEngine {
 			throw new RuntimeException(e);
 		}
 		subContext.timeout = context.timeout / 5;
-		outer: while (System.currentTimeMillis() - startTime < context.timeout
-				&& candidates.first().result.output.size() > 1) {
+		outer: while (System.currentTimeMillis() - startTime < context.timeout && !candidates.first().isMinimal()) {
 			for (final ParseStep candidateStep : candidates) {
 				final ParseStep nextStep = picker.pickNext(subContext, candidateStep,
 						createOrder);

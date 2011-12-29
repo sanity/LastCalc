@@ -8,11 +8,13 @@ import com.google.common.collect.*;
 import us.locut.Misc;
 
 public class PreParser extends Parser {
+	public static PreParser singleton = new PreParser();
+
 	private static final long serialVersionUID = 3705611710430408505L;
 
 	private static ArrayList<Object> template;
 
-	public static Set<String> reserved = Sets.newHashSet("(", ")", "{", "}", "[", "]", ",", ":");
+	public static Set<String> reserved = Sets.newHashSet("(", ")", "{", "}", "[", "]", ",", ":", "...");
 
 	static {
 		template = Lists.newArrayList();
@@ -34,9 +36,13 @@ public class PreParser extends Parser {
 				willFlatten = true;
 				break;
 			}
+			if (o instanceof ListWithTail || o instanceof MapWithTail) {
+				willFlatten = true;
+				break;
+			}
 		}
 		if (!willFlatten)
-			return input;
+			return Lists.newArrayList(input);
 
 		final ArrayList<Object> ret = Lists.newArrayListWithCapacity(input.size() * 4);
 
@@ -65,15 +71,21 @@ public class PreParser extends Parser {
 			}
 		} else if (obj instanceof List) {
 			final List<Object> list = (List<Object>) obj;
-			output.add("[");
-			for (final Object lo : list) {
-				flattenTo(lo, output);
-				output.add(",");
-			}
-			// Overwrite last ","
-			output.set(output.size() - 1, "]");
+			
+				output.add("[");
+				for (final Object lo : list) {
+					flattenTo(lo, output);
+					output.add(",");
+				}
+				if (list.isEmpty()) {
+					output.add("]");
+				} else {
+				// Overwrite last ","
+				output.set(output.size() - 1, "]");
+				}
 		} else if (obj instanceof Map) {
 			final Map<Object, Object> map = (Map<Object, Object>) obj;
+
 			output.add("{");
 			for (final Map.Entry<Object, Object> e : map.entrySet()) {
 				flattenTo(e.getKey(), output);
@@ -81,8 +93,34 @@ public class PreParser extends Parser {
 				flattenTo(e.getValue(), output);
 				output.add(",");
 			}
-			output.set(output.size() - 1, "}");
+			if (map.isEmpty()) {
+				output.add("}");
+			} else {
+				output.set(output.size() - 1, "}");
+			}
+		} else if (obj instanceof ListWithTail) {
+			final ListWithTail lwt = (ListWithTail) obj;
+			output.add("[");
+			for (final Object lo : lwt.list) {
+				flattenTo(lo, output);
+				output.add(",");
+			}
+			output.set(output.size() - 1, "...");
+			flattenTo(lwt.tail, output);
+			output.add("]");
+		} else if (obj instanceof MapWithTail) {
+			final MapWithTail mwt = (MapWithTail) obj;
 
+			output.add("{");
+			for (final Map.Entry<Object, Object> e : mwt.map.entrySet()) {
+				flattenTo(e.getKey(), output);
+				output.add(":");
+				flattenTo(e.getValue(), output);
+				output.add(",");
+			}
+			output.set(output.size() - 1, "...");
+			flattenTo(mwt.tail, output);
+			output.add("}");
 		} else {
 			output.add(obj);
 		}
@@ -125,14 +163,31 @@ public class PreParser extends Parser {
 
 			final List<SubTokenSequence> sequenceList = Lists.newArrayListWithCapacity(tokens.size());
 
+			Object retTail = null;
+			boolean nextIsTail = false;
+
 			for (final Object o : inListTokens) {
 				if (sequenceList.isEmpty() || o.equals(",")) {
-					sequenceList.add(new SubTokenSequence(Lists.newArrayListWithCapacity(3)));
+					if (!nextIsTail) {
+						sequenceList.add(new SubTokenSequence(Lists.newArrayListWithCapacity(3)));
+					} else
+						// Can't have commas after ...
+						return ParseResult.fail();  // TODO: Should generate parse error
 				}
 				if (o.equals(",")) {
 					continue;
 				}
-				sequenceList.get(sequenceList.size() - 1).tokens.add(o);
+				if (o.equals("...")) {
+					nextIsTail = true;
+					continue;
+				}
+				if (!nextIsTail) {
+					sequenceList.get(sequenceList.size() - 1).tokens.add(o);
+				} else {
+					if (retTail != null) // Can't have multiple tokens after ...
+						return ParseResult.fail();
+					retTail = o;
+				}
 
 			}
 
@@ -148,7 +203,14 @@ public class PreParser extends Parser {
 
 			final List<Object> result = Lists.newArrayListWithCapacity(tokens.size());
 			result.addAll(tokens.subList(0, x));
-			result.add(retList);
+			if (retTail == null) {
+				result.add(retList);
+			} else if (retTail instanceof List) {
+				retList.addAll(((List<Object>) retTail));
+				result.add(retList);
+			} else {
+				result.add(new ListWithTail(retList, retTail));
+			}
 			result.addAll(tokens.subList(templatePos + 1, tokens.size()));
 			return ParseResult.success(result, result.size());
 		} else if (tokens.get(templatePos).equals("}")) {
@@ -161,14 +223,29 @@ public class PreParser extends Parser {
 
 			final List<SubTokenSequence> sequenceList = Lists.newArrayListWithCapacity(tokens.size());
 
+			Object tail = null;
+			boolean nextIsTail = false;
+
 			for (final Object o : inMapTokens) {
 				if (sequenceList.isEmpty() || o.equals(",")) {
+					if (nextIsTail)
+						return ParseResult.fail(); // TODO: Should be parse error
 					sequenceList.add(new SubTokenSequence(Lists.newArrayListWithCapacity(3)));
 				}
 				if (o.equals(",")) {
 					continue;
 				}
-				sequenceList.get(sequenceList.size() - 1).tokens.add(o);
+				if (o.equals("...")) {
+					nextIsTail = true;
+					continue;
+				}
+				if (nextIsTail) {
+					if (tail != null)
+						return ParseResult.fail();
+					tail = o;
+				} else {
+					sequenceList.get(sequenceList.size() - 1).tokens.add(o);
+				}
 
 			}
 
@@ -195,9 +272,18 @@ public class PreParser extends Parser {
 				retMap.put(key, value);
 			}
 
+			if (tail != null && tail instanceof Map) {
+				retMap.putAll((Map<Object, Object>) tail);
+				tail = null;
+			}
+
 			final List<Object> result = Lists.newArrayListWithCapacity(tokens.size());
 			result.addAll(tokens.subList(0, x));
-			result.add(retMap);
+			if (tail == null) {
+				result.add(retMap);
+			} else {
+				result.add(new MapWithTail(retMap, tail));
+			}
 			result.addAll(tokens.subList(templatePos + 1, tokens.size()));
 			return ParseResult.success(result, result.size());
 		}
@@ -278,4 +364,115 @@ public class PreParser extends Parser {
 		return obj instanceof PreParser;
 	}
 
+	public static class ListWithTail implements Serializable {
+		private static final long serialVersionUID = -529889868305161556L;
+
+		public final List<Object> list;
+
+		public final Object tail;
+
+		public ListWithTail(final List<Object> list, final Object tail) {
+			this.list = list;
+			this.tail = tail;
+		}
+
+		@Override
+		public String toString() {
+			final StringBuilder builder = new StringBuilder();
+			builder.append("ListWithTail [list=");
+			builder.append(list);
+			builder.append(", tail=");
+			builder.append(tail);
+			builder.append("]");
+			return builder.toString();
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((list == null) ? 0 : list.hashCode());
+			result = prime * result + ((tail == null) ? 0 : tail.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (!(obj instanceof ListWithTail))
+				return false;
+			final ListWithTail other = (ListWithTail) obj;
+			if (list == null) {
+				if (other.list != null)
+					return false;
+			} else if (!list.equals(other.list))
+				return false;
+			if (tail == null) {
+				if (other.tail != null)
+					return false;
+			} else if (!tail.equals(other.tail))
+				return false;
+			return true;
+		}
+
+	}
+
+	public static class MapWithTail implements Serializable {
+		private static final long serialVersionUID = -3556614307132116724L;
+
+		public final Map<Object, Object> map;
+
+		public final Object tail;
+
+		public MapWithTail(final Map<Object, Object> map, final Object tail) {
+			this.map = map;
+			this.tail = tail;
+		}
+
+		@Override
+		public String toString() {
+			final StringBuilder builder = new StringBuilder();
+			builder.append("MapWithTail [map=");
+			builder.append(map);
+			builder.append(", tail=");
+			builder.append(tail);
+			builder.append("]");
+			return builder.toString();
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((map == null) ? 0 : map.hashCode());
+			result = prime * result + ((tail == null) ? 0 : tail.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (!(obj instanceof MapWithTail))
+				return false;
+			final MapWithTail other = (MapWithTail) obj;
+			if (map == null) {
+				if (other.map != null)
+					return false;
+			} else if (!map.equals(other.map))
+				return false;
+			if (tail == null) {
+				if (other.tail != null)
+					return false;
+			} else if (!tail.equals(other.tail))
+				return false;
+			return true;
+		}
+
+	}
 }

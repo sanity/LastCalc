@@ -1,9 +1,11 @@
 package us.locut.engines;
 
-import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
 
 import us.locut.parsers.*;
 import us.locut.parsers.Parser.ParseResult;
+import us.locut.parsers.PreParser.SubTokenSequence;
 
 public class ParseStep implements Comparable<ParseStep> {
 	public final List<Object> input;
@@ -63,7 +65,36 @@ public class ParseStep implements Comparable<ParseStep> {
 			return 0;
 	}
 
+	double cachedScore = Double.MIN_VALUE;
+
 	private double getScore() {
-		return scoreBias + result.output.size();
+		if (cachedScore == Double.MIN_VALUE) {
+			cachedScore = scoreBias + PreParser.flatten(result.output).size() + result.output.size();
+		}
+		return cachedScore;
+	}
+
+	public boolean isMinimal() {
+		return isMinimal(result.output);
+	}
+
+	private boolean isMinimal(final Object o) {
+		if (o instanceof Iterable) {
+			for (final Object r : ((Iterable<Object>) o)) {
+				if (!isMinimal(r))
+					return false;
+			}
+			return true;
+		} else if (o instanceof String)
+			return false;
+		else if (o instanceof Map) {
+			for (final Entry<Object, Object> e : ((Map<Object, Object>) o).entrySet()) {
+				if (!isMinimal(e.getKey()) || !isMinimal(e.getValue()))
+					return false;
+			}
+		} else if (o instanceof SubTokenSequence)
+			return isMinimal(((SubTokenSequence) o).tokens);
+		return true;
 	}
 }
+

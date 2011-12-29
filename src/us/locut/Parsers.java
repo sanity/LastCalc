@@ -1,5 +1,6 @@
 package us.locut;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.regex.*;
 
@@ -9,8 +10,7 @@ import org.jscience.mathematics.number.*;
 
 import us.locut.parsers.*;
 import us.locut.parsers.amounts.*;
-import us.locut.parsers.collections.*;
-import us.locut.parsers.datastructures.lists.ListParser;
+import us.locut.parsers.collections.GetFromMap;
 
 public class Parsers {
 	private static Pattern p;
@@ -21,14 +21,13 @@ public class Parsers {
 		parsers.add(new AmountParser());
 		parsers.add(new AmountConverterParser());
 		parsers.add(new DimensionlessAmountParser());
-		parsers.add(new ListParser());
 		parsers.add(new GetFromMap());
-		parsers.add(new MapToParser());
 
 	}
 
 	static {
-		p = Pattern.compile("[0-9.]+|[a-zA-Z0-9]+|[\\+-/*=()\\[\\]\\{\\}\\:]|\"(?:[^\"\\\\]|\\\\.)*\"");
+		p = Pattern
+				.compile("\\.\\.\\.|\\?|[0-9]*\\.?[0-9]+|[a-zA-Z0-9]+|[\\+-/*=()\\[\\]\\{\\}\\:]|\"(?:[^\"\\\\]|\\\\.)*\"");
 	}
 
 	public static ArrayList<Object> tokenize(final String orig) {
@@ -47,6 +46,10 @@ public class Parsers {
 					digits = true;
 				} else if (charAt == '.') {
 					pureNum.append(charAt);
+					if (decimal) { // A number can't have more than one '.'
+						pureNum = null;
+						break;
+					}
 					decimal = true;
 				} else {
 					pureNum = null;
@@ -74,7 +77,8 @@ public class Parsers {
 	}
 
 
-	public static class QuotedString {
+	public static class QuotedString implements Serializable {
+		private static final long serialVersionUID = 8125107374281852751L;
 		public final String value;
 
 		public QuotedString(final String value) {

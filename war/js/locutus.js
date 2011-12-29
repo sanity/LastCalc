@@ -17,7 +17,7 @@ function highlightSyntax(element) {
 	});
 	inSpan = false;
 	element.html(element.html().replace(
-			/[0-9\.]+|[a-zA-Z0-9]+|"(?:[^"\\]|\\.)*"/g,
+			/\.\.\.|\?|[0-9]*\.?[0-9]+|[a-zA-Z0-9]+|"(?:[^"\\]|\\.)*"/g,
 			function(str) {
 				// We have to do this because of the <span> inserted by rangy which was
 				// tripping
@@ -35,7 +35,7 @@ function highlightSyntax(element) {
 				// if (str.match(/^"(?:[^"\\]|\\.)*"$/)) {
 				// return "<span class=\"highlighted quoted\">"+str+"</span>";
 				// }
-				if (str.match(/^[0-9\.]+$/)) {
+				if (str.match(/^[-+]?[0-9]*\.?[0-9]+$/)) {
 					return "<span class=\"highlighted number\">" + str + "</span>";
 				}
 				var nc = variables[str];

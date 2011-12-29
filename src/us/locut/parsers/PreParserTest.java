@@ -10,6 +10,9 @@ import org.junit.Test;
 
 import us.locut.Parsers;
 import us.locut.engines.*;
+import us.locut.parsers.Parser.ParseResult;
+import us.locut.parsers.PreParser.ListWithTail;
+import us.locut.parsers.PreParser.MapWithTail;
 import us.locut.parsers.PreParser.SubTokenSequence;
 import us.locut.parsers.amounts.AmountMathOp;
 
@@ -73,6 +76,80 @@ public class PreParserTest {
 		System.out.println(origTokens);
 		System.out.println(flattened);
 		Assert.assertEquals(origTokens, flattened);
+	}
+
+	@Test
+	public void listWithTailTest() {
+		final PreParser bp = new PreParser();
+		final LinkedList<Parser> parsers = Lists.newLinkedList();
+		us.locut.Parsers.getAll(parsers);
+		final LinkedList<Parser> priorityParsers = Lists.newLinkedList();
+		priorityParsers.add(new PreParser());
+		priorityParsers.addAll(AmountMathOp.getOps());
+		priorityParsers.add(new UserDefinedParserParser());
+		final FixedOrderParserPickerFactory priorityPPF = new FixedOrderParserPickerFactory(priorityParsers);
+		final RecentFirstParserPickerFactory catchAllPPF = new RecentFirstParserPickerFactory(parsers);
+		final ParseEngine st = new BacktrackingParseEngine(new CombinedParserPickerFactory(priorityPPF, catchAllPPF));
+		final ParserContext context = new ParserContext(st, Long.MAX_VALUE);
+		{
+			final List<Object> origTokens = Lists.<Object> newArrayList("a", "[", "k", "...", "tail", "]");
+			final ParseResult result = bp.parse(origTokens, origTokens.indexOf("]"), context);
+			Assert.assertEquals(2, result.output.size());
+			Assert.assertTrue(result.output.get(1) instanceof ListWithTail);
+			final ListWithTail lwt1 = (ListWithTail) result.output.get(1);
+			Assert.assertEquals(lwt1.list.size(), 1);
+			Assert.assertEquals(lwt1.list.get(0), "k");
+			Assert.assertEquals(lwt1.tail, "tail");
+		}
+		{
+			final List<Object> origTokens = Lists.<Object> newArrayList("a", "[", "k", "...", "[", "n", "]", "]");
+			final List<Object> result = st.parseAndGetLastStep(origTokens, context);
+			Assert.assertEquals(2, result.size());
+			Assert.assertTrue(result.get(1) instanceof List);
+			final List<Object> list = (List<Object>) result.get(1);
+			Assert.assertEquals(list.size(), 2);
+			Assert.assertEquals("k", list.get(0));
+			Assert.assertEquals("n", list.get(1));
+
+		}
+	}
+
+	@Test
+	public void mapWithTailTest() {
+		final PreParser bp = new PreParser();
+		final LinkedList<Parser> parsers = Lists.newLinkedList();
+		us.locut.Parsers.getAll(parsers);
+		final LinkedList<Parser> priorityParsers = Lists.newLinkedList();
+		priorityParsers.add(new PreParser());
+		priorityParsers.addAll(AmountMathOp.getOps());
+		priorityParsers.add(new UserDefinedParserParser());
+		final FixedOrderParserPickerFactory priorityPPF = new FixedOrderParserPickerFactory(priorityParsers);
+		final RecentFirstParserPickerFactory catchAllPPF = new RecentFirstParserPickerFactory(parsers);
+		final ParseEngine st = new BacktrackingParseEngine(new CombinedParserPickerFactory(priorityPPF, catchAllPPF));
+		final ParserContext context = new ParserContext(st, Long.MAX_VALUE);
+		{
+			final List<Object> origTokens = Parsers.tokenize("{k:v...tail}");
+			Assert.assertEquals("...", origTokens.get(4));
+			final ParseResult result = bp.parse(origTokens, origTokens.indexOf("}"), context);
+			Assert.assertEquals(1, result.output.size());
+			Assert.assertTrue(result.output.get(0) instanceof MapWithTail);
+			final MapWithTail mwt1 = (MapWithTail) result.output.get(0);
+			Assert.assertEquals(1, mwt1.map.size());
+			Assert.assertEquals("v", mwt1.map.get("k"));
+			Assert.assertEquals("tail", mwt1.tail);
+		}
+		{
+			final List<Object> origTokens = Parsers.tokenize("{k:v ... {k2:v2}}");
+			Assert.assertEquals("...", origTokens.get(4));
+			final List<Object> result = st.parseAndGetLastStep(origTokens, context);
+			Assert.assertEquals(1, result.size());
+			Assert.assertTrue(result.get(0) instanceof Map);
+			final Map<Object, Object> map = (Map<Object, Object>) result.get(0);
+			Assert.assertEquals(map.size(), 2);
+			Assert.assertEquals("v", map.get("k"));
+			Assert.assertEquals("v2", map.get("k2"));
+
+		}
 	}
 
 	@Test
