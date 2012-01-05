@@ -136,6 +136,11 @@ public abstract class TokenList implements Iterable<Object> {
 		public int size() {
 			return end - start;
 		}
+
+		@Override
+		public TLPos getPosInParent(final int ix) {
+			return parent.getPosInParent(start + ix);
+		}
 	}
 
 	public static final class CompositeTokenList extends TokenList {
@@ -161,7 +166,7 @@ public abstract class TokenList implements Iterable<Object> {
 				ix -= sizes[l];
 				l++;
 				if (l == sizes.length)
-					return new ArrayIndexOutOfBoundsException();
+					throw new ArrayIndexOutOfBoundsException();
 			}
 			return tokenLists.get(l).get(ix);
 		}
@@ -178,6 +183,18 @@ public abstract class TokenList implements Iterable<Object> {
 				sz += sizes[x];
 			}
 			return sz;
+		}
+
+		@Override
+		public TLPos getPosInParent(int ix) {
+			int l = 0;
+			while (ix >= sizes[l]) {
+				ix -= sizes[l];
+				l++;
+				if (l == sizes.length)
+					throw new ArrayIndexOutOfBoundsException();
+			}
+			return tokenLists.get(l).getPosInParent(ix);
 		}
 	}
 
