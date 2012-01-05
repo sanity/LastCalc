@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 
 import us.locut.parsers.*;
 import us.locut.parsers.Parser.ParseResult;
+import us.locut.parsers.PreParser.ListWithTail;
+import us.locut.parsers.PreParser.MapWithTail;
 import us.locut.parsers.PreParser.SubTokenSequence;
 
 public class ParseStep implements Comparable<ParseStep> {
@@ -69,9 +71,37 @@ public class ParseStep implements Comparable<ParseStep> {
 
 	private double getScore() {
 		if (cachedScore == Double.MIN_VALUE) {
-			cachedScore = scoreBias + PreParser.flatten(result.output).size() + result.output.size();
+			cachedScore = getScore(result.output) + scoreBias;
 		}
 		return cachedScore;
+	}
+
+	public static double getScore(final Object output) {
+		if (output instanceof Iterable) {
+			double score = 0;
+			for (final Object o : ((Iterable<Object>) output)) {
+				score += getScore(o);
+			}
+			return score;
+		} else if (output instanceof String)
+			return 1;
+		else if (output instanceof SubTokenSequence)
+			return getScore(((SubTokenSequence) output).tokens);
+		else if (output instanceof Map) {
+			final Map<Object, Object> map = (Map<Object, Object>) output;
+			double score = 0;
+			for (final Map.Entry<Object, Object> e : map.entrySet()) {
+				score += getScore(e.getKey()) + getScore(e.getValue());
+			}
+			return score;
+		} else if (output instanceof MapWithTail) {
+			final MapWithTail mwt = (MapWithTail) output;
+			return 1 + getScore(mwt.map) + getScore(mwt.tail);
+		} else if (output instanceof ListWithTail) {
+			final ListWithTail lwt = (ListWithTail) output;
+			return 1 + getScore(lwt.list) + getScore(lwt.tail);
+		} else
+			return 0;
 	}
 
 	public boolean isMinimal() {
@@ -94,6 +124,8 @@ public class ParseStep implements Comparable<ParseStep> {
 			}
 		} else if (o instanceof SubTokenSequence)
 			return isMinimal(((SubTokenSequence) o).tokens);
+		else if (o instanceof ListWithTail)
+			return false;
 		return true;
 	}
 }

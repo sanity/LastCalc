@@ -35,7 +35,7 @@ public class UserDefinedParserParser extends Parser {
 		final Set<String> variables = Sets.newHashSet();
 
 		for (final Object o : PreParser.flatten(before)) {
-			if (o instanceof String && !PreParser.reserved.contains(o) && after.contains(o)
+			if (o instanceof String && !PreParser.reserved.contains(o)
 					&& Character.isUpperCase(((String) o).charAt(0))) {
 				variables.add((String) o);
 			}
@@ -104,6 +104,31 @@ public class UserDefinedParserParser extends Parser {
 				}
 			}
 			bind(fromMWT.tail, tail, variables, bound);
+		} else if (from instanceof Map && to instanceof Map) {
+			final Map<Object, Object> fromM = (Map<Object, Object>) from;
+			final Map<Object, Object> toM = (Map<Object, Object>) to;
+			final Map<Object, Object> tail = Maps.newLinkedHashMap(toM);
+			if (toM.size() != fromM.size())
+				throw new BindException("Maps are not the same size");
+			for (final Entry<Object, Object> e : fromM.entrySet()) {
+				if (!variables.contains(e.getValue()))
+					throw new BindException("Map value '" + e.getValue() + " is not a variable");
+				if (variables.contains(e.getKey()) && !bound.containsKey(e.getKey())) {
+					// The key is a variable, bind to any value and remove from
+					// tail
+					final Map.Entry<Object, Object> nextEntry = tail.entrySet().iterator().next();
+					bound.put((String) e.getKey(), nextEntry.getKey());
+					bind(e.getValue(), nextEntry.getValue(), variables, bound);
+					tail.remove(nextEntry.getKey());
+				} else {
+					final Object aKey = bound.containsKey(e.getKey()) ? bound.get(e.getKey()) : e.getKey();
+					final Object value = toM.get(aKey);
+					if (value == null)
+						throw new BindException("Map doesn't contain key '" + e.getKey() + "'");
+					bind(e.getValue(), value, variables, bound);
+					tail.remove(e.getKey());
+				}
+			}
 		} else if (from instanceof ListWithTail && to instanceof List) {
 			final ListWithTail fromLWT = (ListWithTail) from;
 			final List<Object> toList = (List<Object>) to;
@@ -174,7 +199,9 @@ public class UserDefinedParserParser extends Parser {
 				return ParseResult.fail();
 			}
 			final List<Object> parsedResult = context.parseEngine.parseAndGetLastStep(result, context);
-			return ParseResult.success(createResponseWithCollection(tokens, templatePos, parsedResult), -result.size());
+			final ArrayList<Object> response = createResponseWithCollection(tokens, templatePos,
+					parsedResult);
+			return ParseResult.success(response);
 		}
 
 		@Override

@@ -71,7 +71,7 @@ public class WorksheetServlet extends HttpServlet {
 			}
 			// Remove any qaPairs that have been removed from the browser DOM
 			if (!orderedQuestions.isEmpty()) {
-				while (worksheet.qaPairs.size() > orderedQuestions.lastKey() + 1) {
+				while (worksheet.qaPairs.size() > orderedQuestions.lastKey()) {
 					worksheet.qaPairs.remove(worksheet.qaPairs.size() - 1);
 				}
 			}
@@ -89,15 +89,17 @@ public class WorksheetServlet extends HttpServlet {
 				qap.answer = Lists.newArrayList();
 			} else {
 				if (qap.answer == null) {
-					final ParserContext context = new ParserContext(parseEngine, 2000000);
+					final ParserContext context = new ParserContext(parseEngine, 2000);
 					qap.answer = parseEngine.parseAndGetLastStep(Parsers.tokenize(qap.question), context);
 				}
 
 				if (qap.answer.size() == 1 && qap.answer.get(0) instanceof UserDefinedParser) {
 					final UserDefinedParser udp = (UserDefinedParser) qap.answer.get(0);
-					for (final Object o : udp.getTemplate()) {
-						if (o instanceof String) {
-							userDefinedKeywords.put(o.toString(), pos + 1);
+
+					if (udp.getTemplate().size() == 1 && udp.getTemplate().get(0) instanceof String) {
+						final String keyword = (String) udp.getTemplate().get(0);
+						if (!PreParser.reserved.contains(keyword) && !userDefinedKeywords.containsKey(keyword)) {
+							userDefinedKeywords.put(keyword, pos + 1);
 						}
 					}
 					userDefinedParsers.addParser(udp);

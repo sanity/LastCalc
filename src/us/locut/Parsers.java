@@ -10,6 +10,7 @@ import org.jscience.mathematics.number.*;
 
 import us.locut.parsers.*;
 import us.locut.parsers.amounts.*;
+import us.locut.parsers.bool.*;
 import us.locut.parsers.collections.GetFromMap;
 
 public class Parsers {
@@ -19,9 +20,12 @@ public class Parsers {
 		parsers.addAll(UnitParser.getParsers());
 		parsers.add(new TrailingEqualsStripper());
 		parsers.add(new AmountParser());
+		parsers.add(new UDPApplier());
 		parsers.add(new AmountConverterParser());
 		parsers.add(new DimensionlessAmountParser());
 		parsers.add(new GetFromMap());
+		parsers.add(new IfThenElse());
+		parsers.add(new BoolParser());
 
 	}
 

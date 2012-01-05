@@ -9,7 +9,7 @@ function highlightSyntax(element) {
 		alert("highlightSyntax() called with " + element.length
 				+ " elements (should be 1)");
 	}
-
+	var lineNumber = parseInt(element.parent().find(".question_no").text());
 	var savedSel = rangy.saveSelection();
 	// Remove any existing variables
 	element.find("span.highlighted").replaceWith(function() {
@@ -39,7 +39,7 @@ function highlightSyntax(element) {
 					return "<span class=\"highlighted number\">" + str + "</span>";
 				}
 				var nc = variables[str];
-				if (nc) {
+				if (nc && (nc <= lineNumber)) {
 					var colors = [ "red", "green", "blue", "orange", "rosy", "pink",
 							"white", "gray", "black" ];
 					var color = colors[nc % colors.length];
@@ -92,6 +92,7 @@ function insertNodeOverSelection(node, containerNode) {
 	}
 }
 
+/*
 // Catch clicks on variables
 $(document).on("mousedown", ".variable", function(event) {
 	var savedSel = rangy.saveSelection();
@@ -104,7 +105,7 @@ $(document).on("mousedown", ".variable", function(event) {
 		rangy.restoreSelection(savedSel);
 	}
 });
-
+*/
 function tidyQuestions() {
 	$("div.question").each(function(ix) {
 		highlightSyntax($(this).find(".editable"));

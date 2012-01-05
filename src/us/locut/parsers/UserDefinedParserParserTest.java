@@ -30,6 +30,8 @@ public class UserDefinedParserParserTest {
 		final Map<Object, Object> tailMap = (Map<Object, Object>) bound.get("tailvar");
 		Assert.assertEquals(1, tailMap.size());
 		Assert.assertEquals("value3", tailMap.get("key3"));
+
+		// TODO: Test with just map, rather than MapWithTail
 	}
 
 	@Test
