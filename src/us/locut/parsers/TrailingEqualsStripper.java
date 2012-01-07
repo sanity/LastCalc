@@ -1,15 +1,14 @@
 package us.locut.parsers;
 
-import java.util.*;
-
-import com.google.common.collect.Lists;
+import us.locut.TokenList;
 
 public class TrailingEqualsStripper extends Parser {
+	private static final TokenList template = TokenList.createD("=");
 	private static final long serialVersionUID = 2340131974673871340L;
 
 	@Override
-	public ArrayList<Object> getTemplate() {
-		return Lists.<Object> newArrayList("=");
+	public TokenList getTemplate() {
+		return template;
 	}
 
 	@Override
@@ -18,9 +17,9 @@ public class TrailingEqualsStripper extends Parser {
 	}
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos) {
+	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		if (templatePos == tokens.size()-1)
-			return ParseResult.success(createResponse(tokens, templatePos));
+			return ParseResult.success(tokens.subList(0, tokens.size() - 1));
 		else
 			return ParseResult.fail();
 	}

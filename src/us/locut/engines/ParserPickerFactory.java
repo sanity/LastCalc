@@ -1,10 +1,11 @@
 package us.locut.engines;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import us.locut.TokenList;
 import us.locut.parsers.*;
 import us.locut.parsers.Parser.ParseResult;
 
@@ -34,7 +35,7 @@ public abstract class ParserPickerFactory implements Serializable {
 
 		protected ParseStep getNext(final ParserContext context,
 				final Iterable<Parser> parsers, final ParseStep previous, final int createOrder) {
-			final List<Object> input = previous.result.output;
+			final TokenList input = previous.result.output;
 			for (final Parser candidate : parsers) {
 				int sPos = -1;
 				final Attempt attempt = new Attempt(input, candidate);
@@ -73,10 +74,10 @@ public abstract class ParserPickerFactory implements Serializable {
 	}
 
 	public static class Attempt {
-		public List<Object> input;
+		public TokenList input;
 		public Parser parser;
 
-		public Attempt(final List<Object> input, final Parser parser) {
+		public Attempt(final TokenList input, final Parser parser) {
 			this.input = input;
 			this.parser = parser;
 		}

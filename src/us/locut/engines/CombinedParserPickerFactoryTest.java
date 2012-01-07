@@ -1,12 +1,11 @@
 package us.locut.engines;
 
-import java.util.List;
+import com.google.common.collect.Lists;
 
 import org.junit.*;
 
+import us.locut.TokenList;
 import us.locut.parsers.*;
-
-import com.google.common.collect.Lists;
 
 public class CombinedParserPickerFactoryTest {
 
@@ -24,11 +23,11 @@ public class CombinedParserPickerFactoryTest {
 		final BacktrackingParseEngine pe = new BacktrackingParseEngine(f);
 
 		final ParserContext context = new ParserContext(pe, Long.MAX_VALUE);
-		final List<Object> result = pe.parseAndGetLastStep(
-				Lists.<Object> newArrayList("1", "1", "2", "2", "3", "3", "4", "4"),
+		final TokenList result = pe.parseAndGetLastStep(new TokenList.SimpleTokenList("1", "1", "2", "2", "3", "3",
+				"4", "4"),
 				context);
 
-		Assert.assertEquals(Lists.<Object> newArrayList("one", "two", "three", "four"), result);
+		Assert.assertEquals(TokenList.createD("one", "two", "three", "four"), result);
 	}
 
 }

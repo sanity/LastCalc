@@ -1,18 +1,18 @@
 package us.locut.parsers;
 
-import java.util.*;
+import us.locut.TokenList;
 
 public class NoopParser extends Parser {
-
+	private static final long serialVersionUID = 7600767637692555261L;
 	public static final NoopParser singleton = new NoopParser();
 
 	@Override
-	public ArrayList<Object> getTemplate() {
+	public TokenList getTemplate() {
 		return null;
 	}
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos) {
+	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		return ParseResult.success(tokens);
 	}
 

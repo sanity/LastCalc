@@ -1,31 +1,29 @@
 package us.locut.parsers.amounts;
 
-import java.util.*;
-
 import javax.measure.unit.Unit;
-
-import com.google.common.collect.Lists;
 
 import org.jscience.physics.amount.Amount;
 
+import us.locut.TokenList;
 import us.locut.parsers.Parser;
 
 public class UnitStripper extends Parser {
 	private static final long serialVersionUID = 5689741343269900107L;
-	private static final ArrayList<Object> template = Lists.<Object> newArrayList(Amount.class);
+	private static final TokenList template = TokenList.createD(Amount.class);
 
 	@Override
-	public ArrayList<Object> getTemplate() {
+	public TokenList getTemplate() {
 		return template;
 	}
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos) {
+	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		final Amount<?> amount = (Amount<?>) tokens.get(templatePos);
 		if (amount.getUnit().equals(Unit.ONE))
 			return ParseResult.fail();
-		return ParseResult.success(createResponse(tokens, templatePos,
- Amount.valueOf(amount.getEstimatedValue(), Unit.ONE)), 1);
+		return ParseResult.success(
+				tokens.replaceWithTokens(templatePos, templatePos + template.size(),
+				Amount.valueOf(amount.getEstimatedValue(), Unit.ONE)), 1);
 	}
 
 	@Override

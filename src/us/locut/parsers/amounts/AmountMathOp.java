@@ -8,22 +8,23 @@ import com.google.common.collect.*;
 
 import org.jscience.physics.amount.Amount;
 
+import us.locut.TokenList;
 import us.locut.parsers.*;
 
 public abstract class AmountMathOp extends Parser {
 	private static final long serialVersionUID = -2510157348504286501L;
 	private final String description;
-	private final ArrayList<Object> template;
+	private final TokenList template;
 	private final Set<String> subordinateTo;
 
 	public AmountMathOp(final Object operator, final String description, final Set<String> subordinateTo) {
 		this.description = description;
-		template = Lists.<Object> newArrayList(Amount.class, operator, Amount.class);
+		template = TokenList.createD(Amount.class, operator, Amount.class);
 		this.subordinateTo = subordinateTo;
 	}
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos) {
+	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		final Amount<?> a = (Amount<?>) tokens.get(templatePos);
 		final Amount<?> b = (Amount<?>) tokens.get(templatePos + 2);
 		for (final Object token : tokens) {
@@ -31,7 +32,8 @@ public abstract class AmountMathOp extends Parser {
 				return Parser.ParseResult.fail();
 		}
 		try {
-			return Parser.ParseResult.success(createResponse(tokens, templatePos, operation(a, b)));
+			return Parser.ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(),
+					operation(a, b)));
 		} catch (final ConversionException ce) {
 			return Parser.ParseResult.fail();
 		}
@@ -45,7 +47,7 @@ public abstract class AmountMathOp extends Parser {
 	protected abstract Amount<?> operation(final Amount<?> a, final Amount<?> b) throws ConversionException;
 
 	@Override
-	public ArrayList<Object> getTemplate() {
+	public TokenList getTemplate() {
 		return template;
 	}
 

@@ -86,7 +86,7 @@ public class WorksheetServlet extends HttpServlet {
 		int pos = 0;
 		for (final QAPair qap : worksheet.qaPairs) {
 			if (qap.question.trim().length() == 0) {
-				qap.answer = Lists.newArrayList();
+				qap.answer = TokenList.createD();
 			} else {
 				if (qap.answer == null) {
 					final ParserContext context = new ParserContext(parseEngine, 2000);

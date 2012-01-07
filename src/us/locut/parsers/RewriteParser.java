@@ -1,36 +1,36 @@
 package us.locut.parsers;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import com.google.common.collect.Lists;
+import us.locut.TokenList;
 
 public class RewriteParser extends Parser {
 
 	private static final long serialVersionUID = 7536991519287899564L;
-	private final ArrayList<Object> template;
-	private final ArrayList<Object> to;
+	private final TokenList template;
+	private final TokenList to;
 
 	public RewriteParser(final Object from, final Object to) {
 		if (from instanceof ArrayList) {
-			template = (ArrayList<Object>) from;
+			template = TokenList.create((ArrayList<Object>) from);
 		} else {
-			template = Lists.newArrayList(from);
+			template = TokenList.createD(from);
 		}
 		if (to instanceof ArrayList) {
-			this.to = (ArrayList<Object>) to;
+			this.to = TokenList.create((ArrayList<Object>) to);
 		} else {
-			this.to = Lists.newArrayList(to);
+			this.to = TokenList.createD(to);
 		}
 	}
 
 	@Override
-	public ArrayList<Object> getTemplate() {
+	public TokenList getTemplate() {
 		return template;
 	}
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos) {
-		return ParseResult.success(createResponse(tokens, templatePos, to.toArray()));
+	public ParseResult parse(final TokenList tokens, final int templatePos) {
+		return ParseResult.success(tokens.replaceWithTokenList(templatePos, templatePos + template.size(), to));
 	}
 
 	@Override

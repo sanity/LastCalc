@@ -1,31 +1,30 @@
 package us.locut.parsers.amounts;
 
-import java.util.*;
-
 import javax.measure.unit.Unit;
-
-import com.google.common.collect.Lists;
 
 import org.jscience.physics.amount.Amount;
 
+import us.locut.TokenList;
 import us.locut.parsers.Parser;
 
 public class AmountParser extends Parser {
 	private static final long serialVersionUID = 9120544485351922021L;
-	private static final ArrayList<Object> template = Lists.<Object> newArrayList(Number.class, Unit.class);
+	private static final TokenList template = TokenList.createD(Number.class, Unit.class);
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos) {
+	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		final Number number = (Number) tokens.get(templatePos);
 		final Unit<?> unit = (Unit<?>) tokens.get(templatePos + 1);
 		if (number.longValue() == number.doubleValue())
-			return ParseResult.success(createResponse(tokens, templatePos, Amount.valueOf(number.longValue(), unit)));
+			return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(),
+					Amount.valueOf(number.longValue(), unit)));
 		else
-			return ParseResult.success(createResponse(tokens, templatePos, Amount.valueOf(number.doubleValue(), unit)));
+			return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(),
+					Amount.valueOf(number.doubleValue(), unit)));
 	}
 
 	@Override
-	public ArrayList<Object> getTemplate() {
+	public TokenList getTemplate() {
 		return template;
 	}
 

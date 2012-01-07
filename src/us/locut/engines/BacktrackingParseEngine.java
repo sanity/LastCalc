@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.google.common.collect.*;
 
+import us.locut.TokenList;
 import us.locut.engines.ParserPickerFactory.ParserPicker;
 import us.locut.parsers.*;
 import us.locut.parsers.Parser.ParseResult;
@@ -18,7 +19,7 @@ public class BacktrackingParseEngine extends ParseEngine {
 	}
 
 	@Override
-	public LinkedList<ParseStep> parse(final List<Object> input,
+	public LinkedList<ParseStep> parse(final TokenList input,
 			final ParserContext context) {
 		final TreeSet<ParseStep> candidates = Sets.<ParseStep> newTreeSet();
 		final ParserPicker picker = ppf.getPicker();
@@ -32,13 +33,19 @@ public class BacktrackingParseEngine extends ParseEngine {
 			throw new RuntimeException(e);
 		}
 		subContext.timeout = context.timeout / 5;
+		final Set<ParseStep> exhausted = Sets.newHashSet();
 		outer: while (System.currentTimeMillis() - startTime < context.timeout && !candidates.first().isMinimal()) {
 			for (final ParseStep candidateStep : candidates) {
+				if (exhausted.contains(candidateStep)) {
+					continue;
+				}
 				final ParseStep nextStep = picker.pickNext(subContext, candidateStep,
 						createOrder);
 				if (nextStep != null && nextStep.result.isSuccess()) {
 					candidates.add(nextStep);
 					continue outer;
+				} else {
+					exhausted.add(candidateStep);
 				}
 			}
 			break outer;

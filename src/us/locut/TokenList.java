@@ -1,10 +1,19 @@
 package us.locut;
 
+import java.io.Serializable;
 import java.util.*;
 
 import com.google.common.collect.*;
 
-public abstract class TokenList implements Iterable<Object> {
+public abstract class TokenList implements Iterable<Object>, Serializable {
+
+	public static SimpleTokenList create(final List<Object> list) {
+		return new SimpleTokenList(Lists.newArrayList(list));
+	}
+
+	public static SimpleTokenList createD(final Object... list) {
+		return new SimpleTokenList(list);
+	}
 
 	public int indexOf(final Object o) {
 		for (int x = 0; x < size(); x++) {
@@ -14,11 +23,26 @@ public abstract class TokenList implements Iterable<Object> {
 		return -1;
 	}
 
+	public final void addAllTo(final Collection<Object> coll) {
+		for (final Object o : this) {
+			coll.add(o);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return Misc.joiner.join(this);
+	}
+
 	public SubTokenList subList(final int start, final int end) {
 		return new SubTokenList(this, start, end);
 	}
 
-	public CompositeTokenList replace(final int start, final int end, final TokenList replaceWith) {
+	public CompositeTokenList replaceWithTokens(final int start, final int end, final Object... replaceWith) {
+		return new CompositeTokenList(subList(0, start), new SimpleTokenList(replaceWith), subList(end, size()));
+	}
+
+	public CompositeTokenList replaceWithTokenList(final int start, final int end, final TokenList replaceWith) {
 		return new CompositeTokenList(subList(0, start), replaceWith, subList(end, size()));
 	}
 
@@ -36,6 +60,10 @@ public abstract class TokenList implements Iterable<Object> {
 	public abstract Object get(int ix);
 
 	public abstract int size();
+
+	public final boolean isEmpty() {
+		return size() == 0;
+	}
 
 	@Override
 	public int hashCode() {
@@ -77,6 +105,7 @@ public abstract class TokenList implements Iterable<Object> {
 	}
 
 	public static final class SimpleTokenList extends TokenList {
+		private static final long serialVersionUID = -6387012802414390386L;
 		private final ArrayList<Object> tokens;
 
 		public SimpleTokenList(final Object... tokens) {
@@ -91,6 +120,7 @@ public abstract class TokenList implements Iterable<Object> {
 		public Object get(final int ix) {
 			return tokens.get(ix);
 		}
+
 
 		@Override
 		public int size() {
@@ -109,17 +139,18 @@ public abstract class TokenList implements Iterable<Object> {
 	}
 
 	public static final class SubTokenList extends TokenList {
+		private static final long serialVersionUID = -4306902697632956336L;
 		public final TokenList parent;
 		private final int start, end;
 
 		public SubTokenList(final TokenList parent, final int start, final int end) {
 			this.parent = parent;
-			if (end <= start)
+			if (end < start)
 				throw new IllegalArgumentException("End must be > Start");
 			if (start < 0)
 				throw new IllegalArgumentException("Start must be >= 0");
-			if (end >= parent.size())
-				throw new IllegalArgumentException("End must be less than size of parent TokenList");
+			if (end > parent.size())
+				throw new IllegalArgumentException("End must be less than or equal to size of parent TokenList");
 			this.start = start;
 			this.end = end;
 		}
@@ -144,6 +175,7 @@ public abstract class TokenList implements Iterable<Object> {
 	}
 
 	public static final class CompositeTokenList extends TokenList {
+		private static final long serialVersionUID = 96315179953921395L;
 		public final ArrayList<TokenList> tokenLists;
 		private final int[] sizes;
 

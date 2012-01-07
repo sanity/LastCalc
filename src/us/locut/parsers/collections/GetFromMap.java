@@ -1,14 +1,13 @@
 package us.locut.parsers.collections;
 
-import java.util.*;
+import java.util.Map;
 
-import com.google.common.collect.Lists;
-
+import us.locut.TokenList;
 import us.locut.parsers.Parser;
 
 public class GetFromMap extends Parser {
 
-	private static ArrayList<Object> template = Lists.<Object> newArrayList("get", Object.class, "from", Map.class);
+	private static TokenList template = TokenList.createD("get", Object.class, "from", Map.class);
 
 	/**
 	 * 
@@ -16,18 +15,18 @@ public class GetFromMap extends Parser {
 	private static final long serialVersionUID = 5755928813441453688L;
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos) {
+	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		final Object toGet = tokens.get(templatePos + 1);
 		final Map<Object, Object> map = (Map<Object, Object>) tokens.get(templatePos + 3);
 		final Object got = map.get(toGet);
 		if (got != null)
-			return ParseResult.success(createResponse(tokens, templatePos, got));
+			return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), got));
 		else
 			return ParseResult.fail();
 	}
 
 	@Override
-	public ArrayList<Object> getTemplate() {
+	public TokenList getTemplate() {
 		return template;
 	}
 

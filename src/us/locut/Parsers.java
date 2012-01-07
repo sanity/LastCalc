@@ -34,7 +34,7 @@ public class Parsers {
 				.compile("\\.\\.\\.|\\?|[0-9]*\\.?[0-9]+|[a-zA-Z0-9]+|[\\+-/*=()\\[\\]\\{\\}\\:]|\"(?:[^\"\\\\]|\\\\.)*\"");
 	}
 
-	public static ArrayList<Object> tokenize(final String orig) {
+	public static TokenList tokenize(final String orig) {
 		final Matcher m = p.matcher(orig);
 
 		final ArrayList<Object> ret = Lists.newArrayList();
@@ -77,7 +77,7 @@ public class Parsers {
 			}
 		}
 
-		return ret;
+		return TokenList.create(ret);
 	}
 
 

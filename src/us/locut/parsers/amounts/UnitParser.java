@@ -8,28 +8,28 @@ import javax.measure.unit.*;
 import com.google.common.base.Joiner;
 import com.google.common.collect.*;
 
-import us.locut.Parsers;
+import us.locut.*;
 import us.locut.parsers.Parser;
 
 public class UnitParser extends Parser {
 
 	private static final long serialVersionUID = 3254703564962161446L;
-	ArrayList<Object> template;
+	TokenList template;
 	private final Unit<?> unit;
 
-	public UnitParser(final Unit<?> unit, final ArrayList<Object> template) {
+	public UnitParser(final Unit<?> unit, final TokenList template) {
 		this.unit = unit;
 		this.template = template;
 	}
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos) {
-		return ParseResult.success(createResponse(tokens, templatePos, unit));
+	public ParseResult parse(final TokenList tokens, final int templatePos) {
+		return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), unit));
 	}
 
 
 	@Override
-	public ArrayList<Object> getTemplate() {
+	public TokenList getTemplate() {
 		return template;
 	}
 
@@ -38,9 +38,9 @@ public class UnitParser extends Parser {
 		addParsers(ret, SI.class);
 		addParsers(ret, NonSI.class);
 		verboseNamesPlur.put(NonSI.FOOT, "feet");
-		ret.add(new UnitParser(NonSI.FOOT, Lists.<Object> newArrayList("feet")));
+		ret.add(new UnitParser(NonSI.FOOT, TokenList.createD("feet")));
 		verboseNamesPlur.put(NonSI.INCH, "inches");
-		ret.add(new UnitParser(NonSI.INCH, Lists.<Object> newArrayList("inches")));
+		ret.add(new UnitParser(NonSI.INCH, TokenList.createD("inches")));
 		return ret;
 	}
 
@@ -67,23 +67,24 @@ public class UnitParser extends Parser {
 				try {
 					final Unit<?> unit = (Unit<?>) f.get(null);
 					if (longName.length > 0) {
-						ret.add(new UnitParser(unit, Lists.<Object> newArrayList(longName)));
+						ret.add(new UnitParser(unit, TokenList.create(Lists.newArrayList(longName))));
 						verboseNamesSing.put(unit, joiner.join(longName));
 						// And pluralize
 						if (longName[0].toString().charAt(longName[0].toString().length() - 1) != 's') {
 							final ArrayList<Object> pluralLongName = Lists.<Object> newArrayList(longName);
 							pluralLongName.set(0, pluralLongName.get(0) + "s");
-							ret.add(new UnitParser(unit, Lists.<Object> newArrayList(pluralLongName)));
+							ret.add(new UnitParser(unit, TokenList.create(pluralLongName)));
 							verboseNamesPlur.put(unit, joiner.join(pluralLongName));
 						}
 					}
-					final ArrayList<Object> shortName = Parsers.tokenize(unit.toString());
+					final TokenList shortName = Parsers.tokenize(unit.toString());
 					// Don't use it if it is only one character, or if its in a
 					// list of confusing values like "in"
-					if ((!shortName.isEmpty())
-							&& ((shortName.size() > 1) || ((shortName.get(0).toString().length() > 1) && (!dontUse
-									.contains(shortName.get(0)))))) {
-						ret.add(new UnitParser(unit, shortName));
+					if (shortName.size() > 0) {
+						if (((shortName.size() > 1) || ((shortName.get(0).toString().length() > 1) && (!dontUse
+								.contains(shortName.get(0)))))) {
+							ret.add(new UnitParser(unit, shortName));
+						}
 					}
 				} catch (final IllegalArgumentException e) {
 					e.printStackTrace();

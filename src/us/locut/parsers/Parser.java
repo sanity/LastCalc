@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.google.common.collect.Sets;
 
+import us.locut.TokenList;
 import us.locut.parsers.amounts.AmountMathOp;
 
 public abstract class Parser implements Serializable {
@@ -12,17 +13,17 @@ public abstract class Parser implements Serializable {
 
 	public static Set<String> reservedTokens = Sets.newHashSet("(", ")", "[", "]", ",", "{", "}", "=", "is");
 
-	public ParseResult parse(final List<Object> tokens, final int templatePos, final ParserContext context) {
+	public ParseResult parse(final TokenList tokens, final int templatePos, final ParserContext context) {
 		if (context == null)
 			throw new IllegalArgumentException("context is null");
 		return parse(tokens, templatePos);
 	}
 
-	public ParseResult parse(final List<Object> tokens, final int templatePos) {
+	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		return parse(tokens, templatePos, null);
 	}
 
-	public abstract ArrayList<Object> getTemplate();
+	public abstract TokenList getTemplate();
 
 	@Override
 	public abstract int hashCode();
@@ -62,11 +63,11 @@ public abstract class Parser implements Serializable {
 		return response;
 	}
 
-	public final int matchTemplate(final List<Object> input) {
+	public final int matchTemplate(final TokenList input) {
 		return matchTemplate(input, 0);
 	}
 
-	public final int matchTemplate(final List<Object> input, final int startPos) {
+	public final int matchTemplate(final TokenList input, final int startPos) {
 		final int templateSize = getTemplate().size();
 		templateScan: for (int sPos = startPos; sPos < 1 + input.size() - templateSize; sPos++) {
 			for (int x = 0; x < templateSize; x++) {
@@ -102,22 +103,22 @@ public abstract class Parser implements Serializable {
 			return new ParseResult(null, 0);
 		}
 
-		public static ParseResult success(final List<Object> tokens) {
+		public static ParseResult success(final TokenList tokens) {
 			return new ParseResult(tokens, 0);
 		}
 
-		public static ParseResult success(final List<Object> tokens, final double scoreBias) {
+		public static ParseResult success(final TokenList tokens, final double scoreBias) {
 			return new ParseResult(tokens, scoreBias);
 		}
 
-		private ParseResult(final List<Object> output, final double scoreBias) {
+		private ParseResult(final TokenList output, final double scoreBias) {
 			this.output = output;
 			this.scoreBias = scoreBias;
 		}
 
 		public final double scoreBias;
 
-		public final List<Object> output;
+		public final TokenList output;
 		public boolean isSuccess() {
 			return output != null;
 		}

@@ -1,29 +1,24 @@
 package us.locut.parsers.bool;
 
-import java.util.*;
-
 import com.google.common.collect.Lists;
 
+import us.locut.TokenList;
 import us.locut.parsers.Parser;
 
 public class BoolParser extends Parser {
 	private static final long serialVersionUID = -7666856639055196045L;
-	private static ArrayList<Object> template;
+	private static TokenList template = TokenList.createD(Lists.newArrayList("true", "yes", "false", "no"));
 
-	static {
-		template = Lists.newArrayList();
-		template.add(Lists.newArrayList("true", "yes", "false", "no"));
-	}
 
 	@Override
-	public ArrayList<Object> getTemplate() {
+	public TokenList getTemplate() {
 		return template;
 	}
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos) {
+	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		final boolean result = (tokens.get(templatePos).equals("true") || tokens.get(templatePos).equals("yes"));
-		return ParseResult.success(createResponse(tokens, templatePos, result), -1);
+		return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), result));
 	}
 
 	@Override

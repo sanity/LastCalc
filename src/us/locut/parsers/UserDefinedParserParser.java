@@ -5,32 +5,69 @@ import java.util.Map.Entry;
 
 import com.google.common.collect.*;
 
+import us.locut.TokenList;
 import us.locut.parsers.PreParser.ListWithTail;
 import us.locut.parsers.PreParser.MapWithTail;
-import us.locut.parsers.PreParser.SubTokenSequence;
 
 public class UserDefinedParserParser extends Parser {
 
 	private static final long serialVersionUID = -6964937711038633291L;
-	private static ArrayList<Object> template;
+	private static TokenList template;
 
 	static {
-		template = Lists.newArrayList();
-		template.add(Lists.<Object> newArrayList("=", "is", "means"));
+		template = TokenList.createD((Lists.<Object> newArrayList("=", "is", "means")));
 	}
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos, final ParserContext context) {
+	public ParseResult parse(final TokenList tokens, final int templatePos, final ParserContext context) {
 
-		for (final Object o : tokens) {
-			if (PreParser.reserved.contains(o))
-				return ParseResult.fail();
+		// Identify the beginning and end of the UDPP
+		int start, depth = 0;
+		for (int x = templatePos - 1;; x--) {
+			final Object t = tokens.get(x);
+			if (t.equals("(")) {
+				if (depth == 0) {
+					start = x + 1;
+					break;
+				} else {
+					depth--;
+				}
+			} else if (t.equals(")")) {
+				depth++;
+			}
+			if (x == 0) {
+				start = 0;
+				break;
+			}
 		}
-		final List<Object> before = Lists.newArrayList(tokens.subList(0, templatePos));
+		if (depth != 0)
+			return ParseResult.fail();
 
-		final List<Object> after = PreParser.flatten(tokens.subList(templatePos + 1, tokens.size()));
+		final int end;
+		for (int x = templatePos + 1;; x++) {
+			final Object t = tokens.get(x);
+			if (t.equals(")")) {
+				if (depth == 0) {
+					end = x;
+					break;
+				} else {
+					depth--;
+				}
+			} else if (t.equals("(")) {
+				depth++;
+			}
+			if (x == tokens.size() - 1) {
+				end = tokens.size();
+				break;
+			}
+		}
 
-		final List<Object> response = Lists.newArrayListWithCapacity(tokens.size() + 1 + tokens.size());
+		if (depth != 0)
+			return ParseResult.fail();
+
+		final TokenList before = tokens.subList(start, templatePos);
+
+		final TokenList after = PreParser.flatten(tokens.subList(templatePos + 1, end));
 
 		final Set<String> variables = Sets.newHashSet();
 
@@ -41,9 +78,10 @@ public class UserDefinedParserParser extends Parser {
 			}
 		}
 
-		response.add(new UserDefinedParser(before, after, variables));
+		final UserDefinedParser udp = new UserDefinedParser(before, after, variables);
 
-		return ParseResult.success(response, -2);
+		return ParseResult.success(
+				tokens.replaceWithTokens(Math.max(0, start - 1), Math.min(tokens.size(), end + 1), udp));
 	}
 
 	public static class BindException extends Exception {
@@ -60,24 +98,16 @@ public class UserDefinedParserParser extends Parser {
 					throws BindException {
 		if (from.equals(to) || from.equals("?"))
 			return;
-		else if (from instanceof SubTokenSequence) {
-			if (to instanceof SubTokenSequence) {
-				bind(((SubTokenSequence) from).tokens, ((SubTokenSequence) to).tokens, variables, bound);
-			} else if (to instanceof List) {
-				bind(((SubTokenSequence) from).tokens, to, variables, bound);
-			} else
-				throw new BindException("Don't know how to bind " + from + ":" + from.getClass().getSimpleName() + " to "
-						+ to + ":" + to.getClass().getSimpleName());
-		} else if (from instanceof String && variables.contains(from)) {
+		if (from instanceof String && variables.contains(from)) {
 			bound.put((String) from, to);
-		} else if (from instanceof List && to instanceof List) {
-			final List<Object> fromL = (List<Object>) from;
-			final List<Object> toL = (List<Object>) to;
-			if (fromL.size() != toL.size())
-				throw new BindException("Lists are not of same size");
-			for (int x = 0; x < fromL.size(); x++) {
-				bind(fromL.get(x), toL.get(x), variables, bound);
+		} else if (from instanceof Iterable && to instanceof Iterable) {
+			final Iterator<Object> fromL = ((Iterable<Object>) from).iterator();
+			final Iterator<Object> toL = ((Iterable<Object>) to).iterator();
+			while (fromL.hasNext() && toL.hasNext()) {
+				bind(fromL.next(), toL.next(), variables, bound);
 			}
+			if (fromL.hasNext() || toL.hasNext())
+				throw new BindException("Iterables are not of the same size");
 		} else if (from instanceof MapWithTail && to instanceof Map) {
 			final MapWithTail fromMWT = (MapWithTail) from;
 			final Map<Object, Object> toM = (Map<Object, Object>) to;
@@ -150,40 +180,41 @@ public class UserDefinedParserParser extends Parser {
 	public static class UserDefinedParser extends Parser {
 		private static final long serialVersionUID = -4928516936219533258L;
 
-		public final List<Object> after;
+		public final TokenList after;
 
-		private final ArrayList<Object> template;
+		private final TokenList template;
 
-		private final List<Object> before;
+		private final TokenList before;
 
 		private final Set<String> variables;
 
-		public UserDefinedParser(final List<Object> before, final List<Object> after, final Set<String> variables) {
+		public UserDefinedParser(final TokenList before, final TokenList after, final Set<String> variables) {
 			this.before = before;
 			this.after = after;
 			this.variables = variables;
-			template = Lists.newArrayList();
+			final List<Object> tpl = Lists.newArrayList();
 
 			for (final Object o : before) {
 				if (variables.contains(o)) {
-					template.add(Object.class);
+					tpl.add(Object.class);
 				} else if (o instanceof String) {
-					template.add(o);
+					tpl.add(o);
 				} else if (o instanceof MapWithTail || o instanceof Map) {
-					template.add(Map.class);
+					tpl.add(Map.class);
 				} else if (o instanceof ListWithTail || o instanceof List) {
-					template.add(List.class);
+					tpl.add(List.class);
 				} else {
-					template.add(o.getClass());
+					tpl.add(o.getClass());
 				}
 			}
+			template = TokenList.create(tpl);
 
 		}
 
 		@Override
-		public ParseResult parse(final List<Object> tokens, final int templatePos, final ParserContext context) {
+		public ParseResult parse(final TokenList tokens, final int templatePos, final ParserContext context) {
 			final List<Object> result = Lists.newArrayListWithCapacity(after.size());
-			final List<Object> input = tokens.subList(templatePos, templatePos + template.size());
+			final TokenList input = tokens.subList(templatePos, templatePos + template.size());
 			final Map<String, Object> varMap = Maps.newHashMapWithExpectedSize(variables.size());
 			try {
 				bind(before, input, variables, varMap);
@@ -198,14 +229,12 @@ public class UserDefinedParserParser extends Parser {
 			} catch (final BindException e) {
 				return ParseResult.fail();
 			}
-			final List<Object> parsedResult = context.parseEngine.parseAndGetLastStep(result, context);
-			final ArrayList<Object> response = createResponseWithCollection(tokens, templatePos,
-					parsedResult);
-			return ParseResult.success(response);
+			return ParseResult.success(tokens.replaceWithTokenList(templatePos, templatePos + template.size(),
+					TokenList.create(result)));
 		}
 
 		@Override
-		public ArrayList<Object> getTemplate() {
+		public TokenList getTemplate() {
 			return template;
 		}
 
@@ -247,7 +276,7 @@ public class UserDefinedParserParser extends Parser {
 	}
 
 	@Override
-	public ArrayList<Object> getTemplate() {
+	public TokenList getTemplate() {
 		return template;
 	}
 

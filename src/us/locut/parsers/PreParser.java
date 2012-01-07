@@ -1,30 +1,31 @@
 package us.locut.parsers;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.*;
 
 import com.google.common.collect.*;
 
-import us.locut.Misc;
+import us.locut.TokenList;
 
 public class PreParser extends Parser {
 	public static PreParser singleton = new PreParser();
 
 	private static final long serialVersionUID = 3705611710430408505L;
 
-	private static ArrayList<Object> template;
+	private static TokenList template;
 
 	public static Set<String> reserved = Sets.newHashSet("(", ")", "{", "}", "[", "]", ",", ":", "...");
 
 	static {
-		template = Lists.newArrayList();
-		template.add(Lists.<Object> newArrayList(")", "]", "}"));
+		final ArrayList<Object> tpl = Lists.newArrayList();
+		tpl.add(Lists.<Object> newArrayList(")", "]", "}"));
+		template = new TokenList.SimpleTokenList(tpl);
 	}
 
-	public static List<Object> flatten(final List<Object> input) {
+	public static TokenList flatten(final TokenList input) {
 		boolean willFlatten = false;
 		for (final Object o : input) {
-			if (o instanceof SubTokenSequence) {
+			if (o instanceof TokenList) {
 				willFlatten = true;
 				break;
 			}
@@ -42,30 +43,22 @@ public class PreParser extends Parser {
 			}
 		}
 		if (!willFlatten)
-			return Lists.newArrayList(input);
+			return input;
 
-		final ArrayList<Object> ret = Lists.newArrayListWithCapacity(input.size() * 4);
+		final List<Object> ret = Lists.newArrayListWithCapacity(input.size() * 4);
 
-		for (final Object o : input) {
-			if ((o instanceof SubTokenSequence) && ((SubTokenSequence) o).tokens.size() > 1) {
-				ret.add("(");
-				flattenTo(o, ret);
-				ret.add(")");
-			} else {
-				flattenTo(o, ret);
-			}
-		}
+		flattenTo(input, ret);
 
-		return ret;
+		return TokenList.create(ret);
 	}
 
-	private static void flattenTo(final Object obj, final ArrayList<Object> output) {
-		if (obj instanceof SubTokenSequence) {
-			final SubTokenSequence sts = (SubTokenSequence) obj;
-			if (sts.tokens.size() == 1) {
-				flattenTo(sts.tokens.get(0), output);
+	private static void flattenTo(final Object obj, final List<Object> output) {
+		if (obj instanceof TokenList) {
+			final TokenList sts = (TokenList) obj;
+			if (sts.size() == 1) {
+				flattenTo(sts.get(0), output);
 			} else {
-				for (final Object o : sts.tokens) {
+				for (final Object o : sts) {
 					flattenTo(o, output);
 				}
 			}
@@ -127,182 +120,95 @@ public class PreParser extends Parser {
 	}
 
 	@Override
-	public ArrayList<Object> getTemplate() {
+	public TokenList getTemplate() {
 		return template;
 	}
 
 	@Override
-	public ParseResult parse(final List<Object> tokens, final int templatePos, final ParserContext context) {
+	public ParseResult parse(final TokenList tokens, final int templatePos, final ParserContext context) {
 		if (tokens.get(templatePos).equals(")")) {
-			int x;
-			for (x = templatePos - 1; !tokens.get(x).equals("("); x--) {
-				if (tokens.get(x).equals(")"))
-					return ParseResult.fail();
-			}
-			final List<Object> subTokens = tokens.subList(x + 1, templatePos);
-			final List<Object> parsedSubTokens = context.parseEngine.parseAndGetLastStep(subTokens, context);
-
-			final List<Object> result = Lists.newArrayListWithCapacity(tokens.size());
-
-			result.addAll(tokens.subList(0, x));
-			if (parsedSubTokens.size() == 1) {
-				result.add(parsedSubTokens.get(0));
-			} else {
-				result.add(new SubTokenSequence(parsedSubTokens));
-			}
-			result.addAll(tokens.subList(templatePos + 1, tokens.size()));
-
-			return ParseResult.success(result, parsedSubTokens.size() - 1);
+			if (tokens.get(templatePos - 2).equals("(") && !reserved.contains(tokens.get(templatePos - 1)))
+				return ParseResult.success(tokens.replaceWithTokens(templatePos - 2, templatePos + 1,
+						tokens.get(templatePos - 1)));
+			else
+				return ParseResult.fail();
 		} else if (tokens.get(templatePos).equals("]")) {
-			int x;
-			for (x = templatePos - 1; !tokens.get(x).equals("["); x--) {
-				if (tokens.get(x).equals("]"))
+			// Is there a tail
+			int pos = templatePos;
+			Object tail = null;
+			if (tokens.get(templatePos - 2).equals("...")) {
+				tail = tokens.get(templatePos - 1);
+				pos -= 2;
+			}
+			final LinkedList<Object> list = Lists.newLinkedList();
+			while (true) {
+				final Object posToken = tokens.get(pos);
+				if (posToken.equals("[")) {
+					break;
+				}
+				if (!posToken.equals(",") && !posToken.equals("...") && !posToken.equals("]"))
 					return ParseResult.fail();
+				if (reserved.contains(tokens.get(pos - 1)))
+					return ParseResult.fail();
+				list.addFirst(tokens.get(pos - 1));
+				pos -= 2;
 			}
-			final List<Object> inListTokens = tokens.subList(x + 1, templatePos);
-
-			final List<SubTokenSequence> sequenceList = Lists.newArrayListWithCapacity(tokens.size());
-
-			SubTokenSequence tailSTS = null;
-
-			for (final Object o : inListTokens) {
-				if (sequenceList.isEmpty() || o.equals(",")) {
-					sequenceList.add(new SubTokenSequence(Lists.newArrayListWithCapacity(3)));
-				}
-				if (o.equals(",")) {
-					continue;
-				}
-				if (o.equals("...")) {
-					tailSTS = new SubTokenSequence(Lists.newArrayListWithCapacity(5));
-					continue;
-				}
-				if (tailSTS == null) {
-					sequenceList.get(sequenceList.size() - 1).tokens.add(o);
-				} else {
-					tailSTS.tokens.add(o);
-				}
-
-			}
-
-			final List<Object> retList = Lists.newArrayListWithCapacity(sequenceList.size());
-			for (final SubTokenSequence sts : sequenceList) {
-				final List<Object> parsed = context.parseEngine.parseAndGetLastStep(sts.tokens, context);
-				if (parsed.size() == 1) {
-					retList.add(parsed.get(0));
-				} else {
-					retList.add(new SubTokenSequence(parsed));
-				}
-			}
-
-			Object retTail = null;
-			if (tailSTS != null) {
-				final List<Object> parsed = context.parseEngine.parseAndGetLastStep(tailSTS.tokens, context);
-				if (parsed.size() == 1) {
-					retTail = parsed.get(0);
-				} else {
-					retTail = new SubTokenSequence(parsed);
-				}
-			}
-
-			final List<Object> result = Lists.newArrayListWithCapacity(tokens.size());
-			result.addAll(tokens.subList(0, x));
-			if (retTail == null) {
-				result.add(retList);
-			} else if (retTail instanceof List) {
-				retList.addAll(((List<Object>) retTail));
-				result.add(retList);
-			} else {
-				result.add(new ListWithTail(retList, retTail));
-			}
-			result.addAll(tokens.subList(templatePos + 1, tokens.size()));
-			return ParseResult.success(result, result.size());
+			if (tail == null)
+				return ParseResult.success(tokens.replaceWithTokens(pos, templatePos + 1, list));
+			else if (tail instanceof Collection) {
+				list.addAll((Collection<Object>) tail);
+				return ParseResult.success(tokens.replaceWithTokens(pos, templatePos + 1, list));
+			} else
+				return ParseResult
+						.success(tokens.replaceWithTokens(pos, templatePos + 1, new ListWithTail(list, tail)));
 		} else if (tokens.get(templatePos).equals("}")) {
-			int x;
-			for (x = templatePos - 1; !tokens.get(x).equals("{"); x--) {
-				if (tokens.get(x).equals("}"))
+			// find start of map declaration
+			int startBracket = templatePos - 1;
+			while (true) {
+				final Object tokenPos = tokens.get(startBracket);
+				if (tokenPos.equals("{")) {
+					break;
+				}
+				if (startBracket == 0)
 					return ParseResult.fail();
-			}
-			final List<Object> inMapTokens = Lists.newArrayList(tokens.subList(x + 1, templatePos));
-
-			final List<SubTokenSequence> sequenceList = Lists.newArrayListWithCapacity(tokens.size());
-
-			SubTokenSequence tailSTS = null;
-
-			for (final Object o : inMapTokens) {
-				if (sequenceList.isEmpty() || o.equals(",")) {
-					sequenceList.add(new SubTokenSequence(Lists.newArrayListWithCapacity(3)));
-				}
-				if (o.equals(",")) {
-					continue;
-				}
-				if (o.equals("...")) {
-					tailSTS = new SubTokenSequence(Lists.newArrayListWithCapacity(5));
-					continue;
-				}
-				if (tailSTS != null) {
-					tailSTS.tokens.add(o);
-				} else {
-					sequenceList.get(sequenceList.size() - 1).tokens.add(o);
-				}
-
-			}
-
-			final Map<Object, Object> retMap = Maps.newLinkedHashMap();
-			for (final SubTokenSequence sts : sequenceList) {
-				final int mps = sts.tokens.indexOf(":");
-				if (mps == -1)
+				if (tokenPos.equals("{") || tokenPos.equals("[") || tokenPos.equals("]"))
 					return ParseResult.fail();
-				Object key;
-				if (mps == 1) {
-					key = sts.tokens.get(0);
-				} else {
-					final List<Object> parsed = context.parseEngine.parseAndGetLastStep(
-							Lists.newArrayList(sts.tokens.subList(0, mps)),
-							context);
-					if (parsed.size() == 1) {
-						key = parsed.get(0);
-					} else {
-						key = new SubTokenSequence(parsed);
-					}
 
-				}
-				Object value;
-				if (mps == sts.tokens.size() - 2) {
-					value = sts.tokens.get(sts.tokens.size() - 1);
-				} else {
-					final List<Object> parsed = context.parseEngine.parseAndGetLastStep(
-							sts.tokens.subList(mps + 1, sts.tokens.size()), context);
-					if (parsed.size() == 1) {
-						value = parsed.get(0);
-					} else {
-						value = new SubTokenSequence(parsed);
-					}
-				}
-				retMap.put(key, value);
+				startBracket--;
 			}
 
-			Object retTail = null;
-			if (tailSTS != null) {
-				final List<Object> parsed = context.parseEngine.parseAndGetLastStep(tailSTS.tokens, context);
-				if (parsed.size() == 1) {
-					retTail = parsed.get(0);
-				} else {
-					retTail = new SubTokenSequence(parsed);
-				}
-			}
+			int pos = startBracket;
 
-			final List<Object> result = Lists.newArrayListWithCapacity(tokens.size());
-			result.addAll(tokens.subList(0, x));
-			if (retTail == null) {
-				result.add(retMap);
-			} else if (retTail instanceof Map) {
-				retMap.putAll((Map<Object, Object>) retTail);
-				result.add(retMap);
-			} else {
-				result.add(new MapWithTail(retMap, retTail));
+			final Map<Object, Object> map = Maps.newLinkedHashMap();
+			Object tail = null;
+
+			while (pos < templatePos) {
+				final Object posToken = tokens.get(pos);
+				if (posToken.equals("{") || posToken.equals(",")) {
+					final Object key = tokens.get(pos + 1);
+					if (key instanceof String && reserved.contains(key))
+						return ParseResult.fail();
+					if (!tokens.get(pos + 2).equals(":"))
+						return ParseResult.fail();
+					final Object value = tokens.get(pos + 3);
+					if (value instanceof String && reserved.contains(value))
+						return ParseResult.fail();
+					map.put(key, value);
+				} else if (posToken.equals("...") && pos == templatePos - 2) {
+					tail = tokens.get(pos + 1);
+				} else
+					return ParseResult.fail();
+				pos += 4;
 			}
-			result.addAll(tokens.subList(templatePos + 1, tokens.size()));
-			return ParseResult.success(result, result.size());
+			if (tail == null)
+				return ParseResult.success(tokens.replaceWithTokens(startBracket, templatePos + 1, map));
+			else if (tail instanceof Map) {
+				map.putAll((Map<Object, Object>) tail);
+				return ParseResult.success(tokens.replaceWithTokens(startBracket, templatePos + 1, map));
+			} else
+				return ParseResult.success(tokens.replaceWithTokens(startBracket, templatePos + 1, new MapWithTail(map,
+						tail)));
+
 		}
 		return ParseResult.fail();
 	}
@@ -310,65 +216,6 @@ public class PreParser extends Parser {
 	@Override
 	public String toString() {
 		return "";
-	}
-
-	public static class SubTokenSequence implements Serializable {
-		private static final long serialVersionUID = -8924157711289740438L;
-
-		public List<Object> tokens;
-
-		public SubTokenSequence(final List<Object> tokens) {
-			this.tokens = tokens;
-		}
-
-		@Override
-		public String toString() {
-			return "(" + Misc.joiner.join(tokens) + ")";
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((tokens == null) ? 0 : tokens.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (!(obj instanceof SubTokenSequence))
-				return false;
-			final SubTokenSequence other = (SubTokenSequence) obj;
-			if (tokens == null) {
-				if (other.tokens != null)
-					return false;
-			} else if (!tokens.equals(other.tokens))
-				return false;
-			return true;
-		}
-
-		private void writeObject(final ObjectOutputStream out) throws IOException {
-			out.writeInt(tokens.size());
-			for (final Object o : tokens) {
-				out.writeObject(o);
-			}
-		}
-
-		private void readObject(final ObjectInputStream in) throws IOException {
-			final int size = in.readInt();
-			tokens = Lists.newArrayListWithCapacity(size);
-			for (int x = 0; x < size; x++) {
-				try {
-					tokens.add(in.readObject());
-				} catch (final ClassNotFoundException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
 	}
 
 	@Override
