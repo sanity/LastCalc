@@ -9,7 +9,6 @@ import javax.servlet.http.*;
 
 import com.google.common.collect.*;
 
-
 import com.googlecode.objectify.Objectify;
 import com.lastcalc.*;
 import com.lastcalc.db.*;
@@ -53,28 +52,29 @@ public class WorksheetServlet extends HttpServlet {
 			resp.sendError(404);
 			return;
 		}
+		final ArrayList<QAPair> qaPairs = worksheet.qaPairs;
 		if (request.questions != null) {
 			int earliestModified = Integer.MAX_VALUE;
 			final TreeMap<Integer, String> orderedQuestions = Maps.newTreeMap();
 			orderedQuestions.putAll(request.questions);
 			for (final Entry<Integer, String> e : orderedQuestions.entrySet()) {
 				final int pos = e.getKey() - 1;
-				if (pos < worksheet.qaPairs.size()) {
-					final QAPair qaPair = worksheet.qaPairs.get(pos);
+				if (pos < qaPairs.size()) {
+					final QAPair qaPair = qaPairs.get(pos);
 					qaPair.question = e.getValue();
 					earliestModified = Math.min(earliestModified, pos);
 				} else {
-					worksheet.qaPairs.add(new QAPair(e.getValue(), null));
+					qaPairs.add(new QAPair(e.getValue(), null));
 				}
 			}
-			for (int x = earliestModified; x < worksheet.qaPairs.size(); x++) {
-				final QAPair qaPair = worksheet.qaPairs.get(x);
+			for (int x = earliestModified; x < qaPairs.size(); x++) {
+				final QAPair qaPair = qaPairs.get(x);
 				qaPair.answer = null;
 			}
 			// Remove any qaPairs that have been removed from the browser DOM
 			if (!orderedQuestions.isEmpty()) {
-				while (worksheet.qaPairs.size() > orderedQuestions.lastKey()) {
-					worksheet.qaPairs.remove(worksheet.qaPairs.size() - 1);
+				while (qaPairs.size() > orderedQuestions.lastKey()) {
+					qaPairs.remove(qaPairs.size() - 1);
 				}
 			}
 		}
@@ -93,7 +93,7 @@ public class WorksheetServlet extends HttpServlet {
 		final BacktrackingParseEngine parseEngine = new BacktrackingParseEngine(ppf);
 		final Map<String, Integer> userDefinedKeywords = Maps.newHashMap();
 		int pos = 0;
-		for (final QAPair qap : worksheet.qaPairs) {
+		for (final QAPair qap : qaPairs) {
 			if (qap.question.trim().length() == 0) {
 				qap.answer = TokenList.createD();
 			} else {
@@ -122,8 +122,9 @@ public class WorksheetServlet extends HttpServlet {
 		response.answers = Maps.newHashMap();
 		response.variables = userDefinedKeywords;
 
-		for (int x = 0; x < worksheet.qaPairs.size(); x++) {
-			response.answers.put(x + 1, Renderers.toHtml(req.getRequestURI(), worksheet.qaPairs.get(x).answer)
+		for (int x = 0; x < qaPairs.size(); x++) {
+			response.answers.put(x + 1,
+					Renderers.toHtml(req.getRequestURI(), PreParser.flatten(qaPairs.get(x).answer))
 					.toString());
 		}
 
