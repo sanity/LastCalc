@@ -14,7 +14,6 @@ import com.lastcalc.*;
 import com.lastcalc.db.*;
 import com.lastcalc.engines.*;
 import com.lastcalc.parsers.*;
-import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.parsers.amounts.AmountMathOp;
 
 @SuppressWarnings("serial")
@@ -80,47 +79,23 @@ public class WorksheetServlet extends HttpServlet {
 		}
 
 		// Recompute worksheet
-		final FixedOrderParserPickerFactory priorityParsers = new FixedOrderParserPickerFactory();
-		// The first thing we do is parse any datastructures like lists or maps
-		priorityParsers.addParser(new PreParser());
-		// Next we want to parse any user-defined functions before subsequent
-		// parsers screw them up
-		priorityParsers.addParser(new UserDefinedParserParser());
-
-		final FixedOrderParserPickerFactory userDefinedParsers = new FixedOrderParserPickerFactory();
-		final CombinedParserPickerFactory ppf = new CombinedParserPickerFactory(priorityParsers, userDefinedParsers,
-				globalParserPickerFactory);
-		final BacktrackingParseEngine parseEngine = new BacktrackingParseEngine(ppf);
-		final Map<String, Integer> userDefinedKeywords = Maps.newHashMap();
-		int pos = 0;
+		final SequentialParser seqParser = SequentialParser.create();
 		for (final QAPair qap : qaPairs) {
 			if (qap.question.trim().length() == 0) {
 				qap.answer = TokenList.createD();
 			} else {
 				if (qap.answer == null) {
-					final ParserContext context = new ParserContext(parseEngine, 2000);
-					qap.answer = parseEngine.parseAndGetLastStep(Parsers.tokenize(qap.question), context);
-				}
-
-				if (qap.answer.size() == 1 && qap.answer.get(0) instanceof UserDefinedParser) {
-					final UserDefinedParser udp = (UserDefinedParser) qap.answer.get(0);
-
-					if (udp.getTemplate().size() == 1 && udp.getTemplate().get(0) instanceof String) {
-						final String keyword = (String) udp.getTemplate().get(0);
-						if (!PreParser.reserved.contains(keyword) && !userDefinedKeywords.containsKey(keyword)) {
-							userDefinedKeywords.put(keyword, pos + 1);
-						}
-					}
-					userDefinedParsers.addParser(udp);
+					qap.answer = seqParser.parseNext(Parsers.tokenize(qap.question));
+				} else {
+					seqParser.processNextAnswer(qap.answer);
 				}
 			}
-			pos++;
 		}
 
 		obj.put(worksheet);
 
 		response.answers = Maps.newHashMap();
-		response.variables = userDefinedKeywords;
+		response.variables = seqParser.getUserDefinedKeywordMap();
 
 		for (int x = 0; x < qaPairs.size(); x++) {
 			response.answers.put(x + 1,

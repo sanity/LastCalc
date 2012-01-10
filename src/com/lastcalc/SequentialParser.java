@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.google.common.collect.*;
 
+import com.google.appengine.api.utils.SystemProperty;
 import com.lastcalc.engines.*;
 import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
@@ -35,7 +36,9 @@ public class SequentialParser implements Serializable {
 		priorityParsers.addParser(new UserDefinedParserParser());
 	}
 
-	public static SequentialParser create(final long timeout) {
+	public static SequentialParser create() {
+		final long timeout = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? 2000
+				: Integer.MAX_VALUE;
 		return new SequentialParser(priorityParsers, globalParserPickerFactory, timeout);
 	}
 
@@ -57,8 +60,17 @@ public class SequentialParser implements Serializable {
 		userDefinedKeywords = Maps.newHashMap();
 	}
 
-	TokenList parseNext(final TokenList question) {
+	public TokenList parseNext(final String question) {
+		return parseNext(Parsers.tokenize(question));
+	}
+
+	public TokenList parseNext(final TokenList question) {
 		final TokenList answer = parseEngine.parseAndGetLastStep(question, context);
+		processNextAnswer(answer);
+		return answer;
+	}
+
+	public void processNextAnswer(final TokenList answer) {
 		if (answer.size() == 1 && answer.get(0) instanceof UserDefinedParser) {
 			final UserDefinedParser udp = (UserDefinedParser) answer.get(0);
 
@@ -71,7 +83,6 @@ public class SequentialParser implements Serializable {
 			userDefinedParsers.addParser(udp);
 		}
 		pos++;
-		return answer;
 	}
 
 	public Map<String, Integer> getUserDefinedKeywordMap() {
