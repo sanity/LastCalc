@@ -39,6 +39,32 @@ public class PreParserTest {
 	}
 
 	@Test
+	public void emptyDatastructuresTest() {
+		final TokenList toParse = Parsers.tokenize("[] {}");
+
+		final LinkedList<Parser> parsers = Lists.newLinkedList();
+		us.locut.Parsers.getAll(parsers);
+		final LinkedList<Parser> priorityParsers = Lists.newLinkedList();
+		priorityParsers.add(new PreParser());
+		priorityParsers.addAll(AmountMathOp.getOps());
+		priorityParsers.add(new UserDefinedParserParser());
+		final FixedOrderParserPickerFactory priorityPPF = new FixedOrderParserPickerFactory(priorityParsers);
+		final RecentFirstParserPickerFactory catchAllPPF = new RecentFirstParserPickerFactory(parsers);
+		final ParseEngine st = new BacktrackingParseEngine(new CombinedParserPickerFactory(priorityPPF, catchAllPPF));
+		final ParserContext context = new ParserContext(st, Long.MAX_VALUE);
+
+		final TokenList result = st.parseAndGetLastStep(toParse, context);
+
+		Assert.assertEquals(2, result.size());
+		Assert.assertTrue(result.get(0) instanceof List);
+		final List<Object> list = (List<Object>) result.get(0);
+		Assert.assertTrue(list.isEmpty());
+		Assert.assertTrue(result.get(1) instanceof Map);
+		final Map<Object, Object> map = (Map<Object, Object>) result.get(1);
+		Assert.assertTrue(map.isEmpty());
+	}
+
+	@Test
 	public void listParseTest() {
 		final PreParser bp = new PreParser();
 		final TokenList origTokens = TokenList.create(Lists.<Object> newArrayList("a", "[", "b", ",", "n", "]",

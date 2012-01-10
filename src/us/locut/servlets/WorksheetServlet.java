@@ -36,9 +36,7 @@ public class WorksheetServlet extends HttpServlet {
 				}
 			}
 		}
-		parsers.add(new PreParser());
 		parsers.addAll(AmountMathOp.getOps());
-		parsers.add(new UserDefinedParserParser());
 		globalParserPickerFactory = new RecentFirstParserPickerFactory(parsers);
 	}
 
@@ -56,6 +54,7 @@ public class WorksheetServlet extends HttpServlet {
 			return;
 		}
 		if (request.questions != null) {
+			int earliestModified = Integer.MAX_VALUE;
 			final TreeMap<Integer, String> orderedQuestions = Maps.newTreeMap();
 			orderedQuestions.putAll(request.questions);
 			for (final Entry<Integer, String> e : orderedQuestions.entrySet()) {
@@ -63,11 +62,14 @@ public class WorksheetServlet extends HttpServlet {
 				if (pos < worksheet.qaPairs.size()) {
 					final QAPair qaPair = worksheet.qaPairs.get(pos);
 					qaPair.question = e.getValue();
-					qaPair.answer = null; // Set to null to indicate that it must be
-					// recomputed
+					earliestModified = Math.min(earliestModified, pos);
 				} else {
 					worksheet.qaPairs.add(new QAPair(e.getValue(), null));
 				}
+			}
+			for (int x = earliestModified; x < worksheet.qaPairs.size(); x++) {
+				final QAPair qaPair = worksheet.qaPairs.get(x);
+				qaPair.answer = null;
 			}
 			// Remove any qaPairs that have been removed from the browser DOM
 			if (!orderedQuestions.isEmpty()) {
@@ -78,8 +80,15 @@ public class WorksheetServlet extends HttpServlet {
 		}
 
 		// Recompute worksheet
+		final FixedOrderParserPickerFactory priorityParsers = new FixedOrderParserPickerFactory();
+		// The first thing we do is parse any datastructures like lists or maps
+		priorityParsers.addParser(new PreParser());
+		// Next we want to parse any user-defined functions before subsequent
+		// parsers screw them up
+		priorityParsers.addParser(new UserDefinedParserParser());
+
 		final FixedOrderParserPickerFactory userDefinedParsers = new FixedOrderParserPickerFactory();
-		final CombinedParserPickerFactory ppf = new CombinedParserPickerFactory(userDefinedParsers,
+		final CombinedParserPickerFactory ppf = new CombinedParserPickerFactory(priorityParsers, userDefinedParsers,
 				globalParserPickerFactory);
 		final BacktrackingParseEngine parseEngine = new BacktrackingParseEngine(ppf);
 		final Map<String, Integer> userDefinedKeywords = Maps.newHashMap();

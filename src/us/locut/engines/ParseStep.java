@@ -41,16 +41,7 @@ public class ParseStep implements Comparable<ParseStep> {
 
 	@Override
 	public String toString() {
-		return alParse(input) + " -> " + parser.getClass().getSimpleName() + " : " + parser + " -> "
-				+ alParse(result.output);
-	}
-
-	private static String alParse(final TokenList input) {
-		final StringBuilder sb = new StringBuilder();
-		for (final Object o : input) {
-			sb.append(o.getClass().getSimpleName() + "[" + o.toString() + "] ");
-		}
-		return sb.toString();
+		return input + " -> " + parser.getClass().getSimpleName() + " : " + parser + " -> " + result.output;
 	}
 
 	@Override

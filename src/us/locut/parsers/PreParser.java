@@ -136,7 +136,9 @@ public class PreParser extends Parser {
 			// Is there a tail
 			int pos = templatePos;
 			Object tail = null;
-			if (tokens.get(templatePos - 2).equals("...")) {
+			if (tokens.get(templatePos - 1).equals("[")) {
+				pos--;
+			} else if (tokens.get(templatePos - 2).equals("...")) {
 				tail = tokens.get(templatePos - 1);
 				pos -= 2;
 			}
@@ -181,24 +183,25 @@ public class PreParser extends Parser {
 
 			final Map<Object, Object> map = Maps.newLinkedHashMap();
 			Object tail = null;
-
-			while (pos < templatePos) {
-				final Object posToken = tokens.get(pos);
-				if (posToken.equals("{") || posToken.equals(",")) {
-					final Object key = tokens.get(pos + 1);
-					if (key instanceof String && reserved.contains(key))
+			if (startBracket < templatePos - 1) { // Handle empty map ie. {}
+				while (pos < templatePos) {
+					final Object posToken = tokens.get(pos);
+					if (posToken.equals("{") || posToken.equals(",")) {
+						final Object key = tokens.get(pos + 1);
+						if (key instanceof String && reserved.contains(key))
+							return ParseResult.fail();
+						if (!tokens.get(pos + 2).equals(":"))
+							return ParseResult.fail();
+						final Object value = tokens.get(pos + 3);
+						if (value instanceof String && reserved.contains(value))
+							return ParseResult.fail();
+						map.put(key, value);
+					} else if (posToken.equals("...") && pos == templatePos - 2) {
+						tail = tokens.get(pos + 1);
+					} else
 						return ParseResult.fail();
-					if (!tokens.get(pos + 2).equals(":"))
-						return ParseResult.fail();
-					final Object value = tokens.get(pos + 3);
-					if (value instanceof String && reserved.contains(value))
-						return ParseResult.fail();
-					map.put(key, value);
-				} else if (posToken.equals("...") && pos == templatePos - 2) {
-					tail = tokens.get(pos + 1);
-				} else
-					return ParseResult.fail();
-				pos += 4;
+					pos += 4;
+				}
 			}
 			if (tail == null)
 				return ParseResult.success(tokens.replaceWithTokens(startBracket, templatePos + 1, map));

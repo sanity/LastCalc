@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import com.google.common.collect.*;
 
 import us.locut.TokenList;
+import us.locut.engines.ParseStep;
 import us.locut.parsers.PreParser.ListWithTail;
 import us.locut.parsers.PreParser.MapWithTail;
 
@@ -229,8 +230,11 @@ public class UserDefinedParserParser extends Parser {
 			} catch (final BindException e) {
 				return ParseResult.fail();
 			}
-			return ParseResult.success(tokens.replaceWithTokenList(templatePos, templatePos + template.size(),
-					TokenList.create(result)));
+			final TokenList resultTL = TokenList.create(result);
+			final TokenList flattened = PreParser.flatten(resultTL);
+			return ParseResult.success(
+					tokens.replaceWithTokenList(templatePos, templatePos + template.size(), flattened),
+					-ParseStep.getScore(flattened));
 		}
 
 		@Override
