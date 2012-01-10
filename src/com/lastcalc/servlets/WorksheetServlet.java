@@ -7,35 +7,21 @@ import java.util.Map.Entry;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Maps;
 
 import com.googlecode.objectify.Objectify;
 import com.lastcalc.*;
 import com.lastcalc.db.*;
-import com.lastcalc.engines.*;
-import com.lastcalc.parsers.*;
-import com.lastcalc.parsers.amounts.AmountMathOp;
+import com.lastcalc.parsers.PreParser;
+import com.lastcalc.parsers.currency.Currencies;
 
 @SuppressWarnings("serial")
 public class WorksheetServlet extends HttpServlet {
 
-	Set<String> recognizedWords = Sets.newHashSet();
-
-	private ParserPickerFactory globalParserPickerFactory;
-
 	@Override
 	public void init() throws ServletException {
-		final LinkedList<Parser> parsers = Lists.newLinkedList();
-		com.lastcalc.Parsers.getAll(parsers);
-		for (final Parser p : parsers) {
-			for (final Object i : p.getTemplate()) {
-				if (i instanceof String) {
-					recognizedWords.add((String) i);
-				}
-			}
-		}
-		parsers.addAll(AmountMathOp.getOps());
-		globalParserPickerFactory = new RecentFirstParserPickerFactory(parsers);
+		// Force initialization of SequentialParser static fields
+		SequentialParser.create();
 	}
 
 	@Override
@@ -43,7 +29,7 @@ public class WorksheetServlet extends HttpServlet {
 		final WorksheetRequest request = Misc.gson.fromJson(req.getReader(), WorksheetRequest.class);
 		final WorksheetResponse response = new WorksheetResponse();
 		if (request.getRecognizedWords) {
-			response.recognizedWords = recognizedWords;
+			response.recognizedWords = SequentialParser.recognizedWords;
 		}
 		final Objectify obj = DAO.begin();
 		final Worksheet worksheet = obj.find(Worksheet.class, request.worksheetId);
@@ -105,6 +91,10 @@ public class WorksheetServlet extends HttpServlet {
 
 		resp.setContentType("application/json");
 		Misc.gson.toJson(response, resp.getWriter());
+
+		if (Currencies.shouldUpdate()) {
+			Currencies.updateExchangeRates();
+		}
 	}
 
 	public static class WorksheetRequest {

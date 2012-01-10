@@ -12,6 +12,7 @@ import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.amounts.*;
 import com.lastcalc.parsers.bool.*;
 import com.lastcalc.parsers.collections.GetFromMap;
+import com.lastcalc.parsers.currency.Currencies;
 
 
 public class Parsers {
@@ -19,6 +20,7 @@ public class Parsers {
 
 	public static void getAll(final Collection<Parser> parsers) {
 		parsers.addAll(UnitParser.getParsers());
+		parsers.addAll(Currencies.getParsers());
 		parsers.add(new TrailingEqualsStripper());
 		parsers.add(new AmountParser());
 		parsers.add(new UDPApplier());
@@ -32,7 +34,7 @@ public class Parsers {
 
 	static {
 		p = Pattern
-				.compile("\\.\\.\\.|\\?|[0-9]*\\.?[0-9]+|[a-zA-Z0-9]+|[\\+-/*=()\\[\\]\\{\\}\\:]|\"(?:[^\"\\\\]|\\\\.)*\"");
+				.compile("\\.\\.\\.|\\?|[0-9]*\\.?[0-9]+|[a-zA-Z0-9]+|[\\+-/*=()\\[\\]\\{\\}\\:]|\"(?:[^\"\\\\]|\\\\.)*\"|[$Û´£]");
 	}
 
 	public static TokenList tokenize(final String orig) {

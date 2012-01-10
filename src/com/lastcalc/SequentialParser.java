@@ -12,7 +12,7 @@ import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.parsers.amounts.AmountMathOp;
 
 public class SequentialParser implements Serializable {
-	private static final Set<String> recognizedWords = Sets.newHashSet();
+	public static final Set<String> recognizedWords = Sets.newHashSet();
 	private static RecentFirstParserPickerFactory globalParserPickerFactory;;
 	private static final FixedOrderParserPickerFactory priorityParsers = new FixedOrderParserPickerFactory();
 	static {
