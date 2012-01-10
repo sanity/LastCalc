@@ -6,11 +6,11 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet>
 		<servlet-name>MainPage</servlet-name>
-		<servlet-class>us.locut.servlets.MainPageServlet</servlet-class>
+		<servlet-class>com.lastcalc.servlets.MainPageServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>Worksheet</servlet-name>
-		<servlet-class>us.locut.servlets.WorksheetServlet</servlet-class>
+		<servlet-class>com.lastcalc.servlets.WorksheetServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>MainPage</servlet-name>
