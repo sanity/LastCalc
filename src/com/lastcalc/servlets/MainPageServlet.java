@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServlet;
 
 import org.jsoup.nodes.*;
 
-
 import com.googlecode.objectify.Objectify;
 import com.lastcalc.Renderers;
 import com.lastcalc.db.*;
@@ -96,7 +95,7 @@ public class MainPageServlet extends HttpServlet {
 				question.appendElement("div").attr("class", "question_no").text(Integer.toString(x));
 				question.appendElement("div").attr("class", "editable").attr("contentEditable", "true");
 				question.appendElement("div").attr("class", "answer");
-				resp.setContentType("text/html");
+				resp.setContentType("text/html; charset=UTF-8");
 				resp.getWriter().append(doc.toString());
 			}
 		};

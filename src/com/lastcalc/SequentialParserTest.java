@@ -42,4 +42,12 @@ public class SequentialParserTest {
 		Assert.assertEquals(3, ((Number) list.get(2)).longValue());
 		Assert.assertEquals(4, ((Number) list.get(3)).longValue());
 	}
+
+	@Test
+	public void precedenceTest() {
+		final SequentialParser sp = SequentialParser.create();
+		Assert.assertEquals(((Amount) sp.parseNext("3+5*2").get(0)).getExactValue(), 13);
+		Assert.assertEquals(((Amount) sp.parseNext("2*(6/3)").get(0)).getExactValue(), 4);
+
+	}
 }

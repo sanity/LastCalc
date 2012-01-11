@@ -27,13 +27,13 @@ public class Renderers {
 					final Element currencySpan = amountSpan.appendElement("span").addClass("currency");
 					final Currency currency = (Currency) amount.getUnit();
 					if (currency.getCode().equalsIgnoreCase("USD")) {
-						currencySpan.text("US$" + currencyFormat.format(estimatedValue));
+						currencySpan.html("US$" + currencyFormat.format(estimatedValue));
 					} else if (currency.getCode().equalsIgnoreCase("GBP")) {
-						currencySpan.text("£" + currencyFormat.format(estimatedValue));
+						currencySpan.html("&pound;" + currencyFormat.format(estimatedValue));
 					} else if (currency.getCode().equalsIgnoreCase("EUR")) {
-						currencySpan.text("Û" + currencyFormat.format(estimatedValue));
+						currencySpan.html("&euro;" + currencyFormat.format(estimatedValue));
 					} else if (currency.getCode().equalsIgnoreCase("JPY")) {
-						currencySpan.text("´" + currencyFormat.format(estimatedValue));
+						currencySpan.html("&yen;" + currencyFormat.format(estimatedValue));
 					} else {
 						currencySpan.text(currencyFormat.format(estimatedValue) + currency.getCode());
 					}

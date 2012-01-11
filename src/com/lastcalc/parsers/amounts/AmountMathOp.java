@@ -28,7 +28,7 @@ public abstract class AmountMathOp extends Parser {
 	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		final Amount<?> a = (Amount<?>) tokens.get(templatePos);
 		final Amount<?> b = (Amount<?>) tokens.get(templatePos + 2);
-		for (final Object token : tokens) {
+		for (final Object token : PreParser.enclosedByStructure(tokens, templatePos)) {
 			if (subordinateTo.contains(token))
 				return Parser.ParseResult.fail();
 		}

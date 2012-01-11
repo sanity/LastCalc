@@ -55,7 +55,7 @@ public class Currencies {
 			final Map<String, Currency> currencies = Maps.newHashMap();
 			for (final Entry<String, Double> e : rates.rates.entrySet()) {
 				final Currency currency = new Currency(e.getKey());
-				currency.setExchangeRate(e.getValue());
+				currency.setExchangeRate(1.0 / e.getValue());
 				currencies.put(e.getKey(), currency);
 			}
 

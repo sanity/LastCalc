@@ -120,6 +120,19 @@ public class PreParser extends Parser {
 		}
 	}
 
+	public static TokenList enclosedByStructure(final TokenList orig, final int pos) {
+		int startPos;
+		for (startPos = pos; startPos > -1 && !reserved.contains(orig.get(startPos)); startPos--) {
+
+		}
+		startPos++;
+		int endPos;
+		for (endPos = pos; endPos < orig.size() && !reserved.contains(orig.get(endPos)); endPos++) {
+
+		}
+		return orig.subList(startPos, endPos);
+	}
+
 	@Override
 	public TokenList getTemplate() {
 		return template;

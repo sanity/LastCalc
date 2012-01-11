@@ -11,7 +11,8 @@ import org.junit.Test;
 import com.lastcalc.*;
 import com.lastcalc.engines.*;
 import com.lastcalc.parsers.Parser.ParseResult;
-import com.lastcalc.parsers.PreParser.*;
+import com.lastcalc.parsers.PreParser.ListWithTail;
+import com.lastcalc.parsers.PreParser.MapWithTail;
 import com.lastcalc.parsers.amounts.AmountMathOp;
 
 
@@ -130,6 +131,14 @@ public class PreParserTest {
 			Assert.assertEquals("n", list.get(1));
 
 		}
+	}
+
+	@Test
+	public void enclosedByStructureTest() {
+		Assert.assertEquals(Parsers.tokenize("blah blah"), PreParser.enclosedByStructure(Parsers.tokenize("test (blah blah) test"), 2));
+		Assert.assertEquals(Parsers.tokenize("blah blah"),
+				PreParser.enclosedByStructure(Parsers.tokenize("blah blah"), 0));
+
 	}
 
 	@Test

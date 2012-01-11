@@ -89,7 +89,7 @@ public class WorksheetServlet extends HttpServlet {
 					.toString());
 		}
 
-		resp.setContentType("application/json");
+		resp.setContentType("application/json; charset=UTF-8");
 		Misc.gson.toJson(response, resp.getWriter());
 
 		if (Currencies.shouldUpdate()) {
