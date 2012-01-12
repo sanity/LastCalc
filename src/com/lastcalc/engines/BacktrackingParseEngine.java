@@ -35,7 +35,8 @@ public class BacktrackingParseEngine extends ParseEngine {
 		}
 		subContext.timeout = context.timeout / 5;
 		final Set<ParseStep> exhausted = Sets.newHashSet();
-		outer: while (System.currentTimeMillis() - startTime < context.timeout && !candidates.first().isMinimal()) {
+		outer: while (System.currentTimeMillis() - startTime < context.timeout
+				&& candidates.first().result.output.size() > 1) {
 			for (final ParseStep candidateStep : candidates) {
 				if (exhausted.contains(candidateStep)) {
 					continue;

@@ -1,19 +1,23 @@
 package com.lastcalc;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
+import java.util.logging.Logger;
 
 import com.google.common.collect.*;
 
 import com.google.appengine.api.utils.SystemProperty;
+import com.lastcalc.bootstrap.Bootstrap;
 import com.lastcalc.engines.*;
 import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.parsers.amounts.AmountMathOp;
 
 public class SequentialParser implements Serializable {
+	private static final Logger log = Logger.getLogger(Bootstrap.class.getName());
+
 	public static final Set<String> recognizedWords = Sets.newHashSet();
-	private static RecentFirstParserPickerFactory globalParserPickerFactory;;
+	public static RecentFirstParserPickerFactory globalParserPickerFactory;
 	private static final FixedOrderParserPickerFactory priorityParsers = new FixedOrderParserPickerFactory();
 	static {
 		final LinkedList<Parser> allParsers = Lists.newLinkedList();
@@ -26,6 +30,7 @@ public class SequentialParser implements Serializable {
 			}
 		}
 		allParsers.addAll(AmountMathOp.getOps());
+
 		globalParserPickerFactory = new RecentFirstParserPickerFactory(allParsers);
 
 		// Recompute worksheet
@@ -34,6 +39,35 @@ public class SequentialParser implements Serializable {
 		// Next we want to parse any user-defined functions before subsequent
 		// parsers screw them up
 		priorityParsers.addParser(new UserDefinedParserParser());
+
+		try {
+			final BufferedReader br = new BufferedReader(new InputStreamReader(
+					Bootstrap.class.getResourceAsStream("bootstrap.txt")));
+			final SequentialParser parser = SequentialParser.create();
+			int lineNo = 1;
+			while (true) {
+				String next = br.readLine();
+				if (next == null) {
+					break;
+				}
+				next = next.trim();
+				if (next.length() == 0 || next.startsWith("#")) {
+					continue;
+				}
+				final TokenList parsed = parser.parseNext(next);
+				if (parsed.size() != 1 || !(parsed.get(0) instanceof UserDefinedParser)) {
+					log.warning("Failed to parse line" + lineNo + " as UserDefinedParserParser (" + next + ")");
+				} else {
+					globalParserPickerFactory.addParser((UserDefinedParser) parsed.get(0));
+				}
+				lineNo++;
+			}
+			br.close();
+
+		} catch (final Exception e) {
+			log.warning("Exception while loading boostrap parsers: " + e);
+			e.printStackTrace();
+		}
 	}
 
 	public static SequentialParser create() {

@@ -24,7 +24,7 @@ public class UnitStripper extends Parser {
 			return ParseResult.fail();
 		return ParseResult.success(
 				tokens.replaceWithTokens(templatePos, templatePos + template.size(),
-				Amount.valueOf(amount.getEstimatedValue(), Unit.ONE)), 1);
+						Amount.valueOf(amount.getEstimatedValue(), Unit.ONE)), 2);
 	}
 
 	@Override

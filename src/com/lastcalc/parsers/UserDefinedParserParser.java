@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 import com.google.common.collect.*;
 
 import com.lastcalc.TokenList;
-import com.lastcalc.engines.ParseStep;
-import com.lastcalc.parsers.PreParser.*;
+import com.lastcalc.parsers.PreParser.ListWithTail;
+import com.lastcalc.parsers.PreParser.MapWithTail;
 
 
 public class UserDefinedParserParser extends Parser {
@@ -234,7 +234,7 @@ public class UserDefinedParserParser extends Parser {
 			final TokenList flattened = PreParser.flatten(resultTL);
 			return ParseResult.success(
 					tokens.replaceWithTokenList(templatePos, templatePos + template.size(), flattened),
-					-ParseStep.getScore(flattened));
+					-flattened.size());
 		}
 
 		@Override

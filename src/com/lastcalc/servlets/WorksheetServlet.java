@@ -22,6 +22,7 @@ public class WorksheetServlet extends HttpServlet {
 	public void init() throws ServletException {
 		// Force initialization of SequentialParser static fields
 		SequentialParser.create();
+
 	}
 
 	@Override

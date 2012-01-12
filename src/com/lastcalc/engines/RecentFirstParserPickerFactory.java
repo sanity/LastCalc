@@ -30,6 +30,10 @@ public class RecentFirstParserPickerFactory extends ParserPickerFactory {
 		}
 	}
 
+	public void addParser(final Parser parser) {
+		parsers.add(parser);
+	}
+
 	@Override
 	public void teach(final Iterable<ParseStep> steps) {
 		final ArrayList<ParseStep> reversed = Lists.newArrayList(steps);
