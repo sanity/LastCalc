@@ -1,0 +1,7 @@
+pounds = gbp
+pound = gbp
+dollars = usd
+dollar = usd
+yen = jpy
+euro = eur
+euros = eur
