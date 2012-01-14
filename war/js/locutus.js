@@ -92,20 +92,6 @@ function insertNodeOverSelection(node, containerNode) {
 	}
 }
 
-/*
-// Catch clicks on variables
-$(document).on("mousedown", ".variable", function(event) {
-	var savedSel = rangy.saveSelection();
-	var clickedvariable = $(this).get(0);
-	var divWithFocus = $("div:focus").get(0);
-	// Confirm that divWithFocus isn't a parent of clickedvariable
-	if (clickedvariable.parentElement != divWithFocus) {
-		event.preventDefault();
-		insertNodeOverSelection(clickedvariable.cloneNode(true), divWithFocus);
-		rangy.restoreSelection(savedSel);
-	}
-});
-*/
 function tidyQuestions() {
 	$("div.question").each(function(ix) {
 		highlightSyntax($(this).find(".editable"));
