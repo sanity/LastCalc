@@ -70,6 +70,8 @@ public class MainPageServlet extends HttpServlet {
 				.attr("type", "text/css");
 				doc.head().appendElement("script")
 				.attr("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
+				doc.head().appendElement("script")
+						.attr("src", "http://cdn.jquerytools.org/1.2.6/all/jquery.tools.min.js");
 				doc.head().appendElement("script").attr("src", "/js/rangy-core.js");
 				doc.head().appendElement("script").attr("src", "/js/rangy-selectionsaverestore.js");
 				doc.head().appendElement("script").attr("src", "/js/locutus.js");

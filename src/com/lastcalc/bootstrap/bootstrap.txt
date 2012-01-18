@@ -5,3 +5,4 @@ dollar = usd
 yen = jpy
 euro = eur
 euros = eur
+A x B = A * B

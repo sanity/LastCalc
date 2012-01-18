@@ -4,7 +4,6 @@ variables = {};
 
 recognizedWords = [];
 
-
 function getLineNumber(lineEl) {
 	return parseInt(lineEl.attr("id").substring(4));
 }
@@ -58,10 +57,15 @@ function highlightSyntax(element) {
 				if (str.match(/^[-+]?[0-9]*\.?[0-9]+$/)) {
 					return "<span class=\"highlighted number\">" + str + "</span>";
 				}
+				if (str.match(/[A-Z]+[a-zA-Z0-9]*/)) {
+					return "<span class=\"highlighted variable white\">" + str
+							+ "</span>";
+
+				}
 				var nc = variables[str];
 				if (nc && (nc <= lineNumber)) {
 					var colors = [ "red", "green", "blue", "orange", "rosy", "pink",
-							"white", "gray", "black" ];
+							"gray", "black" ];
 					var color = colors[nc % colors.length];
 					return "<span class=\"highlighted variable " + color + "\">" + str
 							+ "</span>";

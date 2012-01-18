@@ -3,8 +3,9 @@ package com.lastcalc.engines;
 import com.lastcalc.TokenList;
 import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.Parser.ParseResult;
+import com.lastcalc.parsers.PreParser.ListWithTail;
+import com.lastcalc.parsers.PreParser.MapWithTail;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
-
 
 public class ParseStep implements Comparable<ParseStep> {
 	public final TokenList input;
@@ -58,31 +59,39 @@ public class ParseStep implements Comparable<ParseStep> {
 	double cachedScore = Double.MIN_VALUE;
 
 	private double getScore() {
-		double ret = scoreBias;
-		for (final Object token : result.output) {
-			ret += getScore(token);
-		}
-		return ret;
+		return scoreBias + getScore(result.output);
 	}
 
-	private double getScore(final Object token) {
-		if (token instanceof UserDefinedParser) {
+	public static double getScore(final Object token) {
+		if (token instanceof TokenList) {
+			double ret = 0;
+			for (final Object t : ((TokenList) token)) {
+				ret += getScore(t);
+			}
+			return ret;
+		} else if (token instanceof UserDefinedParser) {
 			double ret = 0;
 			for (final Object t : ((UserDefinedParser) token).after) {
 				ret += getScore(t);
 			}
 			return ret;
-		}
-		else
+		} else if (token instanceof ListWithTail) {
+			final ListWithTail lwt = (ListWithTail) token;
+			return 2 + getScore(lwt.list) + getScore(lwt.tail);
+		} else if (token instanceof MapWithTail) {
+			final MapWithTail mwt = (MapWithTail) token;
+			return 2 + getScore(mwt.map) + getScore(mwt.tail);
+		} else
 			return 1;
 	}
 
 	public boolean isMinimal() {
 		if (result.output.size() > 1)
 			return false;
+		if (result.output.get(0) instanceof ListWithTail || result.output.get(0) instanceof MapWithTail)
+			return false;
 		if (result.output.get(0) instanceof UserDefinedParser)
 			return ((UserDefinedParser) result.output.get(0)).after.size() == 1;
 		return true;
 	}
 }
-
