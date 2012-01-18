@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import com.google.common.collect.*;
 
 import com.lastcalc.TokenList;
-import com.lastcalc.engines.ParseStep;
 import com.lastcalc.parsers.PreParser.ListWithTail;
 import com.lastcalc.parsers.PreParser.MapWithTail;
 
@@ -232,14 +231,10 @@ public class UserDefinedParserParser extends Parser {
 				return ParseResult.fail();
 			}
 			final TokenList resultTL = TokenList.create(result);
-			// final TokenList flattened = PreParser.flatten(resultTL);
-			// return ParseResult.success(
-			// tokens.replaceWithTokenList(templatePos, templatePos +
-			// template.size(), flattened),
-			// -flattened.size());
+			final TokenList flattened = PreParser.flatten(resultTL);
 			return ParseResult.success(
-					tokens.replaceWithTokenList(templatePos, templatePos + template.size(), resultTL),
-					-ParseStep.getScore(resultTL));
+					tokens.replaceWithTokenList(templatePos, templatePos + template.size(), flattened),
+					-flattened.size());
 		}
 
 		@Override

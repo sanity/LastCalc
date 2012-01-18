@@ -3,9 +3,6 @@ package com.lastcalc.engines;
 import com.lastcalc.TokenList;
 import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.Parser.ParseResult;
-import com.lastcalc.parsers.PreParser.ListWithTail;
-import com.lastcalc.parsers.PreParser.MapWithTail;
-import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 
 public class ParseStep implements Comparable<ParseStep> {
 	public final TokenList input;
@@ -39,7 +36,8 @@ public class ParseStep implements Comparable<ParseStep> {
 
 	@Override
 	public String toString() {
-		return input + " -> " + parser.getClass().getSimpleName() + " : " + parser + " -> " + result.output;
+		return input + " -> " + parser.getClass().getSimpleName() + " : " + parser + " -> " + result.output
+				+ " Score: " + getScore();
 	}
 
 	@Override
@@ -56,42 +54,28 @@ public class ParseStep implements Comparable<ParseStep> {
 			return 0;
 	}
 
-	double cachedScore = Double.MIN_VALUE;
-
 	private double getScore() {
-		return scoreBias + getScore(result.output);
+		return scoreBias + getScore(result.output) - (0.0001 * depth);
 	}
 
 	public static double getScore(final Object token) {
+		double score = 0;
 		if (token instanceof TokenList) {
-			double ret = 0;
 			for (final Object t : ((TokenList) token)) {
-				ret += getScore(t);
+				if (t instanceof String) {
+					score++;
+				} else if (t instanceof Number) {
+					score += 0.8;
+
+				} else {
+					score += 0.5;
+				}
 			}
-			return ret;
-		} else if (token instanceof UserDefinedParser) {
-			double ret = 0;
-			for (final Object t : ((UserDefinedParser) token).after) {
-				ret += getScore(t);
-			}
-			return ret;
-		} else if (token instanceof ListWithTail) {
-			final ListWithTail lwt = (ListWithTail) token;
-			return 2 + getScore(lwt.list) + getScore(lwt.tail);
-		} else if (token instanceof MapWithTail) {
-			final MapWithTail mwt = (MapWithTail) token;
-			return 2 + getScore(mwt.map) + getScore(mwt.tail);
-		} else
-			return 1;
+		}
+		return score;
 	}
 
 	public boolean isMinimal() {
-		if (result.output.size() > 1)
-			return false;
-		if (result.output.get(0) instanceof ListWithTail || result.output.get(0) instanceof MapWithTail)
-			return false;
-		if (result.output.get(0) instanceof UserDefinedParser)
-			return ((UserDefinedParser) result.output.get(0)).after.size() == 1;
-		return true;
+		return result.output.size() == 1;
 	}
 }

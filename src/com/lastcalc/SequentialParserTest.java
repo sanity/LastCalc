@@ -9,15 +9,28 @@ import junit.framework.Assert;
 import org.jscience.physics.amount.Amount;
 import org.junit.Test;
 
+import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
+
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class SequentialParserTest {
+
+	@Test
+	public void parseUDPAnswerTest() {
+		final SequentialParser sp = SequentialParser.create();
+		final TokenList res = sp.parseNext("a=2+3");
+		Assert.assertEquals(1, res.size());
+		Assert.assertTrue(res.get(0) instanceof UserDefinedParser);
+		final UserDefinedParser udp = (UserDefinedParser) res.get(0);
+		Assert.assertEquals(1, udp.after.size());
+	}
+
 	@Test
 	public void incrementTest() {
 		final SequentialParser sp = SequentialParser.create();
 		sp.parseNext("increment [] = []");
 		sp.parseNext("increment [H ... T] = [H+1 ... increment T]");
 		final TokenList inc = sp.parseNext("increment [1,2,3]");
-		Assert.assertEquals(1, inc.size());
+		Assert.assertEquals("Expected [2,3,4] but was " + inc, 1, inc.size());
 		Assert.assertTrue(inc.get(0) instanceof List);
 		final List<Object> list = (List<Object>) inc.get(0);
 		Assert.assertEquals(3, list.size());

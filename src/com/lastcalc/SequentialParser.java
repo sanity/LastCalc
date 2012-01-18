@@ -19,6 +19,8 @@ public class SequentialParser implements Serializable {
 	public static final Set<String> recognizedWords = Sets.newHashSet();
 	public static RecentFirstParserPickerFactory globalParserPickerFactory;
 	private static final FixedOrderParserPickerFactory priorityParsers = new FixedOrderParserPickerFactory();
+	private static final FixedOrderParserPickerFactory lowPriorityParsers = new FixedOrderParserPickerFactory();
+
 	static {
 		final LinkedList<Parser> allParsers = Lists.newLinkedList();
 		com.lastcalc.Parsers.getAll(allParsers);
@@ -38,7 +40,7 @@ public class SequentialParser implements Serializable {
 		priorityParsers.addParser(new PreParser());
 		// Next we want to parse any user-defined functions before subsequent
 		// parsers screw them up
-		priorityParsers.addParser(new UserDefinedParserParser());
+		lowPriorityParsers.addParser(new UserDefinedParserParser());
 
 		try {
 			final BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -73,7 +75,7 @@ public class SequentialParser implements Serializable {
 	public static SequentialParser create() {
 		final long timeout = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? 2000
 				: Integer.MAX_VALUE;
-		return new SequentialParser(priorityParsers, globalParserPickerFactory, timeout);
+		return new SequentialParser(priorityParsers, globalParserPickerFactory, lowPriorityParsers, timeout);
 	}
 
 	private static final long serialVersionUID = 3602019924032548636L;
@@ -84,11 +86,12 @@ public class SequentialParser implements Serializable {
 	private int pos;
 
 	public SequentialParser(final ParserPickerFactory priorityParsers, final ParserPickerFactory allParsers,
+			final ParserPickerFactory lowPriorityParsers,
 			final long timeout) {
 
 		userDefinedParsers = new FixedOrderParserPickerFactory();
 		final CombinedParserPickerFactory ppf = new CombinedParserPickerFactory(priorityParsers, userDefinedParsers,
-				allParsers);
+				allParsers, lowPriorityParsers);
 		parseEngine = new BacktrackingParseEngine(ppf);
 		context = new ParserContext(parseEngine, 2000);
 		userDefinedKeywords = Maps.newHashMap();
