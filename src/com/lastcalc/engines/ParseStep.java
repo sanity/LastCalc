@@ -3,6 +3,7 @@ package com.lastcalc.engines;
 import com.lastcalc.TokenList;
 import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.Parser.ParseResult;
+import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 
 
 public class ParseStep implements Comparable<ParseStep> {
@@ -57,7 +58,31 @@ public class ParseStep implements Comparable<ParseStep> {
 	double cachedScore = Double.MIN_VALUE;
 
 	private double getScore() {
-		return result.output.size() + scoreBias;
+		double ret = scoreBias;
+		for (final Object token : result.output) {
+			ret += getScore(token);
+		}
+		return ret;
+	}
+
+	private double getScore(final Object token) {
+		if (token instanceof UserDefinedParser) {
+			double ret = 0;
+			for (final Object t : ((UserDefinedParser) token).after) {
+				ret += getScore(t);
+			}
+			return ret;
+		}
+		else
+			return 1;
+	}
+
+	public boolean isMinimal() {
+		if (result.output.size() > 1)
+			return false;
+		if (result.output.get(0) instanceof UserDefinedParser)
+			return ((UserDefinedParser) result.output.get(0)).after.size() == 1;
+		return true;
 	}
 }
 

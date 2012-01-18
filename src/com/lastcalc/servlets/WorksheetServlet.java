@@ -38,7 +38,7 @@ public class WorksheetServlet extends HttpServlet {
 			resp.sendError(404);
 			return;
 		}
-		final ArrayList<QAPair> qaPairs = worksheet.qaPairs;
+		final ArrayList<Line> qaPairs = worksheet.qaPairs;
 		if (request.questions != null) {
 			int earliestModified = Integer.MAX_VALUE;
 			final TreeMap<Integer, String> orderedQuestions = Maps.newTreeMap();
@@ -46,15 +46,15 @@ public class WorksheetServlet extends HttpServlet {
 			for (final Entry<Integer, String> e : orderedQuestions.entrySet()) {
 				final int pos = e.getKey() - 1;
 				if (pos < qaPairs.size()) {
-					final QAPair qaPair = qaPairs.get(pos);
+					final Line qaPair = qaPairs.get(pos);
 					qaPair.question = e.getValue();
 					earliestModified = Math.min(earliestModified, pos);
 				} else {
-					qaPairs.add(new QAPair(e.getValue(), null));
+					qaPairs.add(new Line(e.getValue(), null));
 				}
 			}
 			for (int x = earliestModified; x < qaPairs.size(); x++) {
-				final QAPair qaPair = qaPairs.get(x);
+				final Line qaPair = qaPairs.get(x);
 				qaPair.answer = null;
 			}
 			// Remove any qaPairs that have been removed from the browser DOM
@@ -67,7 +67,7 @@ public class WorksheetServlet extends HttpServlet {
 
 		// Recompute worksheet
 		final SequentialParser seqParser = SequentialParser.create();
-		for (final QAPair qap : qaPairs) {
+		for (final Line qap : qaPairs) {
 			if (qap.question.trim().length() == 0) {
 				qap.answer = TokenList.createD();
 			} else {

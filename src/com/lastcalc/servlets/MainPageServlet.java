@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import org.jsoup.nodes.*;
 
 import com.googlecode.objectify.Objectify;
-import com.lastcalc.Renderers;
+import com.lastcalc.*;
 import com.lastcalc.db.*;
 
 public class MainPageServlet extends HttpServlet {
@@ -81,20 +81,27 @@ public class MainPageServlet extends HttpServlet {
 				doc.body().attr("data-worksheet-ro-id", worksheet.readOnlyId);
 				final Element header = doc.body().appendElement("div").attr("id", "header");
 				header.appendElement("h3").attr("id", "logo").text("LastCalc");
-				int x = 1;
-				for (final QAPair qa : worksheet.qaPairs) {
-					final Element question = doc.body().appendElement("div").attr("class", "question");
-					question.appendElement("div").attr("class", "question_no").text(Integer.toString(x));
-					question.appendElement("div").attr("class", "editable").attr("contentEditable", "true")
-					.text(qa.question);
-					question.appendElement("div").attr("class", "answer")
+				int lineNo = 1;
+				final SequentialParser sp = SequentialParser.create();
+				for (final Line qa : worksheet.qaPairs) {
+					sp.processNextAnswer(qa.answer);
+					final Element lineEl = doc.body().appendElement("div").addClass("line")
+							.attr("id", "line" + lineNo);
+					final Element question = lineEl.appendElement("div").attr("class", "question")
+							.attr("contentEditable", "true");
+					question.text(qa.question);
+					final Element equals = lineEl.appendElement("div").attr("class", "equals").text("=");
+					lineEl.appendElement("div").attr("class", "answer")
 					.html(Renderers.toHtml(requestURL.toString(), qa.answer).toString());
-					x++;
+					lineNo++;
 				}
-				final Element question = doc.body().appendElement("div").attr("class", "question");
-				question.appendElement("div").attr("class", "question_no").text(Integer.toString(x));
-				question.appendElement("div").attr("class", "editable").attr("contentEditable", "true");
-				question.appendElement("div").attr("class", "answer");
+				doc.body().attr("data-variables", Misc.gson.toJson(sp.getUserDefinedKeywordMap()));
+				final Element lineEl = doc.body().appendElement("div").addClass("line").attr("id", "line" + lineNo);
+				final Element question = lineEl.appendElement("div").attr("class", "question")
+						.attr("contentEditable", "true");
+				final Element equals = lineEl.appendElement("div").attr("class", "equals").text("=")
+						.attr("style", "display:none;");
+				lineEl.appendElement("div").attr("class", "answer").attr("style", "display:none;");
 				resp.setContentType("text/html; charset=UTF-8");
 				resp.getWriter().append(doc.toString());
 			}

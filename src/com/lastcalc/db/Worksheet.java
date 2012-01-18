@@ -30,7 +30,7 @@ public class Worksheet {
 	public String readOnlyId;
 
 	@Serialized
-	public ArrayList<QAPair> qaPairs;
+	public ArrayList<Line> qaPairs;
 
 	public Date lastModified;
 

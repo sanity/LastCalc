@@ -1,67 +1,128 @@
-body {
-	
+body,td,a,p,.h {
+	font-family: arial, sans-serif;
 }
 
-h3#logo {
+H3#logo {
 	color: #FFFFFF;
 	font-family: verdana, arial, helvetica, sans-serif;
 	text-shadow: 2px 2px 4px #000000;
-	filter: dropshadow(color=#000000, offx=2, offy=2);
+	filter: dropshadow(color = #000000, offx = 2, offy = 2);
 	padding-left: 5px;
 	padding-top: 5px;
 	padding-bottom: 10px;
 }
 
-div#header {
-	width:100%;
-	margin-bottom:30px;
-
-background: rgb(76,76,76); /* Old browsers */
-background: -moz-linear-gradient(-45deg,  rgba(76,76,76,1) 0%, rgba(89,89,89,1) 12%, rgba(102,102,102,1) 25%, rgba(71,71,71,1) 39%, rgba(44,44,44,1) 50%, rgba(0,0,0,1) 51%, rgba(17,17,17,1) 60%, rgba(43,43,43,1) 76%, rgba(28,28,28,1) 91%, rgba(19,19,19,1) 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(76,76,76,1)), color-stop(12%,rgba(89,89,89,1)), color-stop(25%,rgba(102,102,102,1)), color-stop(39%,rgba(71,71,71,1)), color-stop(50%,rgba(44,44,44,1)), color-stop(51%,rgba(0,0,0,1)), color-stop(60%,rgba(17,17,17,1)), color-stop(76%,rgba(43,43,43,1)), color-stop(91%,rgba(28,28,28,1)), color-stop(100%,rgba(19,19,19,1))); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(-45deg,  rgba(76,76,76,1) 0%,rgba(89,89,89,1) 12%,rgba(102,102,102,1) 25%,rgba(71,71,71,1) 39%,rgba(44,44,44,1) 50%,rgba(0,0,0,1) 51%,rgba(17,17,17,1) 60%,rgba(43,43,43,1) 76%,rgba(28,28,28,1) 91%,rgba(19,19,19,1) 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(-45deg,  rgba(76,76,76,1) 0%,rgba(89,89,89,1) 12%,rgba(102,102,102,1) 25%,rgba(71,71,71,1) 39%,rgba(44,44,44,1) 50%,rgba(0,0,0,1) 51%,rgba(17,17,17,1) 60%,rgba(43,43,43,1) 76%,rgba(28,28,28,1) 91%,rgba(19,19,19,1) 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(-45deg,  rgba(76,76,76,1) 0%,rgba(89,89,89,1) 12%,rgba(102,102,102,1) 25%,rgba(71,71,71,1) 39%,rgba(44,44,44,1) 50%,rgba(0,0,0,1) 51%,rgba(17,17,17,1) 60%,rgba(43,43,43,1) 76%,rgba(28,28,28,1) 91%,rgba(19,19,19,1) 100%); /* IE10+ */
-background: linear-gradient(-45deg,  rgba(76,76,76,1) 0%,rgba(89,89,89,1) 12%,rgba(102,102,102,1) 25%,rgba(71,71,71,1) 39%,rgba(44,44,44,1) 50%,rgba(0,0,0,1) 51%,rgba(17,17,17,1) 60%,rgba(43,43,43,1) 76%,rgba(28,28,28,1) 91%,rgba(19,19,19,1) 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-
--webkit-border-radius: 5px;
--moz-border-radius: 5px;
-border-radius: 5px;
-
--webkit-box-shadow: 1px 1px 1px 1px #CCCCCC;
--moz-box-shadow: 1px 1px 1px 1px #CCCCCC;
-box-shadow: 1px 1px 1px 1px #CCCCCC;
-}
-
-div.answer {
-	text-indent: 25px;
-	padding: 10px;
-}
-
-div.editable {
-	width: 98%;
-	border: 1px;
-	padding:3px;
-	margin-left: 15px;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #CCCCCC;
-	
--webkit-box-shadow: inset 0px 1px 1px 0px #CCCCCC;
--moz-box-shadow: inset 0px 1px 1px 0px #CCCCCC;
-box-shadow: inset 0px 1px 1px 0px #CCCCCC;
-}
-
-div.question_no {
-	color: #AAAAAA;
-	font-size: small;
-}
-
-div.question {
+DIV#header {
 	width: 100%;
+	margin-bottom: 30px;
+	background: rgb(76, 76, 76);
+	/*Old browsers*/
+	background: -moz-linear-gradient(-45deg, rgba(76, 76, 76, 1) 0%,
+		rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%,
+		rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(0, 0, 0, 1) 51%,
+		rgba(17, 17, 17, 1) 60%, rgba(43, 43, 43, 1) 76%, rgba(28, 28, 28, 1)
+		91%, rgba(19, 19, 19, 1) 100% );
+	/*FF3.6+*/
+	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(76,
+		76, 76, 1) ), color-stop(12%, rgba(89, 89, 89, 1) ),
+		color-stop(25%, rgba(102, 102, 102, 1) ),
+		color-stop(39%, rgba(71, 71, 71, 1) ),
+		color-stop(50%, rgba(44, 44, 44, 1) ),
+		color-stop(51%, rgba(0, 0, 0, 1) ),
+		color-stop(60%, rgba(17, 17, 17, 1) ),
+		color-stop(76%, rgba(43, 43, 43, 1) ),
+		color-stop(91%, rgba(28, 28, 28, 1) ),
+		color-stop(100%, rgba(19, 19, 19, 1) ) );
+	/*Chrome,Safari4+*/
+	background: -webkit-linear-gradient(-45deg, rgba(76, 76, 76, 1) 0%,
+		rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%,
+		rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(0, 0, 0, 1) 51%,
+		rgba(17, 17, 17, 1) 60%, rgba(43, 43, 43, 1) 76%, rgba(28, 28, 28, 1)
+		91%, rgba(19, 19, 19, 1) 100% );
+	/*Chrome10+,Safari5.1+*/
+	background: -o-linear-gradient(-45deg, rgba(76, 76, 76, 1) 0%,
+		rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%,
+		rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(0, 0, 0, 1) 51%,
+		rgba(17, 17, 17, 1) 60%, rgba(43, 43, 43, 1) 76%, rgba(28, 28, 28, 1)
+		91%, rgba(19, 19, 19, 1) 100% );
+	/*Opera 11.10+*/
+	background: -ms-linear-gradient(-45deg, rgba(76, 76, 76, 1) 0%,
+		rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%,
+		rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(0, 0, 0, 1) 51%,
+		rgba(17, 17, 17, 1) 60%, rgba(43, 43, 43, 1) 76%, rgba(28, 28, 28, 1)
+		91%, rgba(19, 19, 19, 1) 100% );
+	/*IE10+*/
+	background: linear-gradient(-45deg, rgba(76, 76, 76, 1) 0%,
+		rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%,
+		rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(0, 0, 0, 1) 51%,
+		rgba(17, 17, 17, 1) 60%, rgba(43, 43, 43, 1) 76%, rgba(28, 28, 28, 1)
+		91%, rgba(19, 19, 19, 1) 100% );
+	/*W3C*/
+	filter: progid:DXImageTransform.Microsoft.gradient(  startColorstr='#4c4c4c',
+		endColorstr='#131313', GradientType=1 );
+	/*IE6-9 fallback on horizontal gradient*/
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 1px 1px 1px 1px #CCCCCC;
+	-moz-box-shadow: 1px 1px 1px 1px #CCCCCC;
+	box-shadow: 1px 1px 1px 1px #CCCCCC;
 }
 
-div.question_no {
-	float: left;
+DIV.line {
+	padding: 10;
+	margin-left: 40px;
+	margin-right: 40px;
+	margin-bottom: 5px;
+	-webkit-box-shadow: 1px 1px 1px 1px #999;
+	-moz-box-shadow: 1px 1px 1px 1px #999;
+	box-shadow: 1px 1px 1px 1px #999;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+}
+
+DIV.question {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+DIV.question.editing {
+	width: 95%;
+}
+
+DIV.equals {
+	margin-left: 5px;
+	margin-right: 5px;
+	width: 22px;
+	height: 22px;
+	padding: 0px;
+	display: inline-block;
+	text-align: center;
+    color:#666;  
+    text-shadow:0 -1px 0 rgba(0,0,0,0.6),  
+                0 1px 0 rgba(255,255,255,0.8) ;
+	font-size: 17pt;
+	font-family:Courier, monospace;
+	vertical-align: middle;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	background: rgb(206, 220, 231); /* Old browsers */
+	background-image: 	-webkit-repeating-linear-gradient(left, hsla(0,0%,100%,0) 0%, hsla(0,0%,100%,0)   6%, hsla(0,0%,100%, .1) 7.5%),					
+						-webkit-repeating-linear-gradient(left, hsla(0,0%,  0%,0) 0%, hsla(0,0%,  0%,0)   4%, hsla(0,0%,  0%,.03) 4.5%),					
+						-webkit-repeating-linear-gradient(left, hsla(0,0%,100%,0) 0%, hsla(0,0%,100%,0) 1.2%, hsla(0,0%,100%,.15) 2.2%),
+						
+						-webkit-linear-gradient(-90deg, hsl(0,0%,78%)  0%, 
+														hsl(0,0%,90%) 47%, 
+														hsl(0,0%,78%) 53%,
+														hsl(0,0%,70%)100%);
+	-webkit-box-shadow: 1px 1px 1px 1px #888;
+-moz-box-shadow: 1px 1px 1px 1px #888;
+box-shadow: 1px 1px 1px 1px #888;
+}
+
+DIV.answer {
+	display: inline-block;
+	vertical-align: middle;
 }

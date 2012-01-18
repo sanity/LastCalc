@@ -4,12 +4,32 @@ variables = {};
 
 recognizedWords = [];
 
+
+function getLineNumber(lineEl) {
+	return parseInt(lineEl.attr("id").substring(4));
+}
+
+function reassignIds() {
+	// Two step process to ensure that no two elements get the same id
+	var c = 1;
+	$("DIV.line").each(function() {
+		$(this).attr("id", "tmp" + c);
+		c = c + 1;
+	});
+	c = 1;
+	$("DIV.line").each(function() {
+		$(this).attr("id", "line" + c);
+		c = c + 1;
+	});
+}
+
 function highlightSyntax(element) {
 	if (element.length != 1) {
 		alert("highlightSyntax() called with " + element.length
 				+ " elements (should be 1)");
 	}
-	var lineNumber = parseInt(element.parent().find(".question_no").text());
+	var lineNumber = getLineNumber(element.parent("DIV.line"));
+	console.log(rangy);
 	var savedSel = rangy.saveSelection();
 	// Remove any existing variables
 	element.find("span.highlighted").replaceWith(function() {
@@ -56,135 +76,109 @@ function highlightSyntax(element) {
 	rangy.restoreSelection(savedSel);
 }
 
-// Set up variable clicking
-function isOrContainsNode(ancestor, descendant) {
-	var node = descendant;
-	while (node) {
-		if (node === ancestor) {
-			return true;
-		}
-		node = node.parentNode;
-	}
-	return false;
-}
+$(window).load(function() {
 
-function insertNodeOverSelection(node, containerNode) {
-	var sel, range, html;
-	if (window.getSelection) {
-		sel = window.getSelection();
-		if (sel.getRangeAt && sel.rangeCount) {
-			range = sel.getRangeAt(0);
-			if (isOrContainsNode(containerNode, range.commonAncestorContainer)) {
-				range.deleteContents();
-				range.insertNode(node);
-			} else {
-				containerNode.appendChild(node);
-			}
+	$(document).on("keydown", "DIV.question", function(event) {
+		if (event.keyCode == 13) {
+			// Carriage return
+			var origLine = $(this).parent("DIV.line");
+			q = origLine.clone();
+			q.attr("id", "line" + (getLineNumber(origLine) + 1));
+			q.find("DIV.question").text("");
+			q.hide();
+			$(this).parent(".line").after(q);
+			reassignIds();
+			q.fadeIn(50, function() {
+				q.find("DIV.question").focus();
+			});
+			event.preventDefault();
+		} else if (event.keyCode == 38) {
+			// Up arrow
+			$(this).parent().prev().find(".question").focus();
+			event.preventDefault();
+		} else if (event.keyCode == 40) {
+			// Down arrow
+			$(this).parent().next().find(".question").focus();
+			event.preventDefault();
 		}
-	} else if (document.selection && document.selection.createRange) {
-		range = document.selection.createRange();
-		if (isOrContainsNode(containerNode, range.parentElement())) {
-			html = (node.nodeType == 3) ? node.data : node.outerHTML;
-			range.pasteHTML(html);
-		} else {
-			containerNode.appendChild(node);
-		}
-	}
-}
-
-function tidyQuestions() {
-	$("div.question").each(function(ix) {
-		highlightSyntax($(this).find(".editable"));
-		$(this).find(".question_no").text((ix + 1).toString());
 	});
-}
 
-// Catch keyups within questions for highlighting
-$(document).on("keyup", "div.editable", function() {
-	highlightSyntax($(this));
-});
-
-$(document).on("keydown", "div.editable", function(event) {
-	if (event.keyCode == 13) {
-		// Carriage return
-		q = $(this).parent(".question").clone();
-		q.find(".editable").text("");
-		q.find(".answer").text("");
-		$(this).parent(".question").after(q);
-		q.find(".editable").focus();
-		tidyQuestions();
-		event.preventDefault();
-	} else if (event.keyCode == 38) {
-		// Up arrow
-		$(this).parent().prev().find(".editable").focus();
-		event.preventDefault();
-	} else if (event.keyCode == 40) {
-		// Down arrow
-		$(this).parent().next().find(".editable").focus();
-		event.preventDefault();
-	}
-});
-
-$(document).on("focusout", "div.editable", function(event) {
-	if (($.trim($(this).text()).length == 0)) {
-		// Its empty, delete it unless it is the last one
-		if ($(this).parent().next(".question").length != 0) {
-			$(this).parent(".question").remove();
-		} else { // It is the last one, so clear the answer
-			$(this).parent(".question").find(".answer").html("");
+	$(document).on("click", "DIV.line", function(event) {
+		if (!$(this).find("DIV.question").is(":focus")) {
+			$(this).find("DIV.question").focus();
 		}
-	} else {
+	});
 
-	var toSend = {
-		"worksheetId" : $("body").attr("data-worksheet-id"),
-		"questions" : {}
-	};
-	var question = $(this).parent();
-	do {
-		var qText = $.trim(question.find(".editable").text());
-		if (qText.length > 0) {
-			toSend.questions[$.trim(question.find(".question_no").text())] = qText;
+	$(document).on("focus", "DIV.question", function(event) {
+		$(this).parent().find("DIV.answer").hide();
+		$(this).parent().find("DIV.equals").hide();
+		$(this).addClass("editing");
+	});
+
+	$(document).on("focusout", "DIV.question", function(event) {
+		var thisLine = $(this).parent("DIV.line");
+		var thisLineNumber = getLineNumber(thisLine);
+		var q = thisLine.find("DIV.question");
+		q.attr("class", "question"); // Remove editing class, removeClass() didn't
+		// work reliably for some reason
+		thisLine.find("DIV.equals").text("..").show();
+		if (($.trim($(this).text()).length == 0)) {
+			// Its empty, delete this line unless it is the last one
+			if (thisLine.next("DIV.line").length != 0) {
+				thisLine.remove();
+				reassignIds();
+			} else { // It is the last one, so hide the equals and the answer
+				thisLine.find("DIV.answer").hide();
+				thisLine.find("DIV.equals").hide();
+			}
 		} else {
-			question.find(".answer").html("");
-		}
-		question = question.next();
-	} while (question.length > 0);
-	$.ajax({
-		type : "POST",
-		url : "/ws",
-		data : JSON.stringify(toSend),
-		contentType : "application/json; charset=utf-8",
-		dataType : "json",
-		success : function(response) {
-			variables = response.variables;
-			$(".question").each(function(qIx) {
-				if (response.answers[(qIx + 1).toString()]) {
-					$(this).find(".answer").html(response.answers[(qIx + 1).toString()]);
+			var toSend = {
+				"worksheetId" : $("body").attr("data-worksheet-id"),
+				"questions" : {}
+			};
+
+			$("DIV.line").each(function(lineNoM1, lineElement) {
+				var lineNo = lineNoM1 + 1;
+				if (lineNo >= thisLineNumber) {
+					var qText = $.trim($(this).find("DIV.question").text());
+					if (qText.length > 0) {
+						toSend.questions[lineNo] = qText;
+					}
 				}
 			});
-			tidyQuestions();
+			$.ajax({
+				type : "POST",
+				url : "/ws",
+				data : JSON.stringify(toSend),
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				success : function(response) {
+					variables = response.variables;
+					$("DIV.line").each(function() {
+						var ln = getLineNumber($(this));
+						if (response.answers[ln]) {
+							// If we have a new answer for this
+							$(this).find("DIV.answer").html(response.answers[ln]);
+							highlightSyntax($(this).find("DIV.question"));
+							if (!$(this).find("DIV.question").is(":focus")) {
+								// Only show if this question doesn't currently have focus
+								$(this).find("DIV.answer").fadeIn("fast");
+								$(this).find("DIV.equals").text("=").fadeIn("fast");
+							}
+						}
+					});
+				}
+			});
 		}
 	});
-	}
-});
 
-$(window).load(function() {
-	// Grab a list of variables from the server
-	$.ajax({
-		type : "POST",
-		url : "/ws",
-		data : JSON.stringify({
-			"worksheetId" : $("body").attr("data-worksheet-id"),
-			"getRecognizedWords" : true
-		}),
-		contentType : "application/json; charset=utf-8",
-		dataType : "json",
-		success : function(response) {
-			recognizedWords = response.recognizedWords;
-			variables = response.variables;
-			tidyQuestions();
-		}
+	// Catch keyups within questions for highlighting
+	$(document).on("keyup", "div.question", function() {
+		highlightSyntax($(this));
 	});
-
-	$("div.editable").last().focus();
+	variables = jQuery.parseJSON($('body').attr("data-variables"));
+	$("DIV.question").each(function() {
+		highlightSyntax($(this));
+	});
+	$("DIV.question").last().focus();
 });
