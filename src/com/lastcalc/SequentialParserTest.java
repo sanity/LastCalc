@@ -25,6 +25,16 @@ public class SequentialParserTest {
 	}
 
 	@Test
+	public void parseWithPrevAnswer() {
+		final SequentialParser sp = SequentialParser.create();
+		sp.parseNext("49+3");
+		final TokenList res = sp.parseNext("+1");
+		Assert.assertEquals(1, res.size());
+		Assert.assertTrue(res.get(0) instanceof Amount);
+		Assert.assertTrue(((Amount<?>) res.get(0)).getExactValue() == 53);
+	}
+
+	@Test
 	public void incrementTest() {
 		final SequentialParser sp = SequentialParser.create();
 		sp.parseNext("increment [] = []");

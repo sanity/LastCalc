@@ -21,11 +21,14 @@ public class BacktrackingParseEngine extends ParseEngine {
 
 	@Override
 	public LinkedList<ParseStep> parse(final TokenList input,
-			final ParserContext context) {
+			final ParserContext context,
+			final TokenList... alternateInputs) {
 		final TreeSet<ParseStep> candidates = Sets.<ParseStep> newTreeSet();
 		final ParserPicker picker = ppf.getPicker();
-		final int createOrder = 0;
-		candidates.add(new ParseStep(input, NoopParser.singleton, ParseResult.success(input), null, createOrder, 0));
+		candidates.add(new ParseStep(input, NoopParser.singleton, ParseResult.success(input), null, 0));
+		for (final TokenList alternateTL : alternateInputs) {
+			candidates.add(new ParseStep(alternateTL, NoopParser.singleton, ParseResult.success(alternateTL), null, 0));
+		}
 		final long startTime = System.currentTimeMillis();
 		ParserContext subContext;
 		try {
@@ -40,8 +43,7 @@ public class BacktrackingParseEngine extends ParseEngine {
 				if (exhausted.contains(candidateStep)) {
 					continue;
 				}
-				final ParseStep nextStep = picker.pickNext(subContext, candidateStep,
-						createOrder);
+				final ParseStep nextStep = picker.pickNext(subContext, candidateStep);
 				if (nextStep != null && nextStep.result.isSuccess()) {
 					candidates.add(nextStep);
 					continue outer;

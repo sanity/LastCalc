@@ -15,7 +15,10 @@
   outline: none;
   text-align: center;
   font-size: 14px;
-  padding: .05em .2em .055em;
+  padding-top: 0px;
+  padding-bottom: 2px;
+  padding-left: 2px;
+  padding-right: 2px;
   text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
   -webkit-border-radius: .5em;
   -moz-border-radius: .5em;

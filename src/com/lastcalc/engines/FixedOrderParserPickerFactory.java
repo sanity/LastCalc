@@ -43,9 +43,8 @@ public class FixedOrderParserPickerFactory extends ParserPickerFactory {
 		}
 
 		@Override
-		public ParseStep pickNext(final ParserContext context, final ParseStep previous,
-				final int createOrder) {
-			final ParseStep next = getNext(context, parsers, previous, createOrder);
+		public ParseStep pickNext(final ParserContext context, final ParseStep previous) {
+			final ParseStep next = getNext(context, parsers, previous);
 			return next;
 		}
 

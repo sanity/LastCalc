@@ -71,7 +71,7 @@ public class MainPageServlet extends HttpServlet {
 				doc.head().appendElement("script")
 				.attr("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
 				doc.head().appendElement("script")
-						.attr("src", "http://cdn.jquerytools.org/1.2.6/all/jquery.tools.min.js");
+				.attr("src", "http://cdn.jquerytools.org/1.2.6/all/jquery.tools.min.js");
 				doc.head().appendElement("script").attr("src", "/js/rangy-core.js");
 				doc.head().appendElement("script").attr("src", "/js/rangy-selectionsaverestore.js");
 				doc.head().appendElement("script").attr("src", "/js/locutus.js");
@@ -89,6 +89,9 @@ public class MainPageServlet extends HttpServlet {
 					sp.processNextAnswer(qa.answer);
 					final Element lineEl = doc.body().appendElement("div").addClass("line")
 							.attr("id", "line" + lineNo);
+					if (lineNo == 1) {
+						lineEl.addClass("firstLine");
+					}
 					final Element question = lineEl.appendElement("div").attr("class", "question")
 							.attr("contentEditable", "true");
 					question.text(qa.question);
@@ -99,6 +102,9 @@ public class MainPageServlet extends HttpServlet {
 				}
 				doc.body().attr("data-variables", Misc.gson.toJson(sp.getUserDefinedKeywordMap()));
 				final Element lineEl = doc.body().appendElement("div").addClass("line").attr("id", "line" + lineNo);
+				if (lineNo == 1) {
+					lineEl.addClass("firstLine");
+				}
 				final Element question = lineEl.appendElement("div").attr("class", "question")
 						.attr("contentEditable", "true");
 				final Element equals = lineEl.appendElement("div").attr("class", "equals").text("=")

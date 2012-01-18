@@ -40,10 +40,9 @@ public class CombinedParserPickerFactory extends ParserPickerFactory {
 		}
 
 		@Override
-		public ParseStep pickNext(final ParserContext context, final ParseStep previous,
-				final int createOrder) {
+		public ParseStep pickNext(final ParserContext context, final ParseStep previous) {
 			for (final ParserPickerFactory ppf : ppfs) {
-				final ParseStep ps = ppf.getPicker(prevAttemptPos).pickNext(context, previous, createOrder);
+				final ParseStep ps = ppf.getPicker(prevAttemptPos).pickNext(context, previous);
 				if (ps != null)
 					return ps;
 			}

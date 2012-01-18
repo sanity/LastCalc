@@ -187,7 +187,7 @@ public class UserDefinedParserParser extends Parser {
 
 		private final TokenList before;
 
-		private final Set<String> variables;
+		public final Set<String> variables;
 
 		public UserDefinedParser(final TokenList before, final TokenList after, final Set<String> variables) {
 			this.before = before;
@@ -276,6 +276,16 @@ public class UserDefinedParserParser extends Parser {
 			} else if (!before.equals(other.before))
 				return false;
 			return true;
+		}
+
+		public boolean isComplexFunction() {
+			if (!variables.isEmpty())
+				return true;
+			for (final Object o : before) {
+				if (!(o instanceof String))
+					return true;
+			}
+			return false;
 		}
 	}
 

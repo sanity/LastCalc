@@ -31,11 +31,11 @@ public abstract class ParserPickerFactory implements Serializable {
 
 		}
 
-		public abstract ParseStep pickNext(ParserContext context, ParseStep previous,
-				int createOrder);
+		public abstract ParseStep pickNext(ParserContext context, ParseStep previous);
 
 		protected ParseStep getNext(final ParserContext context,
-				final Iterable<Parser> parsers, final ParseStep previous, final int createOrder) {
+				final Iterable<Parser> parsers,
+				final ParseStep previous) {
 			final TokenList input = previous.result.output;
 			for (final Parser candidate : parsers) {
 				int sPos = -1;
@@ -61,7 +61,7 @@ public abstract class ParserPickerFactory implements Serializable {
 						final ParseResult parseResult = candidate.parse(input, sPos, context);
 						prevAttemptPos.put(attempt, sPos);
 						if (parseResult.isSuccess())
-							return new ParseStep(input, candidate, parseResult, previous, createOrder,
+							return new ParseStep(input, candidate, parseResult, previous,
 									parseResult.scoreBias);
 					} else {
 						prevAttemptPos.put(attempt, -2);

@@ -12,7 +12,8 @@ import com.google.common.collect.Maps;
 import com.googlecode.objectify.Objectify;
 import com.lastcalc.*;
 import com.lastcalc.db.*;
-import com.lastcalc.parsers.PreParser;
+import com.lastcalc.parsers.*;
+import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.parsers.currency.Currencies;
 
 @SuppressWarnings("serial")
@@ -82,12 +83,22 @@ public class WorksheetServlet extends HttpServlet {
 		obj.put(worksheet);
 
 		response.answers = Maps.newHashMap();
+		response.answerTypes = Maps.newHashMap();
 		response.variables = seqParser.getUserDefinedKeywordMap();
 
 		for (int x = 0; x < qaPairs.size(); x++) {
+			final TokenList answer = qaPairs.get(x).answer;
 			response.answers.put(x + 1,
-					Renderers.toHtml(req.getRequestURI(), PreParser.flatten(qaPairs.get(x).answer))
+					Renderers.toHtml(req.getRequestURI(), PreParser.flatten(answer))
 					.toString());
+			AnswerType aType;
+			if (answer.size() == 1 && (answer.get(0) instanceof UserDefinedParser)
+					&& ((UserDefinedParser) answer.get(0)).isComplexFunction()) {
+				aType = AnswerType.FUNCTION;
+			} else {
+				aType = AnswerType.NORMAL;
+			}
+			response.answerTypes.put(x + 1, aType);
 		}
 
 		resp.setContentType("application/json; charset=UTF-8");
@@ -111,6 +122,12 @@ public class WorksheetServlet extends HttpServlet {
 
 		Map<Integer, String> answers;
 
+		Map<Integer, AnswerType> answerTypes;
+
 		Map<String, Integer> variables;
+	}
+
+	public enum AnswerType {
+		NORMAL, FUNCTION, ERROR
 	}
 }

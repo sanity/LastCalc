@@ -23,12 +23,19 @@ function reassignIds() {
 }
 
 function highlightSyntax(element) {
+	rangy.init();
+	
 	if (element.length != 1) {
 		alert("highlightSyntax() called with " + element.length
 				+ " elements (should be 1)");
 	}
+	
+	if (!rangy.getSelection().isCollapsed) {
+		console.log("Aborting highlight because selection size > 0");
+		return;
+	}
+	
 	var lineNumber = getLineNumber(element.parent("DIV.line"));
-	console.log(rangy);
 	var savedSel = rangy.saveSelection();
 	// Remove any existing variables
 	element.find("span.highlighted").replaceWith(function() {
@@ -88,6 +95,7 @@ $(window).load(function() {
 			var origLine = $(this).parent("DIV.line");
 			q = origLine.clone();
 			q.attr("id", "line" + (getLineNumber(origLine) + 1));
+			q.attr("class", "line");
 			q.find("DIV.question").text("");
 			q.hide();
 			$(this).parent(".line").after(q);
@@ -125,7 +133,7 @@ $(window).load(function() {
 		var q = thisLine.find("DIV.question");
 		q.attr("class", "question"); // Remove editing class, removeClass() didn't
 		// work reliably for some reason
-		thisLine.find("DIV.equals").text("..").show();
+		thisLine.find("DIV.equals").html("&there4;").show();
 		if (($.trim($(this).text()).length == 0)) {
 			// Its empty, delete this line unless it is the last one
 			if (thisLine.next("DIV.line").length != 0) {
@@ -166,8 +174,14 @@ $(window).load(function() {
 							highlightSyntax($(this).find("DIV.question"));
 							if (!$(this).find("DIV.question").is(":focus")) {
 								// Only show if this question doesn't currently have focus
-								$(this).find("DIV.answer").fadeIn("fast");
-								$(this).find("DIV.equals").text("=").fadeIn("fast");
+								var answerType = response.answerTypes[ln];
+								if (answerType == "NORMAL") {
+									$(this).find("DIV.answer").fadeIn("fast");
+									$(this).find("DIV.equals").text("=").fadeIn("fast");
+								} else if (answerType == "FUNCTION") {
+									$(this).find("DIV.answer").hide();
+									$(this).find("DIV.equals").html("&#10003").fadeIn("fast");
+								}
 							}
 						}
 					});

@@ -85,6 +85,8 @@ public class SequentialParser implements Serializable {
 	private final Map<String, Integer> userDefinedKeywords;
 	private int pos;
 
+	private TokenList previousAnswer = null;
+
 	public SequentialParser(final ParserPickerFactory priorityParsers, final ParserPickerFactory allParsers,
 			final ParserPickerFactory lowPriorityParsers,
 			final long timeout) {
@@ -102,7 +104,14 @@ public class SequentialParser implements Serializable {
 	}
 
 	public TokenList parseNext(final TokenList question) {
-		final TokenList answer = parseEngine.parseAndGetLastStep(question, context);
+		TokenList answer = null;
+		if (previousAnswer != null && previousAnswer.size() == 1) {
+			final TokenList questionWithPrevious = new TokenList.CompositeTokenList(previousAnswer, question);
+			answer = parseEngine.parseAndGetLastStep(question, context, questionWithPrevious);
+
+		} else {
+			answer = parseEngine.parseAndGetLastStep(question, context);
+		}
 		processNextAnswer(answer);
 		return answer;
 	}
@@ -120,6 +129,7 @@ public class SequentialParser implements Serializable {
 			userDefinedParsers.addParser(udp);
 		}
 		pos++;
+		previousAnswer = answer;
 	}
 
 	public Map<String, Integer> getUserDefinedKeywordMap() {

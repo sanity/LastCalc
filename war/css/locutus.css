@@ -74,12 +74,17 @@ DIV.line {
 	margin-left: 40px;
 	margin-right: 40px;
 	margin-bottom: 5px;
-	-webkit-box-shadow: 1px 1px 1px 1px #999;
-	-moz-box-shadow: 1px 1px 1px 1px #999;
-	box-shadow: 1px 1px 1px 1px #999;
-	-webkit-border-radius: 20px;
-	-moz-border-radius: 20px;
-	border-radius: 20px;
+	border: 1px;
+	border-color: #CCC;
+	border-top-style: solid;
+}
+
+DIV.question:focus {
+    outline: none;
+}
+
+DIV.firstLine {
+	border-top-style: none;
 }
 
 DIV.question {

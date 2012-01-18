@@ -15,18 +15,15 @@ public class ParseStep implements Comparable<ParseStep> {
 
 	public final int depth;
 
-	public final int createOrder;
-
 	public final double scoreBias;
 
 	public ParseStep(final TokenList input, final Parser parser, final ParseResult result, final ParseStep previous,
-			final int createOrder, final double score) {
+			final double score) {
 		this.input = input;
 		this.parser = parser;
 		scoreBias = (previous == null ? 0 : previous.scoreBias) + score;
 		this.result = result;
 		this.previous = previous;
-		this.createOrder = createOrder;
 		if (previous != null) {
 			depth = previous.depth + 1;
 		} else {
