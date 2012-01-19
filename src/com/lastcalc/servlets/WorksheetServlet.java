@@ -73,7 +73,7 @@ public class WorksheetServlet extends HttpServlet {
 				qap.answer = TokenList.createD();
 			} else {
 				if (qap.answer == null) {
-					qap.answer = seqParser.parseNext(Parsers.tokenize(qap.question));
+					qap.answer = seqParser.parseNext(Tokenizer.tokenize(qap.question));
 				} else {
 					seqParser.processNextAnswer(qap.answer);
 				}
@@ -93,7 +93,7 @@ public class WorksheetServlet extends HttpServlet {
 					.toString());
 			AnswerType aType;
 			if (answer.size() == 1 && (answer.get(0) instanceof UserDefinedParser)
-					&& ((UserDefinedParser) answer.get(0)).isComplexFunction()) {
+					&& ((UserDefinedParser) answer.get(0)).shouldPrintResult()) {
 				aType = AnswerType.FUNCTION;
 			} else {
 				aType = AnswerType.NORMAL;

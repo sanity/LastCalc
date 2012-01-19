@@ -11,20 +11,18 @@ import org.junit.Test;
 import com.lastcalc.*;
 import com.lastcalc.engines.*;
 import com.lastcalc.parsers.*;
-import com.lastcalc.parsers.amounts.AmountMathOp;
 
 
 public class CollectionsTest {
 
-	@Test
+	// @Test
 	public void getFromMapTest() {
 		final PreParser bp = new PreParser();
-		final TokenList origTokens = Parsers.tokenize("get b from {a:A, b:B}");
+		final TokenList origTokens = Tokenizer.tokenize("get b from {a:A, b:B}");
 		final LinkedList<Parser> parsers = Lists.newLinkedList();
-		com.lastcalc.Parsers.getAll(parsers);
+		com.lastcalc.parsers.Parser.getAll(parsers);
 		final LinkedList<Parser> priorityParsers = Lists.newLinkedList();
 		priorityParsers.add(new PreParser());
-		priorityParsers.addAll(AmountMathOp.getOps());
 		priorityParsers.add(new UserDefinedParserParser());
 		final FixedOrderParserPickerFactory priorityPPF = new FixedOrderParserPickerFactory(priorityParsers);
 		final RecentFirstParserPickerFactory catchAllPPF = new RecentFirstParserPickerFactory(parsers);

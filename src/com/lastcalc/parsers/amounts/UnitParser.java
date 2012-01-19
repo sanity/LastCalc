@@ -78,7 +78,7 @@ public class UnitParser extends Parser {
 							verboseNamesPlur.put(unit, joiner.join(pluralLongName));
 						}
 					}
-					final TokenList shortName = Parsers.tokenize(unit.toString());
+					final TokenList shortName = Tokenizer.tokenize(unit.toString());
 					// Don't use it if it is only one character, or if its in a
 					// list of confusing values like "in"
 					if (shortName.size() > 0) {

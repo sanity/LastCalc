@@ -6,7 +6,11 @@ import java.util.*;
 import com.google.common.collect.Sets;
 
 import com.lastcalc.TokenList;
-import com.lastcalc.parsers.amounts.AmountMathOp;
+import com.lastcalc.parsers.amounts.*;
+import com.lastcalc.parsers.bool.*;
+import com.lastcalc.parsers.collections.GetFromMap;
+import com.lastcalc.parsers.currency.Currencies;
+import com.lastcalc.parsers.math.MathBiOp;
 
 
 public abstract class Parser implements Serializable {
@@ -74,8 +78,6 @@ public abstract class Parser implements Serializable {
 			for (int x = 0; x < templateSize; x++) {
 				final Object templ = getTemplate().get(x);
 				final Object src = input.get(sPos + x);
-				if (this instanceof AmountMathOp) {
-				}
 				if (!match(templ, src)) {
 					continue templateScan;
 				}
@@ -96,6 +98,20 @@ public abstract class Parser implements Serializable {
 			}
 		}
 		return templ.equals(src);
+	}
+
+	public static void getAll(final Collection<Parser> parsers) {
+		parsers.addAll(UnitParser.getParsers());
+		parsers.addAll(Currencies.getParsers());
+		parsers.add(new TrailingEqualsStripper());
+		parsers.add(new AmountParser());
+		parsers.add(new UDPApplier());
+		parsers.add(new AmountConverterParser());
+		parsers.add(new GetFromMap());
+		parsers.add(new BoolParser());
+		parsers.add(new BoolFunctionsParser());
+		parsers.add(new MathBiOp());
+
 	}
 
 	public static final class ParseResult {

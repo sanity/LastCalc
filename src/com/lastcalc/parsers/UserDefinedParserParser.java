@@ -23,48 +23,8 @@ public class UserDefinedParserParser extends Parser {
 	public ParseResult parse(final TokenList tokens, final int templatePos, final ParserContext context) {
 
 		// Identify the beginning and end of the UDPP
-		int start, depth = 0;
-		for (int x = templatePos - 1;; x--) {
-			final Object t = tokens.get(x);
-			if (t.equals("(")) {
-				if (depth == 0) {
-					start = x + 1;
-					break;
-				} else {
-					depth--;
-				}
-			} else if (t.equals(")")) {
-				depth++;
-			}
-			if (x == 0) {
-				start = 0;
-				break;
-			}
-		}
-		if (depth != 0)
-			return ParseResult.fail();
-
-		final int end;
-		for (int x = templatePos + 1;; x++) {
-			final Object t = tokens.get(x);
-			if (t.equals(")")) {
-				if (depth == 0) {
-					end = x;
-					break;
-				} else {
-					depth--;
-				}
-			} else if (t.equals("(")) {
-				depth++;
-			}
-			if (x == tokens.size() - 1) {
-				end = tokens.size();
-				break;
-			}
-		}
-
-		if (depth != 0)
-			return ParseResult.fail();
+		final int start = PreParser.findEdgeOrObjectBackwards(tokens, templatePos, null);
+		final int end = PreParser.findEdgeOrObjectForwards(tokens, templatePos, null) + 1;
 
 		final TokenList before = tokens.subList(start, templatePos);
 
@@ -232,9 +192,16 @@ public class UserDefinedParserParser extends Parser {
 			}
 			final TokenList resultTL = TokenList.create(result);
 			final TokenList flattened = PreParser.flatten(resultTL);
+			// return ParseResult.success(
+			// tokens.replaceWithTokenList(templatePos, templatePos +
+			// template.size(), flattened),
+			// -flattened.size());
+			// return ParseResult.success(
+			// tokens.replaceWithTokenList(templatePos, templatePos +
+			// template.size(), flattened), 0);
 			return ParseResult.success(
 					tokens.replaceWithTokenList(templatePos, templatePos + template.size(), flattened),
-					-flattened.size());
+ 0);
 		}
 
 		@Override
@@ -278,7 +245,7 @@ public class UserDefinedParserParser extends Parser {
 			return true;
 		}
 
-		public boolean isComplexFunction() {
+		public boolean shouldPrintResult() {
 			if (!variables.isEmpty())
 				return true;
 			for (final Object o : before) {

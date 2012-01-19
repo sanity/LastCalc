@@ -15,11 +15,17 @@ public class PreParser extends Parser {
 
 	private static TokenList template;
 
-	public static Set<String> reserved = Sets.newHashSet("(", ")", "{", "}", "[", "]", ",", ":", "...");
+	public static Set<String> open = Sets.newHashSet("(", "{", "[");
+
+	public static Set<String> close = Sets.newHashSet(")", "}", "]");
+
+	public static Set<String> reserved = Sets.newHashSet(",", ":", "...");
 
 	static {
+		reserved.addAll(open);
+		reserved.addAll(close);
 		final ArrayList<Object> tpl = Lists.newArrayList();
-		tpl.add(Lists.<Object> newArrayList(")", "]", "}"));
+		tpl.add(Lists.<Object> newArrayList(close));
 		template = new TokenList.SimpleTokenList(tpl);
 	}
 
@@ -117,6 +123,48 @@ public class PreParser extends Parser {
 			output.add("}");
 		} else {
 			output.add(obj);
+		}
+	}
+
+	public static int findEdgeOrObjectBackwards(final TokenList orig, final int startPos, final Object obj) {
+		int depth = 0;
+		for (int x = startPos-1;; x--) {
+			if (x == -1)
+				return 0;
+			final Object tx = orig.get(x);
+			if (depth == 0 && tx.equals(obj))
+				return x;
+			else if (close.contains(tx)) {
+				depth++;
+			} else if (open.contains(tx)) {
+				if (depth == 0)
+					return x+1;
+				else {
+					depth--;
+				}
+			} else if (reserved.contains(tx) && depth == 0)
+				return x+1;
+		}
+	}
+
+	public static int findEdgeOrObjectForwards(final TokenList orig, final int startPos, final Object obj) {
+		int depth = 0;
+		for (int x = startPos + 1;; x++) {
+			if (x >= orig.size())
+				return orig.size() - 1;
+			final Object tx = orig.get(x);
+			if (depth == 0 && tx.equals(obj))
+				return x;
+			else if (open.contains(tx)) {
+				depth++;
+			} else if (close.contains(tx)) {
+				if (depth == 0)
+					return x - 1;
+				else {
+					depth--;
+				}
+			} else if (reserved.contains(tx) && depth == 0)
+				return x - 1;
 		}
 	}
 

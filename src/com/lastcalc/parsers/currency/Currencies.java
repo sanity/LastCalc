@@ -30,16 +30,18 @@ public class Currencies {
 			updateExchangeRates();
 		}
 		final LinkedList<Parser> parsers = Lists.newLinkedList();
-		for (final Entry<String, Currency> e : currenciesByCode.entrySet()) {
-			parsers.add(new UnitParser(e.getValue(), TokenList.createD(e.getKey())));
-			parsers.add(new UnitParser(e.getValue(), TokenList.createD(e.getKey().toLowerCase())));
-		}
-		parsers.add(new UnitParser(currenciesByCode.get("USD"), TokenList.createD("$")));
-		parsers.add(new UnitParser(currenciesByCode.get("EUR"), TokenList.createD("Û")));
-		parsers.add(new UnitParser(currenciesByCode.get("JPY"), TokenList.createD("´")));
-		parsers.add(new UnitParser(currenciesByCode.get("GBP"), TokenList.createD("£")));
+		if (currenciesByCode != null) {
+			for (final Entry<String, Currency> e : currenciesByCode.entrySet()) {
+				parsers.add(new UnitParser(e.getValue(), TokenList.createD(e.getKey())));
+				parsers.add(new UnitParser(e.getValue(), TokenList.createD(e.getKey().toLowerCase())));
+			}
+			parsers.add(new UnitParser(currenciesByCode.get("USD"), TokenList.createD("$")));
+			parsers.add(new UnitParser(currenciesByCode.get("EUR"), TokenList.createD("Û")));
+			parsers.add(new UnitParser(currenciesByCode.get("JPY"), TokenList.createD("´")));
+			parsers.add(new UnitParser(currenciesByCode.get("GBP"), TokenList.createD("£")));
 
-		parsers.add(new CurrencyReverser());
+			parsers.add(new CurrencyReverser());
+		}
 
 		return parsers;
 	}

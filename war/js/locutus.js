@@ -64,7 +64,7 @@ function highlightSyntax(element) {
 				if (str.match(/^[-+]?[0-9]*\.?[0-9]+$/)) {
 					return "<span class=\"highlighted number\">" + str + "</span>";
 				}
-				if (str.match(/[A-Z]+[a-zA-Z0-9]*/)) {
+				if (str.match(/^[A-Z]+[a-zA-Z0-9]*$/)) {
 					return "<span class=\"highlighted variable white\">" + str
 							+ "</span>";
 
@@ -180,7 +180,7 @@ $(window).load(function() {
 									$(this).find("DIV.equals").text("=").fadeIn("fast");
 								} else if (answerType == "FUNCTION") {
 									$(this).find("DIV.answer").hide();
-									$(this).find("DIV.equals").html("&#10003").fadeIn("fast");
+									$(this).find("DIV.equals").html("<span style=\"font-size:10pt;\">&#10003</span>").fadeIn("fast");
 								}
 							}
 						}

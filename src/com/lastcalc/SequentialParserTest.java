@@ -2,11 +2,9 @@ package com.lastcalc;
 
 import java.util.List;
 
-import javax.measure.unit.Unit;
-
 import junit.framework.Assert;
 
-import org.jscience.physics.amount.Amount;
+import org.jscience.mathematics.number.LargeInteger;
 import org.junit.Test;
 
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
@@ -30,8 +28,8 @@ public class SequentialParserTest {
 		sp.parseNext("49+3");
 		final TokenList res = sp.parseNext("+1");
 		Assert.assertEquals(1, res.size());
-		Assert.assertTrue(res.get(0) instanceof Amount);
-		Assert.assertTrue(((Amount<?>) res.get(0)).getExactValue() == 53);
+		Assert.assertTrue(res.get(0) instanceof LargeInteger);
+		Assert.assertEquals(53, ((LargeInteger) res.get(0)).intValue());
 	}
 
 	@Test
@@ -44,9 +42,9 @@ public class SequentialParserTest {
 		Assert.assertTrue(inc.get(0) instanceof List);
 		final List<Object> list = (List<Object>) inc.get(0);
 		Assert.assertEquals(3, list.size());
-		Assert.assertEquals(2, ((Amount) list.get(0)).longValue(Unit.ONE));
-		Assert.assertEquals(3, ((Amount) list.get(1)).longValue(Unit.ONE));
-		Assert.assertEquals(4, ((Amount) list.get(2)).longValue(Unit.ONE));
+		Assert.assertEquals(2, ((LargeInteger) list.get(0)).intValue());
+		Assert.assertEquals(3, ((LargeInteger) list.get(1)).intValue());
+		Assert.assertEquals(4, ((LargeInteger) list.get(2)).intValue());
 	}
 
 	@Test
@@ -60,17 +58,17 @@ public class SequentialParserTest {
 		Assert.assertTrue(res.get(0) instanceof List);
 		final List<Object> list = (List<Object>) res.get(0);
 		Assert.assertEquals(4, list.size());
-		Assert.assertEquals(1, ((Number) list.get(0)).longValue());
-		Assert.assertEquals(2, ((Number) list.get(1)).longValue());
-		Assert.assertEquals(3, ((Number) list.get(2)).longValue());
-		Assert.assertEquals(4, ((Number) list.get(3)).longValue());
+		Assert.assertEquals(1, ((LargeInteger) list.get(0)).intValue());
+		Assert.assertEquals(2, ((LargeInteger) list.get(1)).intValue());
+		Assert.assertEquals(3, ((LargeInteger) list.get(2)).intValue());
+		Assert.assertEquals(4, ((LargeInteger) list.get(3)).intValue());
 	}
 
 	@Test
 	public void precedenceTest() {
 		final SequentialParser sp = SequentialParser.create();
-		Assert.assertEquals(((Amount) sp.parseNext("3+5*2").get(0)).getExactValue(), 13);
-		Assert.assertEquals(((Amount) sp.parseNext("2*(6/3)").get(0)).getExactValue(), 4);
+		Assert.assertEquals(((org.jscience.mathematics.number.Number) sp.parseNext("3+5*2").get(0)).intValue(), 13);
+		Assert.assertEquals(((org.jscience.mathematics.number.Number) sp.parseNext("2*(6/3)").get(0)).intValue(), 4);
 
 	}
 }

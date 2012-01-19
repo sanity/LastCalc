@@ -16,24 +16,17 @@ public class IfThenElse extends Parser {
 	@Override
 	public ParseResult parse(final TokenList tokens, final int templatePos, final ParserContext context) {
 		final boolean condition = (Boolean) tokens.get(templatePos + 1);
-		int elsePos = tokens.size();
-		for (int x = templatePos + 3; x < tokens.size(); x++) {
-			if (tokens.get(x) instanceof String && ((String) tokens.get(x)).equalsIgnoreCase("else")) {
-				elsePos = x;
-				break;
-			}
-		}
-		TokenList result;
+		final int end = PreParser.findEdgeOrObjectForwards(tokens, templatePos + 2, null) + 1;
+		final int elsePos = PreParser.findEdgeOrObjectForwards(tokens, templatePos + 2, "else");
+		if (!tokens.get(elsePos).equals("else"))
+			return ParseResult.fail();
+		TokenList ret;
 		if (condition) {
-			result = tokens.subList(3, elsePos);
+			ret = new TokenList.SubTokenList(tokens, templatePos + 3, elsePos);
 		} else {
-			if (elsePos == tokens.size()) {
-				result = TokenList.createD(Boolean.FALSE);
-			} else {
-				result = tokens.subList(elsePos + 1, tokens.size());
-			}
+			ret = new TokenList.SubTokenList(tokens, elsePos + 1, end);
 		}
-		return ParseResult.success(tokens.replaceWithTokenList(templatePos, templatePos + template.size(), result));
+		return ParseResult.success(tokens.replaceWithTokenList(templatePos, end, ret));
 	}
 
 	@Override
@@ -43,8 +36,7 @@ public class IfThenElse extends Parser {
 
 	@Override
 	public boolean equals(final Object obj) {
-		// TODO Auto-generated method stub
-		return false;
+		return obj instanceof IfThenElse;
 	}
 
 }

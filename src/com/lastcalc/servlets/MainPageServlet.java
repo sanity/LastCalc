@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServlet;
 
 import org.jsoup.nodes.*;
 
-import com.googlecode.objectify.Objectify;
+import com.googlecode.objectify.*;
 import com.lastcalc.*;
 import com.lastcalc.db.*;
 
@@ -54,11 +54,11 @@ public class MainPageServlet extends HttpServlet {
 
 				resp.sendRedirect("/" + worksheet.id);
 			} else {
-
-				final Worksheet worksheet = obj.get(Worksheet.class, worksheetId);
-
-				if (worksheet == null) {
-					resp.sendError(404);
+				final Worksheet worksheet;
+				try {
+					worksheet = obj.get(Worksheet.class, worksheetId);
+				} catch (final NotFoundException e) {
+					resp.sendError(404, "Worksheet not found");
 					return;
 				}
 

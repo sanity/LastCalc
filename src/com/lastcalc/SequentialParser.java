@@ -11,7 +11,7 @@ import com.lastcalc.bootstrap.Bootstrap;
 import com.lastcalc.engines.*;
 import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
-import com.lastcalc.parsers.amounts.AmountMathOp;
+import com.lastcalc.parsers.bool.IfThenElse;
 
 public class SequentialParser implements Serializable {
 	private static final Logger log = Logger.getLogger(Bootstrap.class.getName());
@@ -23,7 +23,7 @@ public class SequentialParser implements Serializable {
 
 	static {
 		final LinkedList<Parser> allParsers = Lists.newLinkedList();
-		com.lastcalc.Parsers.getAll(allParsers);
+		com.lastcalc.parsers.Parser.getAll(allParsers);
 		for (final Parser p : allParsers) {
 			for (final Object i : p.getTemplate()) {
 				if (i instanceof String) {
@@ -31,13 +31,12 @@ public class SequentialParser implements Serializable {
 				}
 			}
 		}
-		allParsers.addAll(AmountMathOp.getOps());
-
 		globalParserPickerFactory = new RecentFirstParserPickerFactory(allParsers);
 
 		// Recompute worksheet
 		// The first thing we do is parse any datastructures like lists or maps
 		priorityParsers.addParser(new PreParser());
+		priorityParsers.addParser(new IfThenElse());
 		// Next we want to parse any user-defined functions before subsequent
 		// parsers screw them up
 		lowPriorityParsers.addParser(new UserDefinedParserParser());
@@ -100,7 +99,7 @@ public class SequentialParser implements Serializable {
 	}
 
 	public TokenList parseNext(final String question) {
-		return parseNext(Parsers.tokenize(question));
+		return parseNext(Tokenizer.tokenize(question));
 	}
 
 	public TokenList parseNext(final TokenList question) {
