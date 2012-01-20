@@ -65,13 +65,18 @@ public abstract class TokenList implements Iterable<Object>, Serializable {
 		return size() == 0;
 	}
 
+	private int cachedHashCode = 0;
+
 	@Override
 	public int hashCode() {
-		int hashCode = 1;
-		for (final Object o : this) {
-			hashCode = 31 * hashCode + o.hashCode();
+		if (cachedHashCode == 0) {
+			int hashCode = 1;
+			for (final Object o : this) {
+				hashCode = 31 * hashCode + o.hashCode();
+			}
+			cachedHashCode = hashCode;
 		}
-		return hashCode;
+		return cachedHashCode;
 	}
 
 	@Override

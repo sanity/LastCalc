@@ -64,14 +64,14 @@ public class SequentialParserTest {
 		sp.parseNext("aboveFive [] = []");
 		sp.parseNext("aboveFive [H ... T] = if H > 5 then [H ... aboveFive T] else aboveFive T");
 		final long startTime = System.currentTimeMillis();
-		final TokenList inc = sp.parseNext("aboveFive [4,5,6,7,8,9,10,11,12,13,14,15]");
+		final TokenList inc = sp.parseNext("aboveFive [4,5,6,7,8,9,10,11,12,13,14,15, 16, 17, 18, 19, 20]");
 		System.out.println("Filter steps required: \t" + sp.getLastParseStepCount() + " \t"
 				+ (System.currentTimeMillis() - startTime) + "ms");
-		Assert.assertTrue(sp.getLastParseStepCount() <= 142);
+		Assert.assertTrue(sp.getLastParseStepCount() <= 202);
 		Assert.assertEquals("Expected list but was " + inc, 1, inc.size());
 		Assert.assertTrue(inc.get(0) instanceof List);
 		final List<Object> list = (List<Object>) inc.get(0);
-		Assert.assertEquals(10, list.size());
+		Assert.assertEquals(15, list.size());
 		Assert.assertEquals(6, ((LargeInteger) list.get(0)).intValue());
 		Assert.assertEquals(7, ((LargeInteger) list.get(1)).intValue());
 		Assert.assertEquals(8, ((LargeInteger) list.get(2)).intValue());
@@ -82,6 +82,11 @@ public class SequentialParserTest {
 		Assert.assertEquals(13, ((LargeInteger) list.get(7)).intValue());
 		Assert.assertEquals(14, ((LargeInteger) list.get(8)).intValue());
 		Assert.assertEquals(15, ((LargeInteger) list.get(9)).intValue());
+		Assert.assertEquals(16, ((LargeInteger) list.get(10)).intValue());
+		Assert.assertEquals(17, ((LargeInteger) list.get(11)).intValue());
+		Assert.assertEquals(18, ((LargeInteger) list.get(12)).intValue());
+		Assert.assertEquals(19, ((LargeInteger) list.get(13)).intValue());
+		Assert.assertEquals(20, ((LargeInteger) list.get(14)).intValue());
 	}
 
 	@Test
