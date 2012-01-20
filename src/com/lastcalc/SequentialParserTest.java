@@ -41,6 +41,7 @@ public class SequentialParserTest {
 		final TokenList inc = sp.parseNext("increment [1,2,3,4,5,6,7,8]");
 		sp.setDumpSteps(false);
 		System.out.println("Increment steps required: \t" + sp.getLastParseStepCount());
+		Assert.assertTrue(sp.getLastParseStepCount() <= 35);
 		Assert.assertEquals("Expected [2,3,4,5,6,7,8,9] but was " + inc, 1, inc.size());
 		Assert.assertTrue(inc.get(0) instanceof List);
 		final List<Object> list = (List<Object>) inc.get(0);
@@ -62,6 +63,7 @@ public class SequentialParserTest {
 		sp.parseNext("aboveFive [H ... T] = if H > 5 then [H ... aboveFive T] else aboveFive T");
 		final TokenList inc = sp.parseNext("aboveFive [4,5,6,7,8,9,10,11,12]");
 		System.out.println("Filter steps required: \t" + sp.getLastParseStepCount());
+		Assert.assertTrue(sp.getLastParseStepCount() <= 106);
 		Assert.assertEquals("Expected [6,7] but was " + inc, 1, inc.size());
 		Assert.assertTrue(inc.get(0) instanceof List);
 		final List<Object> list = (List<Object>) inc.get(0);
@@ -83,6 +85,7 @@ public class SequentialParserTest {
 		sp.parseNext("concat [[H ... T1] ... T2] = [H ... concat [T1 ... T2]]");
 		final TokenList res = sp.parseNext("concat [[1, 2], [3, 4]]");
 		System.out.println("Concat steps required: \t" + sp.getLastParseStepCount());
+		Assert.assertTrue(sp.getLastParseStepCount() <= 30);
 		Assert.assertEquals(1, res.size());
 		Assert.assertTrue(res.get(0) instanceof List);
 		final List<Object> list = (List<Object>) res.get(0);
