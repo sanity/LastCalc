@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-import com.lastcalc.parsers.ParserContext;
+import com.lastcalc.parsers.*;
 
 
 public class CombinedParserPickerFactory extends ParserPickerFactory {
@@ -49,6 +49,11 @@ public class CombinedParserPickerFactory extends ParserPickerFactory {
 			return null;
 		}
 
+	}
+
+	@Override
+	public void addParser(final Parser parser) {
+		throw new UnsupportedOperationException();
 	}
 
 }

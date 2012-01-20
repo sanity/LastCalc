@@ -74,6 +74,7 @@ public abstract class ParserPickerFactory implements Serializable {
 
 	}
 
+
 	public static class Attempt {
 		public TokenList input;
 		public Parser parser;
@@ -112,4 +113,6 @@ public abstract class ParserPickerFactory implements Serializable {
 		}
 
 	}
+
+	public abstract void addParser(Parser parser);
 }

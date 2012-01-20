@@ -20,7 +20,7 @@ public class SequentialParser implements Serializable {
 	private static final Logger log = Logger.getLogger(Bootstrap.class.getName());
 
 	public static final Set<String> recognizedWords = Sets.newHashSet();
-	public static RecentFirstParserPickerFactory globalParserPickerFactory;
+	public static ParserPickerFactory globalParserPickerFactory;
 	private static final FixedOrderParserPickerFactory priorityParsers = new FixedOrderParserPickerFactory();
 	private static final FixedOrderParserPickerFactory lowPriorityParsers = new FixedOrderParserPickerFactory();
 
@@ -34,7 +34,9 @@ public class SequentialParser implements Serializable {
 				}
 			}
 		}
-		globalParserPickerFactory = new RecentFirstParserPickerFactory(allParsers);
+		// globalParserPickerFactory = new
+		// RecentFirstParserPickerFactory(allParsers);
+		globalParserPickerFactory = new KeywordParserPickerFactory(allParsers);
 
 		// Recompute worksheet
 		// The first thing we do is parse any datastructures like lists or maps
