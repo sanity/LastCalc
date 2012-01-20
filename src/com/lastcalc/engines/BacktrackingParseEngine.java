@@ -19,10 +19,19 @@ public class BacktrackingParseEngine extends ParseEngine {
 
 	}
 
+	private int lastParseStepCount = 0;
+
+	private boolean dumpSteps = false;
+
+	public void setDumpSteps(final boolean dumpSteps) {
+		this.dumpSteps = dumpSteps;
+	}
+
 	@Override
 	public LinkedList<ParseStep> parse(final TokenList input,
 			final ParserContext context,
 			final TokenList... alternateInputs) {
+		lastParseStepCount = 0;
 		final TreeSet<ParseStep> candidates = Sets.<ParseStep> newTreeSet();
 		final ParserPicker picker = ppf.getPicker();
 		candidates.add(new ParseStep(input, NoopParser.singleton, ParseResult.success(input), null, 0));
@@ -45,6 +54,10 @@ public class BacktrackingParseEngine extends ParseEngine {
 				}
 				final ParseStep nextStep = picker.pickNext(subContext, candidateStep);
 				if (nextStep != null && nextStep.result.isSuccess()) {
+					lastParseStepCount++;
+					if (dumpSteps) {
+						System.out.println(lastParseStepCount + "\t" + nextStep);
+					}
 					candidates.add(nextStep);
 					continue outer;
 				} else {
@@ -60,6 +73,10 @@ public class BacktrackingParseEngine extends ParseEngine {
 			bestStep = bestStep.previous;
 		}
 		return steps;
+	}
+
+	public int getLastParseStepCount() {
+		return lastParseStepCount;
 	}
 }
 

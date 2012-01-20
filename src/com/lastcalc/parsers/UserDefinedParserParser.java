@@ -174,6 +174,9 @@ public class UserDefinedParserParser extends Parser {
 
 		@Override
 		public ParseResult parse(final TokenList tokens, final int templatePos, final ParserContext context) {
+			if (tokens.get(PreParser.findEdgeOrObjectBackwards(tokens, templatePos, "then")).equals("then"))
+				return ParseResult.fail();
+
 			final List<Object> result = Lists.newArrayListWithCapacity(after.size());
 			final TokenList input = tokens.subList(templatePos, templatePos + template.size());
 			final Map<String, Object> varMap = Maps.newHashMapWithExpectedSize(variables.size());
@@ -192,16 +195,9 @@ public class UserDefinedParserParser extends Parser {
 			}
 			final TokenList resultTL = TokenList.create(result);
 			final TokenList flattened = PreParser.flatten(resultTL);
-			// return ParseResult.success(
-			// tokens.replaceWithTokenList(templatePos, templatePos +
-			// template.size(), flattened),
-			// -flattened.size());
-			// return ParseResult.success(
-			// tokens.replaceWithTokenList(templatePos, templatePos +
-			// template.size(), flattened), 0);
 			return ParseResult.success(
 					tokens.replaceWithTokenList(templatePos, templatePos + template.size(), flattened),
- 0);
+					Math.min(0, -flattened.size()));
 		}
 
 		@Override

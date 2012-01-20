@@ -6,6 +6,9 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.*;
 
+import org.jscience.mathematics.number.Number;
+import org.jscience.physics.amount.Amount;
+
 import com.google.appengine.api.utils.SystemProperty;
 import com.lastcalc.bootstrap.Bootstrap;
 import com.lastcalc.engines.*;
@@ -86,6 +89,8 @@ public class SequentialParser implements Serializable {
 
 	private TokenList previousAnswer = null;
 
+	private int lastParseStepCount;
+
 	public SequentialParser(final ParserPickerFactory priorityParsers, final ParserPickerFactory allParsers,
 			final ParserPickerFactory lowPriorityParsers,
 			final long timeout) {
@@ -104,13 +109,14 @@ public class SequentialParser implements Serializable {
 
 	public TokenList parseNext(final TokenList question) {
 		TokenList answer = null;
-		if (previousAnswer != null && previousAnswer.size() == 1) {
+		if (previousAnswer != null && previousAnswer.size() == 1 && (previousAnswer.get(0) instanceof Amount || previousAnswer.get(0) instanceof Number)) {
 			final TokenList questionWithPrevious = new TokenList.CompositeTokenList(previousAnswer, question);
 			answer = parseEngine.parseAndGetLastStep(question, context, questionWithPrevious);
 
 		} else {
 			answer = parseEngine.parseAndGetLastStep(question, context);
 		}
+		lastParseStepCount = parseEngine.getLastParseStepCount();
 		processNextAnswer(answer);
 		return answer;
 	}
@@ -133,5 +139,13 @@ public class SequentialParser implements Serializable {
 
 	public Map<String, Integer> getUserDefinedKeywordMap() {
 		return userDefinedKeywords;
+	}
+
+	public void setDumpSteps(final boolean d) {
+		parseEngine.setDumpSteps(d);
+	}
+
+	public int getLastParseStepCount() {
+		return lastParseStepCount;
 	}
 }

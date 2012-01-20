@@ -33,8 +33,7 @@ public class ParseStep implements Comparable<ParseStep> {
 
 	@Override
 	public String toString() {
-		return input + " -> " + parser.getClass().getSimpleName() + " : " + parser + " -> " + result.output
-				+ " Score: " + getScore();
+		return getScore() + "\t" + parser.getClass().getSimpleName() + "\t" + input + "\t" + result.output;
 	}
 
 	@Override
