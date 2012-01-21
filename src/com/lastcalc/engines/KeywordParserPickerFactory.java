@@ -26,20 +26,55 @@ public class KeywordParserPickerFactory extends ParserPickerFactory {
 
 	@Override
 	public void addParser(final Parser parser) {
-		boolean foundKeyword = false;
-		for (final Object o : parser.getTemplate()) {
+		List<Set<Parser>> addTo = null;
+		outer: for (final Object o : parser.getTemplate()) {
 			if (o instanceof String) {
-				foundKeyword = true;
 				Set<Parser> ll = parsersMap.get(o);
 				if (ll == null) {
 					ll = Sets.newHashSet();
 					parsersMap.put((String) o, ll);
 				}
-				ll.add(parser);
+				if (addTo == null || addTo.size() > 1 || addTo.get(0).size() > ll.size()) {
+					addTo = Collections.singletonList(ll);
+				}
+			} else if (o instanceof List) {
+				final List<?> ol = (List<?>) o;
+				final List<Set<Parser>> ma = Lists.newLinkedList();
+				for (final Object oi : ol) {
+					if (!(oi instanceof String)) {
+						continue outer;
+					}
+					Set<Parser> ll = parsersMap.get(o);
+					if (ll == null) {
+						ll = Sets.newHashSet();
+						parsersMap.put((String) oi, ll);
+					}
+					ma.add(ll);
+				}
+				if (addTo == null || ma.size() < addTo.size()) {
+					addTo = ma;
+				} else if (ma.size() == addTo.size()) {
+					int maTtl = 0;
+					for (final Set<Parser> ps : ma) {
+						maTtl += ps.size();
+					}
+					int atTtl = 0;
+					for (final Set<Parser> ps : addTo) {
+						atTtl += ps.size();
+					}
+					if (maTtl < atTtl) {
+						addTo = ma;
+					}
+				}
+
 			}
 		}
-		if (!foundKeyword) {
+		if (addTo == null || addTo.isEmpty()) {
 			noKeywords.add(parser);
+		} else {
+			for (final Set<Parser> sp : addTo) {
+				sp.add(parser);
+			}
 		}
 	}
 

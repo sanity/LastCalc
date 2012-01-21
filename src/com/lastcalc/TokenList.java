@@ -184,6 +184,8 @@ public abstract class TokenList implements Iterable<Object>, Serializable {
 		public final ArrayList<TokenList> tokenLists;
 		private final int[] sizes;
 
+		private final Object[] getCache;
+
 		public CompositeTokenList(final TokenList... tokenLists) {
 			this(Lists.newArrayList(tokenLists));
 		}
@@ -194,18 +196,26 @@ public abstract class TokenList implements Iterable<Object>, Serializable {
 			for (int x = 0; x < tokenLists.size(); x++) {
 				sizes[x] = tokenLists.get(x).size();
 			}
+			int sz = 0;
+			for (int x = 0; x < sizes.length; x++) {
+				sz += sizes[x];
+			}
+			getCache = new Object[sz];
 		}
 
 		@Override
-		public Object get(int ix) {
-			int l = 0;
-			while (ix >= sizes[l]) {
-				ix -= sizes[l];
-				l++;
-				if (l == sizes.length)
-					throw new ArrayIndexOutOfBoundsException();
+		public Object get(final int oix) {
+			if (getCache[oix] == null) {
+				int l = 0, ix = oix;
+				while (ix >= sizes[l]) {
+					ix -= sizes[l];
+					l++;
+					if (l == sizes.length)
+						throw new ArrayIndexOutOfBoundsException();
+				}
+				getCache[oix] = tokenLists.get(l).get(ix);
 			}
-			return tokenLists.get(l).get(ix);
+			return getCache[oix];
 		}
 
 		@Override
@@ -215,11 +225,7 @@ public abstract class TokenList implements Iterable<Object>, Serializable {
 
 		@Override
 		public int size() {
-			int sz = 0;
-			for (int x = 0; x < sizes.length; x++) {
-				sz += sizes[x];
-			}
-			return sz;
+			return getCache.length;
 		}
 
 		@Override

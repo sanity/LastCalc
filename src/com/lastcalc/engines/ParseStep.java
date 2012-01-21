@@ -50,8 +50,13 @@ public class ParseStep implements Comparable<ParseStep> {
 			return 0;
 	}
 
+	private double cachedScore = Double.MAX_VALUE;
+
 	private double getScore() {
-		return scoreBias + getScore(result.output) - (0.0001 * depth);
+		if (cachedScore == Double.MAX_VALUE) {
+			cachedScore = scoreBias + getScore(result.output) - (0.0001 * depth);
+		}
+		return cachedScore;
 	}
 
 	public static double getScore(final Object token) {
