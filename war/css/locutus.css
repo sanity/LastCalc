@@ -6,7 +6,7 @@ H3#logo {
 	color: #FFFFFF;
 	font-family: verdana, arial, helvetica, sans-serif;
 	text-shadow: 2px 2px 4px #000000;
-	filter: dropshadow(color = #000000, offx = 2, offy = 2);
+	filter: dropshadow(color =   #000000, offx =   2, offy =   2);
 	padding-left: 5px;
 	padding-top: 5px;
 	padding-bottom: 10px;
@@ -58,7 +58,7 @@ DIV#header {
 		rgba(17, 17, 17, 1) 60%, rgba(43, 43, 43, 1) 76%, rgba(28, 28, 28, 1)
 		91%, rgba(19, 19, 19, 1) 100% );
 	/*W3C*/
-	filter: progid:DXImageTransform.Microsoft.gradient(  startColorstr='#4c4c4c',
+	filter: progid:DXImageTransform.Microsoft.gradient(   startColorstr='#4c4c4c',
 		endColorstr='#131313', GradientType=1 );
 	/*IE6-9 fallback on horizontal gradient*/
 	-webkit-border-radius: 5px;
@@ -80,7 +80,8 @@ DIV.line {
 }
 
 DIV.question:focus {
-    outline: none;
+	resize: none;
+	-webkit-appearance: textarea;
 }
 
 DIV.firstLine {
@@ -103,31 +104,31 @@ DIV.equals {
 	margin-bottom: 3px;
 	width: 22px;
 	height: 22px;
-	line-height:26px;
+	line-height: 26px;
 	padding: 0px;
 	display: inline-block;
 	text-align: center;
-    color:#666;  
-    text-shadow:0 -1px 0 rgba(0,0,0,0.6),  
-                0 1px 0 rgba(255,255,255,0.8) ;
+	color: #666;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.6), 0 1px 0
+		rgba(255, 255, 255, 0.8);
 	font-size: 17pt;
-	font-family:Courier, monospace;
+	font-family: Courier, monospace;
 	vertical-align: middle;
 	-webkit-border-radius: 20px;
 	-moz-border-radius: 20px;
 	border-radius: 20px;
 	background: rgb(206, 220, 231); /* Old browsers */
-	background-image: 	-webkit-repeating-linear-gradient(left, hsla(0,0%,100%,0) 0%, hsla(0,0%,100%,0)   6%, hsla(0,0%,100%, .1) 7.5%),					
-						-webkit-repeating-linear-gradient(left, hsla(0,0%,  0%,0) 0%, hsla(0,0%,  0%,0)   4%, hsla(0,0%,  0%,.03) 4.5%),					
-						-webkit-repeating-linear-gradient(left, hsla(0,0%,100%,0) 0%, hsla(0,0%,100%,0) 1.2%, hsla(0,0%,100%,.15) 2.2%),
-						
-						-webkit-linear-gradient(-90deg, hsl(0,0%,78%)  0%, 
-														hsl(0,0%,90%) 47%, 
-														hsl(0,0%,78%) 53%,
-														hsl(0,0%,70%)100%);
+	background-image: -webkit-repeating-linear-gradient(left, hsla(0, 0%, 100%, 0)
+		0%, hsla(0, 0%, 100%, 0) 6%, hsla(0, 0%, 100%, .1) 7.5% ),
+		-webkit-repeating-linear-gradient(left, hsla(0, 0%, 0%, 0) 0%,
+		hsla(0, 0%, 0%, 0) 4%, hsla(0, 0%, 0%, .03) 4.5% ),
+		-webkit-repeating-linear-gradient(left, hsla(0, 0%, 100%, 0) 0%,
+		hsla(0, 0%, 100%, 0) 1.2%, hsla(0, 0%, 100%, .15) 2.2% ),
+		-webkit-linear-gradient(-90deg, hsl(0, 0%, 78%) 0%, hsl(0, 0%, 90%)
+		47%, hsl(0, 0%, 78%) 53%, hsl(0, 0%, 70%) 100% );
 	-webkit-box-shadow: 1px 1px 1px 1px #888;
--moz-box-shadow: 1px 1px 1px 1px #888;
-box-shadow: 1px 1px 1px 1px #888;
+	-moz-box-shadow: 1px 1px 1px 1px #888;
+	box-shadow: 1px 1px 1px 1px #888;
 }
 
 DIV.answer {
