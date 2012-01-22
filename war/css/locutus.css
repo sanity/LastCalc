@@ -81,7 +81,13 @@ DIV.line {
 
 DIV.question:focus {
 	resize: none;
-	-webkit-appearance: textarea;
+	-webkit-appearance: textfield;
+    background-color: white;
+    background-color: -moz-field;
+    border: 1px solid darkgray;
+    box-shadow: 1px 1px 1px 0 lightgray inset;
+    margin-top: 5px;
+    padding: 2px 3px;
 }
 
 DIV.firstLine {

@@ -2,7 +2,6 @@ package com.lastcalc.db;
 
 import java.io.*;
 
-
 import com.googlecode.objectify.annotation.Unindexed;
 import com.lastcalc.TokenList;
 
@@ -15,10 +14,25 @@ public class Line implements Serializable {
 		this.answer = answer;
 	}
 
-	public String varAssignment;
-
 	public String question;
 
 	@Unindexed
 	public TokenList answer;
+
+	private void writeObject(final ObjectOutputStream out) throws IOException {
+		out.writeObject(question);
+		out.writeInt(answer.size());
+		for (final Object o : answer) {
+			out.writeObject(o);
+		}
+	}
+
+	private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+		question = (String) in.readObject();
+		final Object[] answer = new Object[in.readInt()];
+		for (int x = 0; x < answer.length; x++) {
+			answer[x] = in.readObject();
+		}
+		this.answer = TokenList.createD(answer);
+	}
 }

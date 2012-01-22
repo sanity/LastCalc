@@ -40,11 +40,16 @@ public class MainPageServlet extends HttpServlet {
 			final String worksheetId = path.substring(1);
 
 			if (worksheetId.length() == 8) {
-				// This is readonly, dupilcate it and redirect to
+				// This is readonly, duplicate it and redirect to
 				// a new id
 				final Worksheet worksheet = new Worksheet();
 
 				final Worksheet template = obj.query(Worksheet.class).filter("readOnlyId", worksheetId).get();
+
+				if (template == null) {
+					resp.sendError(404);
+					return;
+				}
 
 				worksheet.parentId = worksheet.id;
 

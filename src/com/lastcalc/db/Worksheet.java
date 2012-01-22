@@ -5,14 +5,13 @@ import java.util.logging.Logger;
 
 import javax.persistence.*;
 
-
 import com.google.common.collect.Lists;
+
 import com.googlecode.objectify.annotation.*;
 import com.lastcalc.Misc;
 
 @Cached
 public class Worksheet {
-
 	private static final Logger log = Logger.getLogger(Worksheet.class.getName());
 
 	public Worksheet() {
