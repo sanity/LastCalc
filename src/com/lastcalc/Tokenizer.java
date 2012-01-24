@@ -45,7 +45,11 @@ public class Tokenizer {
 			}
 			if (pureNum != null && digits) {
 				if (floatingPoint) {
-					ret.add(FloatingPoint.valueOf(pureNum));
+					final int dotPos = pureNum.indexOf(".");
+					final long intPart = Long.parseLong(pureNum.substring(0, dotPos));
+					final String fracPart = pureNum.substring(dotPos + 1, pureNum.length());
+					final long num = intPart * (long) Math.pow(10, fracPart.length()) + Long.parseLong(fracPart);
+					ret.add(Rational.valueOf(num, (long) Math.pow(10, fracPart.length())));
 				} else {
 					ret.add(LargeInteger.valueOf(pureNum));
 				}

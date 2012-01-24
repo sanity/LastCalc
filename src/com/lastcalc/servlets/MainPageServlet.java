@@ -88,6 +88,11 @@ public class MainPageServlet extends HttpServlet {
 				doc.body().attr("data-worksheet-ro-id", worksheet.readOnlyId);
 				final Element header = doc.body().appendElement("div").attr("id", "header");
 				header.appendElement("h3").attr("id", "logo").text("LastCalc");
+
+				doc.body().appendElement("div").attr("class", "groups").appendElement("a")
+				.attr("href", "https://groups.google.com/forum/?hl=en#!forum/lastcalc")
+				.html("Ideas, Feedback, Questions, or Problems?  <u>Sign up</u> for our Google Group");
+
 				int lineNo = 1;
 				final SequentialParser sp = SequentialParser.create();
 				for (final Line qa : worksheet.qaPairs) {

@@ -19,6 +19,8 @@ public class Line implements Serializable {
 	@Unindexed
 	public TokenList answer;
 
+	// We serialize manually to ensure that TokenLists are serialized
+	// efficiently
 	private void writeObject(final ObjectOutputStream out) throws IOException {
 		out.writeObject(question);
 		out.writeInt(answer.size());

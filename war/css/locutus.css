@@ -2,6 +2,17 @@ body,td,a,p,.h {
 	font-family: arial, sans-serif;
 }
 
+div.groups {
+	text-align:center;
+	margin-left:auto;
+	margin-right:auto;
+	font-size: 10pt;
+}
+
+div.groups a {
+	color: #000000;
+}
+
 H3#logo {
 	color: #FFFFFF;
 	font-family: verdana, arial, helvetica, sans-serif;

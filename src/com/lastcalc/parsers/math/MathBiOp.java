@@ -70,8 +70,26 @@ public class MathBiOp extends Parser {
 				b = numToAmount((org.jscience.mathematics.number.Number) b, unit);
 			}
 			result = calcAmount((Amount) a, op, (Amount) b);
-
 		} else {
+			// If either a or b is FloatingPoint, ensure both are
+			if (a instanceof FloatingPoint || b instanceof FloatingPoint) {
+				if (!(a instanceof FloatingPoint)) {
+					a = FloatingPoint.valueOf(((org.jscience.mathematics.number.Number) a).doubleValue());
+				}
+				if (!(b instanceof FloatingPoint)) {
+					b = FloatingPoint.valueOf(((org.jscience.mathematics.number.Number) b).doubleValue());
+				}
+			}
+			// If either a or b is Rational, ensure both are
+			if (a instanceof Rational || b instanceof Rational) {
+				if (!(a instanceof Rational)) {
+					a = Rational.valueOf(((org.jscience.mathematics.number.Number) a).longValue(), 1);
+				}
+				if (!(b instanceof Rational)) {
+					b = Rational.valueOf(((org.jscience.mathematics.number.Number) b).longValue(), 1);
+				}
+			}
+
 			result = calcNumber((org.jscience.mathematics.number.Number) a, op,
 					(org.jscience.mathematics.number.Number) b);
 		}

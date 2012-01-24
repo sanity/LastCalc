@@ -6,3 +6,10 @@ yen = jpy
 euro = eur
 euros = eur
 A x B = A * B
+
+# Percentages
+X + P% = X * (1+P/100)
+X - P% = X * (1-P/100)
+P% of X = X*(P/100)
+X * P% = X*(P/100)
+P% * X = X*(P/100)
