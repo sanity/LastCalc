@@ -121,4 +121,12 @@ public class SequentialParserTest {
 		final TokenList result = sp.parseNext("100 lb in kg");
 		Assert.assertEquals(1, result.size());
 	}
+
+	@Test
+	public void radixTest() {
+		final SequentialParser sp = SequentialParser.create();
+		final TokenList result = sp.parseNext("(0x1b + 0o20 + 0b101) in binary");
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("0b110000", result.get(0).toString());
+	}
 }

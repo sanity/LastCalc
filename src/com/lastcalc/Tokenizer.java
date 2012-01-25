@@ -8,13 +8,14 @@ import com.google.common.collect.Lists;
 
 import org.jscience.mathematics.number.*;
 
+import com.lastcalc.parsers.math.Radix;
 
 public class Tokenizer {
 	private static Pattern p;
 
 	static {
 		p = Pattern
-				.compile("\\.\\.\\.|\\?|[0-9]*\\.?[0-9]+|[a-zA-Z0-9]+|[()\\[\\]\\{\\}\\:\\+-/*$Û´£%@#\\^]|[=<>!]+|\"(?:[^\"\\\\]|\\\\.)*\"");
+				.compile("\\.\\.\\.|\\?|0o[0-7]+|0b[10]+|0x[0-9a-f]+|[0-9]*\\.?[0-9]+|[a-zA-Z0-9]+|[()\\[\\]\\{\\}\\:\\+-/*$Û´£%@#\\^]|[=<>!]+|\"(?:[^\"\\\\]|\\\\.)*\"");
 	}
 
 	public static TokenList tokenize(final String orig) {
@@ -60,7 +61,13 @@ public class Tokenizer {
 
 				ret.add(new QuotedString(found));
 			} else {
-				ret.add(found);
+				// Is it a radix?
+				final Radix radix = Radix.parse(found);
+				if (radix != null) {
+					ret.add(radix);
+				} else {
+					ret.add(found);
+				}
 			}
 		}
 

@@ -11,6 +11,7 @@ import org.jsoup.parser.Tag;
 
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.parsers.amounts.UnitParser;
+import com.lastcalc.parsers.math.Radix;
 
 
 public class Renderers {
@@ -56,6 +57,8 @@ public class Renderers {
 				final org.jscience.mathematics.number.Number<?> num = (org.jscience.mathematics.number.Number<?>) obj;
 				final String numStr = Misc.numberFormat.format(num.doubleValue());
 				ret.appendElement("span").addClass("number").text(numStr);
+			} else if (obj instanceof Radix) {
+				ret.appendElement("span").addClass("number").text(obj.toString());
 			} else if (obj instanceof UserDefinedParser) {
 				ret.appendChild(toHtml(baseUri, ((UserDefinedParser) obj).after));
 			} else {

@@ -10,7 +10,7 @@ import com.lastcalc.parsers.amounts.*;
 import com.lastcalc.parsers.bool.*;
 import com.lastcalc.parsers.collections.GetFromMap;
 import com.lastcalc.parsers.currency.Currencies;
-import com.lastcalc.parsers.math.MathBiOp;
+import com.lastcalc.parsers.math.*;
 
 
 public abstract class Parser implements Serializable {
@@ -112,6 +112,7 @@ public abstract class Parser implements Serializable {
 		parsers.add(new BoolFunctionsParser());
 		parsers.add(new EqualityParser());
 		parsers.add(new MathBiOp());
+		parsers.add(new RadixConverter());
 
 	}
 

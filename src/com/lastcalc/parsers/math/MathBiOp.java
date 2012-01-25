@@ -54,6 +54,20 @@ public class MathBiOp extends Parser {
 	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		Object a = tokens.get(templatePos);
 		Object b = tokens.get(templatePos + 2);
+		int outputRadix = 10;
+		if (a instanceof Radix && b instanceof Radix) {
+			final Radix ra = (Radix) a;
+			final Radix rb = (Radix) b;
+			if (ra.radix == rb.radix) {
+				outputRadix = ra.radix;
+			}
+		}
+		if (a instanceof Radix) {
+			a = LargeInteger.valueOf(((Radix) a).integer);
+		}
+		if (b instanceof Radix) {
+			b = LargeInteger.valueOf(((Radix) b).integer);
+		}
 		if ((!(a instanceof org.jscience.mathematics.number.Number) && !(a instanceof Amount))
 				|| (!(b instanceof org.jscience.mathematics.number.Number) && !(b instanceof Amount)))
 			return ParseResult.fail();
@@ -76,7 +90,7 @@ public class MathBiOp extends Parser {
 				return Parser.ParseResult.fail();
 		}
 
-		final Object result;
+		Object result;
 		if (a instanceof Amount || b instanceof Amount) {
 			final boolean opSameUnit = opsRequiringSameUnit.contains(op);
 			if (a instanceof org.jscience.mathematics.number.Number) {
@@ -109,6 +123,10 @@ public class MathBiOp extends Parser {
 
 			result = calcNumber((org.jscience.mathematics.number.Number) a, op,
 					(org.jscience.mathematics.number.Number) b);
+
+			if (outputRadix != 10 && result instanceof LargeInteger) {
+				result = new Radix(((LargeInteger) result).longValue(), outputRadix);
+			}
 		}
 		if (result == null)
 			return ParseResult.fail();
@@ -116,6 +134,7 @@ public class MathBiOp extends Parser {
 			return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), result));
 	}
 
+	@SuppressWarnings("rawtypes")
 	private Amount numToAmount(final org.jscience.mathematics.number.Number num, final Unit<?> unit) {
 		if (num.doubleValue() == num.longValue())
 			return Amount.valueOf(num.longValue(), unit);
