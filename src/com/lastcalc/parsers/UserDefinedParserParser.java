@@ -241,14 +241,8 @@ public class UserDefinedParserParser extends Parser {
 			return true;
 		}
 
-		public boolean shouldPrintResult() {
-			if (!variables.isEmpty())
-				return true;
-			for (final Object o : before) {
-				if (!(o instanceof String))
-					return true;
-			}
-			return false;
+		public boolean hasVariables() {
+			return !variables.isEmpty();
 		}
 	}
 

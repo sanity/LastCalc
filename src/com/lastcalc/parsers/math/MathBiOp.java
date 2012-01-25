@@ -16,20 +16,27 @@ public class MathBiOp extends Parser {
 	private static final long serialVersionUID = 4507416694168613210L;
 
 	private static final ArrayList<String> opsRequiringSameUnit = Lists.newArrayList("+", "-", "<", ">", "<=", ">=",
-			"=", "!=");
-
-	private static String[] precidence = new String[] { "^", "*", "/", "%", "+", "-", "<", ">", "<=", ">=", "=", "!=" };
+			"==", "!=");
 
 	private static Map<String, Integer> precidenceMap = Maps.newHashMap();
 	static {
-		for (int x = 0; x < precidence.length; x++) {
-			precidenceMap.put(precidence[x], x);
-		}
+		precidenceMap.put("^", 2);
+		precidenceMap.put("*", 3);
+		precidenceMap.put("/", 3);
+		precidenceMap.put("mod", 3);
+		precidenceMap.put("+", 4);
+		precidenceMap.put("-", 4);
+		precidenceMap.put("<", 6);
+		precidenceMap.put("<=", 6);
+		precidenceMap.put(">", 6);
+		precidenceMap.put(">=", 6);
+		precidenceMap.put("==", 7);
+		precidenceMap.put("!=", 7);
 	}
 
 	private static TokenList template = TokenList.createD(
 			Object.class,
-			Lists.<Object>newArrayList(precidence),
+			Lists.<Object> newArrayList(precidenceMap.keySet()),
 			Object.class);
 
 	@Override
@@ -53,9 +60,19 @@ public class MathBiOp extends Parser {
 		final String op = (String) tokens.get(templatePos + 1);
 
 		final Integer opPrecidence = precidenceMap.get(op);
+		boolean samePrecidenceOk = false;
 		for (final Object token : PreParser.enclosedByStructure(tokens, templatePos)) {
+			if (token == op) {
+				// Operators of the same precedence are permitted *after* this
+				// operator
+				samePrecidenceOk = true;
+				continue;
+			}
 			final Integer tPrecidence = precidenceMap.get(token);
-			if (tPrecidence != null && tPrecidence < opPrecidence)
+			if (samePrecidenceOk) {
+				if (tPrecidence != null && tPrecidence < opPrecidence)
+					return Parser.ParseResult.fail();
+			} else if (tPrecidence != null && tPrecidence <= opPrecidence)
 				return Parser.ParseResult.fail();
 		}
 
@@ -168,11 +185,14 @@ public class MathBiOp extends Parser {
 			return a.isLessThan(b);
 		else if (op.equals("<="))
 			return a.equals(b) || a.isLessThan(b);
-		else if (op.equals("="))
-			return a.equals(b);
-		else if (op.equals("!="))
-			return !a.equals(b);
-		else
+		else if (op.equals("mod")) {
+			if (a instanceof LargeInteger && b instanceof LargeInteger) {
+				final LargeInteger ali = (LargeInteger) a;
+				final LargeInteger bli = (LargeInteger) b;
+				return ali.mod(bli);
+			} else
+				return null;
+		} else
 			return null;
 	}
 

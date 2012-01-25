@@ -42,9 +42,7 @@ public class SequentialParser implements Serializable {
 		// The first thing we do is parse any datastructures like lists or maps
 		priorityParsers.addParser(new PreParser());
 		priorityParsers.addParser(new IfThenElse());
-		// Next we want to parse any user-defined functions before subsequent
-		// parsers screw them up
-		lowPriorityParsers.addParser(new UserDefinedParserParser());
+		priorityParsers.addParser(new UserDefinedParserParser());
 
 		try {
 			final BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -62,7 +60,8 @@ public class SequentialParser implements Serializable {
 				}
 				final TokenList parsed = parser.parseNext(next);
 				if (parsed.size() != 1 || !(parsed.get(0) instanceof UserDefinedParser)) {
-					log.warning("Failed to parse line" + lineNo + " as UserDefinedParserParser (" + next + ")");
+					log.warning("Failed to parse line " + lineNo + " as UserDefinedParserParser (" + next + " -> "
+							+ parsed + ")");
 				} else {
 					globalParserPickerFactory.addParser((UserDefinedParser) parsed.get(0));
 				}
@@ -114,13 +113,17 @@ public class SequentialParser implements Serializable {
 		if (previousAnswer != null && previousAnswer.size() == 1 && (previousAnswer.get(0) instanceof Amount || previousAnswer.get(0) instanceof Number)) {
 			final TokenList questionWithPrevious = new TokenList.CompositeTokenList(previousAnswer, question);
 			answer = parseEngine.parseAndGetLastStep(question, context, questionWithPrevious);
-
 		} else {
 			answer = parseEngine.parseAndGetLastStep(question, context);
 		}
 		lastParseStepCount = parseEngine.getLastParseStepCount();
 		processNextAnswer(answer);
 		return answer;
+	}
+
+	// Parse a question without changing SequentialParser state
+	public TokenList quietParse(final TokenList question) {
+		return parseEngine.parseAndGetLastStep(question, context);
 	}
 
 	public void processNextAnswer(final TokenList answer) {

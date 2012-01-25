@@ -4,24 +4,12 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.jscience.mathematics.number.LargeInteger;
+import org.jscience.mathematics.number.*;
+import org.jscience.mathematics.number.Number;
 import org.junit.Test;
-
-import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class SequentialParserTest {
-
-	@Test
-	public void parseUDPAnswerTest() {
-		final SequentialParser sp = SequentialParser.create();
-		final TokenList res = sp.parseNext("a=2+3");
-		Assert.assertEquals(1, res.size());
-		Assert.assertTrue(res.get(0) instanceof UserDefinedParser);
-		final UserDefinedParser udp = (UserDefinedParser) res.get(0);
-		Assert.assertEquals(1, udp.after.size());
-	}
-
 	@Test
 	public void parseWithPrevAnswer() {
 		final SequentialParser sp = SequentialParser.create();
@@ -30,6 +18,14 @@ public class SequentialParserTest {
 		Assert.assertEquals(1, res.size());
 		Assert.assertTrue(res.get(0) instanceof LargeInteger);
 		Assert.assertEquals(53, ((LargeInteger) res.get(0)).intValue());
+	}
+
+	@Test
+	public void ifTest() {
+		final SequentialParser sp = SequentialParser.create();
+		final TokenList v = sp.parseNext("if 7==5 then 1 else 0");
+		Assert.assertEquals(1, v.size());
+		Assert.assertEquals(0, ((Number<?>) v.get(0)).longValue());
 	}
 
 	@Test
@@ -113,7 +109,16 @@ public class SequentialParserTest {
 	@Test
 	public void precedenceTest() {
 		final SequentialParser sp = SequentialParser.create();
-		Assert.assertEquals(((org.jscience.mathematics.number.Number) sp.parseNext("3+5*2").get(0)).intValue(), 13);
-		Assert.assertEquals(((org.jscience.mathematics.number.Number) sp.parseNext("2*(6/3)").get(0)).intValue(), 4);
+		Assert.assertEquals(13, ((org.jscience.mathematics.number.Number) sp.parseNext("3+5*2").get(0)).intValue());
+		Assert.assertEquals(4, ((org.jscience.mathematics.number.Number) sp.parseNext("2*(6/3)").get(0)).intValue());
+		Assert.assertEquals(6, ((org.jscience.mathematics.number.Number) sp.parseNext("4-1+3").get(0)).intValue());
+		Assert.assertEquals(0, ((org.jscience.mathematics.number.Number) sp.parseNext("4-1-3").get(0)).intValue());
+	}
+
+	@Test
+	public void backtrackTest() {
+		final SequentialParser sp = SequentialParser.create();
+		final TokenList result = sp.parseNext("100 lb in kg");
+		Assert.assertEquals(1, result.size());
 	}
 }

@@ -68,8 +68,6 @@ public class ParseStep implements Comparable<ParseStep> {
 					score++;
 				} else if (t instanceof Number) {
 					score += 0.8;
-				} else if (t instanceof UserDefinedParser) {
-					score += getScore(((UserDefinedParser) t).after) / 2.0;
 				} else {
 					score += 0.5;
 				}
@@ -79,10 +77,15 @@ public class ParseStep implements Comparable<ParseStep> {
 	}
 
 	public boolean isMinimal() {
-		if (result.output.size() == 1) {
-			if (result.output.get(0) instanceof UserDefinedParser)
-				return ((UserDefinedParser) result.output.get(0)).after.size() == 1;
-			else
+		if (result.output.size() == 1 && !(result.output.get(0) instanceof String)) {
+			if (result.output.get(0) instanceof UserDefinedParser) {
+				final UserDefinedParser udp = (UserDefinedParser) result.output.get(0);
+				// Handle a common case
+				if (udp.getTemplate().indexOf("if") != -1)
+					return false;
+				else
+					return true;
+			} else
 				return true;
 		} else
 			return false;

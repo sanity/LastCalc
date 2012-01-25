@@ -26,6 +26,11 @@ public class CurrencyReverser extends Parser {
 	}
 
 	@Override
+	public String toString() {
+		return "";
+	}
+
+	@Override
 	public boolean equals(final Object obj) {
 		return obj instanceof CurrencyReverser;
 	}

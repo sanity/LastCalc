@@ -44,7 +44,7 @@ public class KeywordParserPickerFactory extends ParserPickerFactory {
 					if (!(oi instanceof String)) {
 						continue outer;
 					}
-					Set<Parser> ll = parsersMap.get(o);
+					Set<Parser> ll = parsersMap.get(oi);
 					if (ll == null) {
 						ll = Sets.newHashSet();
 						parsersMap.put((String) oi, ll);
@@ -102,7 +102,7 @@ public class KeywordParserPickerFactory extends ParserPickerFactory {
 
 		@Override
 		public ParseStep pickNext(final ParserContext context, final ParseStep previous) {
-			final Iterable<Parser> parsers = Iterables.concat(Iterables.transform(previous.result.output,
+			Iterable<Parser> parsers = Iterables.concat(Iterables.transform(previous.result.output,
 					new Function<Object, Iterable<Parser>>() {
 
 				@Override
@@ -116,7 +116,8 @@ public class KeywordParserPickerFactory extends ParserPickerFactory {
 						return parsers;
 				}
 			}));
-			final ParseStep next = getNext(context, Iterables.concat(parsers, noKeywords), previous);
+			parsers = Iterables.concat(parsers, noKeywords);
+			final ParseStep next = getNext(context, parsers, previous);
 			return next;
 		}
 

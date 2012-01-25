@@ -68,10 +68,14 @@ public class BacktrackingParseEngine extends ParseEngine {
 		}
 		final LinkedList<ParseStep> steps = Lists.newLinkedList();
 		ParseStep bestStep = candidates.first();
+
+		bestStep.isMinimal();
+
 		while (bestStep != null) {
 			steps.addFirst(bestStep);
 			bestStep = bestStep.previous;
 		}
+
 		return steps;
 	}
 
