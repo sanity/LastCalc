@@ -37,8 +37,8 @@ function highlightSyntax(element) {
 	
 	var lineNumber = getLineNumber(element.parent("DIV.line"));
 	var savedSel = rangy.saveSelection();
-	// Remove any existing variables
-	element.find("span.highlighted").replaceWith(function() {
+	// Remove any existing variables or stray elements caused by a Webkit bug (see http://stackoverflow.com/questions/9018766/dom-elements-appearing-inexplicably_)
+	element.find("font,div,span:not(.rangySelectionBoundary)").replaceWith(function() {
 		return $(this).contents();
 	});
 	inSpan = false;
@@ -191,8 +191,8 @@ $(window).load(function() {
 	});
 
 	// Catch keyups within questions for highlighting
-	$(document).on("keyup", "div.question", function() {
-		highlightSyntax($(this));
+	$(document).on("keyup", "div.question", function(event) {
+		   highlightSyntax($(this));
 	});
 	variables = jQuery.parseJSON($('body').attr("data-variables"));
 	$("DIV.question").each(function() {
