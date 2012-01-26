@@ -28,7 +28,13 @@ public class UserDefinedParserParser extends Parser {
 
 		final TokenList before = tokens.subList(start, templatePos);
 
+		if (before.isEmpty())
+			return ParseResult.fail();
+
 		final TokenList after = PreParser.flatten(tokens.subList(templatePos + 1, end));
+
+		if (after.isEmpty())
+			return ParseResult.fail();
 
 		final Set<String> variables = Sets.newHashSet();
 

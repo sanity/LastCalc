@@ -5,7 +5,22 @@ dollar = usd
 yen = jpy
 euro = eur
 euros = eur
+
+# Math
 A x B = A * B
+square root = sqrt
+cube root = cbrt
+absolute = abs
+exponent = exp
+cosine = cos
+hyperbolic cos = cosh
+logarithm = log
+natural logarithm = log
+int = round
+sine = sin
+hyperbolic sin = sinh
+tangent = tan
+hyperbolic tan = tanh
 
 # Percentages
 X + P% = X * (1+P/100)
@@ -13,3 +28,9 @@ X - P% = X * (1-P/100)
 P% of X = X*(P/100)
 X * P% = X*(P/100)
 P% * X = X*(P/100)
+
+# Various constants
+speed of light = 299792458 meters per second
+the speed of light = 299792458 meters per second
+pi = 3.141592653589
+e = 2.71828183
