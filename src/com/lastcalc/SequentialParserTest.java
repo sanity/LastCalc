@@ -129,4 +129,12 @@ public class SequentialParserTest {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals("0b110000", result.get(0).toString());
 	}
+
+	@Test
+	public void stringFromMapTest() {
+		final SequentialParser sp = SequentialParser.create();
+		final TokenList result = sp.parseNext("get \"blah\" from {\"blah\": 3, \"oaf\" : 2}");
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(LargeInteger.valueOf(3), result.get(0));
+	}
 }
