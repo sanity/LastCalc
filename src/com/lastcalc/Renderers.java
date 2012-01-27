@@ -15,7 +15,7 @@ import com.lastcalc.parsers.math.Radix;
 
 
 public class Renderers {
-	private static Format currencyFormat = new DecimalFormat("#.####");
+	private static Format currencyFormat = new DecimalFormat("###,###.####");
 
 	public static Element toHtml(final String baseUri, final TokenList tokens) {
 		final Element ret = new Element(Tag.valueOf("span"), baseUri);
