@@ -9,6 +9,9 @@ import org.jsoup.nodes.*;
 import com.googlecode.objectify.*;
 import com.lastcalc.*;
 import com.lastcalc.db.*;
+import com.lastcalc.parsers.*;
+import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
+import com.lastcalc.servlets.WorksheetServlet.AnswerType;
 
 public class MainPageServlet extends HttpServlet {
 	private static final long serialVersionUID = -797244922688131805L;
@@ -105,9 +108,43 @@ public class MainPageServlet extends HttpServlet {
 					final Element question = lineEl.appendElement("div").attr("class", "question")
 							.attr("contentEditable", "true");
 					question.text(qa.question);
-					final Element equals = lineEl.appendElement("div").attr("class", "equals").text("=");
-					lineEl.appendElement("div").attr("class", "answer")
-					.html(Renderers.toHtml(requestURL.toString(), qa.answer).toString());
+					AnswerType aType = null;
+					String retAnswer = "";
+					if (qa.answer.size() == 1 && (qa.answer.get(0) instanceof UserDefinedParser)) {
+						final UserDefinedParser udp = (UserDefinedParser) qa.answer.get(0);
+						if (udp.hasVariables()) {
+							aType = AnswerType.FUNCTION;
+						} else {
+							final TokenList udfResult = udp.after;
+							// This is slightly naughty as the SeqParser won't
+							// be in
+							// exactly
+							// the same state as it was when the UDF was parsed.
+							// Unlikely to
+							// cause problems though (fingers crossed!).
+							final TokenList parsedUdfResult = sp.quietParse(udfResult);
+
+							if (parsedUdfResult.size() == 1) {
+								retAnswer = Renderers.toHtml(req.getRequestURI(), PreParser.flatten(parsedUdfResult))
+										.toString();
+								aType = AnswerType.NORMAL;
+							} else {
+								aType = AnswerType.FUNCTION;
+							}
+						}
+					} else {
+						aType = AnswerType.NORMAL;
+						retAnswer = Renderers.toHtml(req.getRequestURI(), PreParser.flatten(qa.answer))
+								.toString();
+					}
+					if (aType.equals(AnswerType.NORMAL)) {
+						lineEl.appendElement("div").attr("class", "equals").text("=");
+					} else {
+						lineEl.appendElement("div").attr("class", "equals")
+								.html("<span style=\"font-size:10pt;\">&#10003</span>");
+					}
+					lineEl.appendElement("div").attr("class", "answer").html(retAnswer);
+					sp.processNextAnswer(qa.answer);
 					lineNo++;
 				}
 				doc.body().attr("data-variables", Misc.gson.toJson(sp.getUserDefinedKeywordMap()));
