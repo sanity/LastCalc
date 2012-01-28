@@ -137,4 +137,13 @@ public class SequentialParserTest {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(LargeInteger.valueOf(3), result.get(0));
 	}
+
+	@Test
+	public void powTest() {
+		final SequentialParser sp = SequentialParser.create();
+		final TokenList result = sp.parseNext("25^(1/2)");
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(5.0,
+				((org.jscience.mathematics.number.Number) result.get(0)).doubleValue());
+	}
 }
