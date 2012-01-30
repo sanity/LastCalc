@@ -146,4 +146,15 @@ public class SequentialParserTest {
 		Assert.assertEquals(5.0,
 				((org.jscience.mathematics.number.Number) result.get(0)).doubleValue());
 	}
+
+	@Test
+	public void stepRangeTest() {
+		final SequentialParser sp = SequentialParser.create();
+		sp.parseNext("step([]) = []");
+		sp.parseNext("step([H...T]) = if T!=[] then [H,step(T)] else [H]");
+		sp.parseNext("range(X)(Y) = if X<Y then [X...range(X+1)(Y)] else []");
+		sp.parseNext("range(X) = range(0)(X)");
+		final TokenList result = sp.parseNext("step(range(2))");
+		Assert.assertEquals("[0, [1]]", result.get(0).toString());
+	}
 }

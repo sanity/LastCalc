@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns="http://java.sun.com/xml/ns/javaee"
-xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
 	<servlet>
 		<servlet-name>MainPage</servlet-name>
 		<servlet-class>com.lastcalc.servlets.MainPageServlet</servlet-class>
@@ -12,6 +12,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>Worksheet</servlet-name>
 		<servlet-class>com.lastcalc.servlets.WorksheetServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>Help</servlet-name>
+		<servlet-class>com.lastcalc.servlets.HelpServlet</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>MainPage</servlet-name>
 		<url-pattern>/*</url-pattern>
@@ -19,5 +23,9 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>Worksheet</servlet-name>
 		<url-pattern>/ws</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Help</servlet-name>
+		<url-pattern>/help</url-pattern>
 	</servlet-mapping>
 </web-app>

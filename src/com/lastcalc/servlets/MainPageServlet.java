@@ -76,10 +76,16 @@ public class MainPageServlet extends HttpServlet {
 				.attr("type", "text/css");
 				doc.head().appendElement("link").attr("rel", "stylesheet").attr("href", "/css/locutus.css")
 				.attr("type", "text/css");
+				doc.head().appendElement("link").attr("rel", "stylesheet")
+				.attr("href", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css")
+				.attr("type", "text/css");
 				doc.head().appendElement("script")
 				.attr("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
 				doc.head().appendElement("script")
 				.attr("src", "http://cdn.jquerytools.org/1.2.6/all/jquery.tools.min.js");
+				doc.head().appendElement("script")
+				.attr("src", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js");
+
 				doc.head().appendElement("script").attr("src", "/js/rangy-core.js");
 				doc.head().appendElement("script").attr("src", "/js/rangy-selectionsaverestore.js");
 				doc.head().appendElement("script").attr("src", "/js/locutus.js");
@@ -90,17 +96,20 @@ public class MainPageServlet extends HttpServlet {
 				doc.body().attr("data-worksheet-id", worksheet.id);
 				doc.body().attr("data-worksheet-ro-id", worksheet.readOnlyId);
 				final Element header = doc.body().appendElement("div").attr("id", "header");
-				header.appendElement("h3").attr("id", "logo").text("LastCalc");
-
-				doc.body().appendElement("div").attr("class", "groups").appendElement("a")
+				header.appendElement("div").attr("id", "logo").text("LastCalc");
+				header.appendElement("div").attr("id", "help-button").text("Hide Help");
+				final Element ws = doc.body().appendElement("div").attr("id", "worksheet");
+				ws.appendElement("div").attr("class", "groups").appendElement("a")
 				.attr("href", "https://groups.google.com/forum/?hl=en#!forum/lastcalc")
 				.html("Ideas, Feedback, Questions, or Problems?  <u>Sign up</u> for our Google Group");
+				doc.body().appendElement("iframe").attr("id", "helpframe").attr("src", "/help")
+						.attr("frameBorder", "0");
 
 				int lineNo = 1;
 				final SequentialParser sp = SequentialParser.create();
 				for (final Line qa : worksheet.qaPairs) {
 					sp.processNextAnswer(qa.answer);
-					final Element lineEl = doc.body().appendElement("div").addClass("line")
+					final Element lineEl = ws.appendElement("div").addClass("line")
 							.attr("id", "line" + lineNo);
 					if (lineNo == 1) {
 						lineEl.addClass("firstLine");
@@ -108,47 +117,22 @@ public class MainPageServlet extends HttpServlet {
 					final Element question = lineEl.appendElement("div").attr("class", "question")
 							.attr("contentEditable", "true");
 					question.text(qa.question);
-					AnswerType aType = null;
-					String retAnswer = "";
-					if (qa.answer.size() == 1 && (qa.answer.get(0) instanceof UserDefinedParser)) {
-						final UserDefinedParser udp = (UserDefinedParser) qa.answer.get(0);
-						if (udp.hasVariables()) {
-							aType = AnswerType.FUNCTION;
-						} else {
-							final TokenList udfResult = udp.after;
-							// This is slightly naughty as the SeqParser won't
-							// be in
-							// exactly
-							// the same state as it was when the UDF was parsed.
-							// Unlikely to
-							// cause problems though (fingers crossed!).
-							final TokenList parsedUdfResult = sp.quietParse(udfResult);
-
-							if (parsedUdfResult.size() == 1) {
-								retAnswer = Renderers.toHtml(req.getRequestURI(), PreParser.flatten(parsedUdfResult))
-										.toString();
-								aType = AnswerType.NORMAL;
-							} else {
-								aType = AnswerType.FUNCTION;
-							}
-						}
-					} else {
-						aType = AnswerType.NORMAL;
-						retAnswer = Renderers.toHtml(req.getRequestURI(), PreParser.flatten(qa.answer))
-								.toString();
-					}
+					final AnswerType aType = qa.answer.size() == 1 && qa.answer.get(0) instanceof UserDefinedParser ? AnswerType.FUNCTION
+							: AnswerType.NORMAL;
 					if (aType.equals(AnswerType.NORMAL)) {
 						lineEl.appendElement("div").attr("class", "equals").text("=");
+						lineEl.appendElement("div").attr("class", "answer")
+						.html(Renderers.toHtml("/", PreParser.flatten(qa.answer)).toString());
 					} else {
 						lineEl.appendElement("div").attr("class", "equals")
-								.html("<span style=\"font-size:10pt;\">&#10003</span>");
+						.html("<span style=\"font-size:10pt;\">&#10003</span>");
+						lineEl.appendElement("div").attr("class", "answer");
 					}
-					lineEl.appendElement("div").attr("class", "answer").html(retAnswer);
 					sp.processNextAnswer(qa.answer);
 					lineNo++;
 				}
 				doc.body().attr("data-variables", Misc.gson.toJson(sp.getUserDefinedKeywordMap()));
-				final Element lineEl = doc.body().appendElement("div").addClass("line").attr("id", "line" + lineNo);
+				final Element lineEl = ws.appendElement("div").addClass("line").attr("id", "line" + lineNo);
 				if (lineNo == 1) {
 					lineEl.addClass("firstLine");
 				}

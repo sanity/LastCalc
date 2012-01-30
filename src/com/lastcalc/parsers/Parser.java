@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 import com.lastcalc.TokenList;
 import com.lastcalc.parsers.amounts.*;
 import com.lastcalc.parsers.bool.*;
-import com.lastcalc.parsers.collections.GetFromMap;
+import com.lastcalc.parsers.collections.*;
 import com.lastcalc.parsers.currency.Currencies;
 import com.lastcalc.parsers.math.*;
 
@@ -107,11 +107,13 @@ public abstract class Parser implements Serializable {
 		parsers.add(new AmountParser());
 		parsers.add(new UDPApplier());
 		parsers.add(new AmountConverterParser());
-		parsers.add(new GetFromMap());
+		parsers.add(new GetFromListOrMap());
+		parsers.add(new ApplyTo());
+		parsers.add(new FoldLeft());
 		parsers.add(new BoolParser());
 		parsers.add(new BoolFunctionsParser());
 		parsers.add(new EqualityParser());
-		parsers.add(new MathOp());
+		parsers.add(new FoldLeft());
 		parsers.add(new MathBiOp());
 		parsers.add(new RadixConverter());
 

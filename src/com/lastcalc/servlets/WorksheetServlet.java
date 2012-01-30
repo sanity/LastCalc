@@ -89,33 +89,9 @@ public class WorksheetServlet extends HttpServlet {
 			response.answers.put(x + 1,
 					Renderers.toHtml(req.getRequestURI(), PreParser.flatten(answer))
 					.toString());
-			AnswerType aType;
-
-			if (answer.size() == 1 && (answer.get(0) instanceof UserDefinedParser)) {
-				final UserDefinedParser udp = (UserDefinedParser) answer.get(0);
-				if (udp.hasVariables()) {
-					aType = AnswerType.FUNCTION;
-				} else {
-					final TokenList udfResult = udp.after;
-					// This is slightly naughty as the SeqParser won't be in
-					// exactly
-					// the same state as it was when the UDF was parsed.
-					// Unlikely to
-					// cause problems though (fingers crossed!).
-					final TokenList parsedUdfResult = seqParser.quietParse(udfResult);
-
-					if (parsedUdfResult.size() == 1) {
-						response.answers.put(x + 1,
-								Renderers.toHtml(req.getRequestURI(), PreParser.flatten(parsedUdfResult)).toString());
-						aType = AnswerType.NORMAL;
-					} else {
-						aType = AnswerType.FUNCTION;
-					}
-				}
-			} else {
-				aType = AnswerType.NORMAL;
-			}
-			response.answerTypes.put(x + 1, aType);
+			response.answerTypes.put(x + 1,
+					answer.size() == 1 && answer.get(0) instanceof UserDefinedParser ? AnswerType.FUNCTION
+							: AnswerType.NORMAL);
 		}
 
 		resp.setContentType("application/json; charset=UTF-8");

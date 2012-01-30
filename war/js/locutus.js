@@ -198,5 +198,22 @@ $(window).load(function() {
 	$("DIV.question").each(function() {
 		highlightSyntax($(this));
 	});
-	$("DIV.question").last().focus();
+	
+	// Set up help button
+	$("DIV#help-button").button();
+	$("DIV#help-button").click(function() {
+		var helpIframe = $("IFRAME#helpframe");
+		if (helpIframe.is(":visible")) {
+			$('DIV#worksheet').width('100%');
+			$("DIV#help-button span").text("Show Help");
+			helpIframe.hide("slide", { direction: "right" }, 1000);
+		} else {
+			$('DIV#worksheet').width('50%');
+			$("DIV#help-button span").text("Hide Help");
+			helpIframe.show("slide", { direction: "right" }, 1000);
+		}
+	});
+	
+	var last = $("DIV.question").last();
+	last.focus();
 });

@@ -20,16 +20,53 @@ sine = sin
 hyperbolic sin = sinh
 tangent = tan
 hyperbolic tan = tanh
-
+Num hundred = Num*100
+Num thousand = Num*1000
+Num million =     Num*1000000
+Num billion =     Num*1000000000
+Num trillion =    Num*1000000000000
+Num quadrillion = Num*1000000000000000
+Num quintillion = Num*1000000000000000000
+Num seNumtillion =  Num*1000000000000000000000
+Num septillion =  Num*1000000000000000000000000
+1st = 0
+first = 0
+2nd = 1
+second = 1
+3rd = 2
+third = 2
+Num th = Num-1
+fourth = 3
+fifth = 4
+sixth = 5
+seventh = 6
+eighth = 7
+ninth = 8
+tenth = 9
 # Percentages
-X + P% = X * (1+P/100)
-X - P% = X * (1-P/100)
-P% of X = X*(P/100)
-X * P% = X*(P/100)
-P% * X = X*(P/100)
+X + PNum% = X * (1+PNum/100)
+X - PNum% = X * (1-PNum/100)
+PNum% of X = X*(PNum/100)
+X * PNum% = X*(PNum/100)
+PNum% * X = X*(PNum/100)
 
 # Various constants
 speed of light = 299792458 meters per second
 the speed of light = 299792458 meters per second
 pi = 3.141592653589
 e = 2.71828183
+
+# Various math operations on lists
+sum List = sum of List
+sum of List = fold (X Y=X+Y) over List with 0
+size List = size of List
+size of List = fold (X Y=X+1) over List with 0
+maximum List = max of List
+maximum of List = max List
+max List = max of List
+max of List = fold (X Y = if X > Y then X else Y) over List with 0
+minimum of List = min List
+min of List = fold (X Y = if (X == false) then Y else (if X < Y then X else Y)) over List with false
+average of List = avg of List
+avg of List = (sum of List) / (size of List)
+standard deviation of List = stdev of List

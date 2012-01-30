@@ -13,16 +13,6 @@ div.groups a {
 	color: #000000;
 }
 
-H3#logo {
-	color: #FFFFFF;
-	font-family: verdana, arial, helvetica, sans-serif;
-	text-shadow: 2px 2px 4px #000000;
-	filter: dropshadow(color =   #000000, offx =   2, offy =   2);
-	padding-left: 5px;
-	padding-top: 5px;
-	padding-bottom: 10px;
-}
-
 DIV#header {
 	width: 100%;
 	margin-bottom: 30px;
@@ -80,20 +70,46 @@ DIV#header {
 	box-shadow: 1px 1px 1px 1px #CCCCCC;
 }
 
+div#logo {
+	color: #FFFFFF;
+	font-family: verdana, arial, helvetica, sans-serif;
+	text-shadow: 2px 2px 4px #000000;
+	filter: dropshadow(color =   #000000, offx =   2, offy =   2);
+	padding-left: 5px;
+	padding-top: 5px;
+	padding-bottom: 10px;
+}
+
+.ui-button .ui-button-text
+{
+   padding: 2px !important;
+   font-size: .72em !important;
+}
+
+DIV#help-button {
+	position: absolute;
+	top:13px;
+	right:10px;
+}
+
 DIV.line {
-	padding: 10;
+	padding: 5;
 	margin-left: 40px;
 	margin-right: 40px;
-	margin-bottom: 5px;
+	margin-bottom: 0px;
 	border: 1px;
 	border-color: #CCC;
 	border-top-style: solid;
 }
 
+SPAN.type-here {
+	text-color:#999999;
+}
+
 DIV.question:focus {
 	resize: none;
 	-webkit-appearance: textfield;
-    background-color: white;
+    background-color: #EEEEFF;
     background-color: -moz-field;
     border: 1px solid darkgray;
     box-shadow: 1px 1px 1px 0 lightgray inset;
@@ -151,4 +167,17 @@ DIV.equals {
 DIV.answer {
 	display: inline-block;
 	vertical-align: middle;
+}
+
+DIV#worksheet {
+	width:50%;
+}
+
+IFRAME#helpframe {
+    position : absolute;
+    top      : 60px;
+    right    : 10px;
+    height   : 92%;
+    width    : 49%;
+    border   : 1px;
 }

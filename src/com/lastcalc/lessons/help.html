@@ -1,29 +1,179 @@
 <html>
-<head></head>
+<head>
+<title>LastCalc Help</title>
+<link rel="stylesheet" href="/css/highlighting.css" type="text/css" />
+<link rel="stylesheet" href="/css/locutus.css" type="text/css" />
+<link rel="stylesheet"
+  href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css"
+  type="text/css" />
+<script type="text/javascript"
+  src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript"
+  src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("ul#menu li").button();
+	});
+</script>
+<style type="text/css">
+body {
+	font-size: 11pt;
+}
+
+h1 {
+	font-size: 14pt;
+}
+
+h2 {
+	font-size: 12pt;
+}
+
+ul {
+	list-style-type: none;
+}
+
+li a {
+	text-decoration: none;
+	font-size: 8pt;
+}
+
+span.ui-button-text {
+	padding-left: 8px ! important;
+	padding-right: 8px ! important;
+}
+
+div.section {
+	clear: both;
+	padding-top: 10px;
+}
+
+div.question {
+	margin-top: 12px;
+	margin-bottom: 12px;
+}
+</style>
+</head>
 <body>
-  <h1>Getting Started</h1>
-  <div class="lesson">
-    <h2>Basic Math</h2>
-    LastCalc let's you do basic math, note that '*' means multiply and
-    '/' means divide, for example:<br />
-    <div class="question">18/2 + 5 * 2</div>
+  Choose a section:
+  <ul id="menu">
+  </ul>
+  <div class="section">
+    <h1>Getting Started</h1>
+    <div class="lesson">
+      <h2>What is LastCalc?</h2>
+      <img style="float: right;" src="/images/homework-cartoon.gif"
+        height="100px" width="100px" /> LastCalc is a powerful but easy
+      to use web-based calculator. Think of the lastCalc page like a
+      notepad for calculations, you start on the top line and work your
+      way down. The good news is that, unlike with a notepad and pencil,
+      LastCalc does the hard work of figuring out the answers for you!
+
+      <h2>Simple math</h2>
+      LastCalc lets you do basic math, note that <b>*</b> means multiply
+      and <b>/</b> means divide, for example:
+      <div class="question">18/2+4*2</div>
+      You type the part of the question before the
+      <div class="equals">=</div>
+      , and when you hit return the answer will appear after it.
+    </div>
+    <div class="lesson">
+      <h2>Brackets</h2>
+      LastCalc will multiply and divide numbers before it adds or
+      subtracts them, but you can force it to calculate part of an
+      answer first by putting it in brackets:<br />
+      <div class="question">18/(2+4)* 2</div>
+    </div>
+    <div class="lesson">
+      <h2>Conversions</h2>
+      LastCalc understands lots of ways to measure things, weights,
+      distances, durations, currencies, and so on. LastCalc will let you
+      convert between different units, some examples:
+      <div class="question">3 weeks in days</div>
+      <div class="question">15 km in miles</div>
+      Or even currency conversions (using up-to-date conversion rates):
+      <div class="question">$23 in euros</div>
+    </div>
   </div>
-  <div class="lesson">
-    <h2>Brackets</h2>
-    LastCalc will multiply and divide numbers before it adds or
-    subtracts them, but you can force it to calculate part of an answer
-    first by putting it in brackets:<br />
-    <div class="question">18/(2 + 5) * 2</div>
+  <div class="section">
+    <h1>Variables and Functions</h1>
+    <div class="lesson">
+      <h2>Assigning a result to a variable</h2>
+      What if you would like to use the result of one calculation in a
+      later calculation? LastCalc let's you do this:
+      <div class="question">homeValue = $80000 + 10%</div>
+      Note how "homeValue" is now colored to indicate that it is a
+      "variable". This means that wherever LastCalc sees "homeValue", it
+      will replace it with the outcome of this calculation. So now, we
+      can calculate:
+      <div class="question">homeValue + $2000</div>
+      You can define as many variables as you like!
+    </div>
+    <div class="lesson">
+      <h2>Functions</h2>
+      What if you find yourself doing the same calculation over and over
+      again? Wouldn't it be nice if LastCalc could learn to do that
+      calculation for you? It can! Imagine that you are a fitness
+      trainer and you frequently need to calculate someone's "body mass
+      index", which is based on their weight and their height. For
+      example, if your weight in kilograms is 90, and your height in
+      meters is 1.8, your BMI is calculated as follows:
+      <div class="question">90 / (1.8 * 1.8)</div>
+      So how do we teach LastCalc how to do this for us? It's easy:
+      <div class="question">bmi Height Weight = Weight / (Height *
+        Height)</div>
+      Let's take a closer look at this. Defining a function is similar
+      to assigning a result to a variable, except for the <span
+        class="highlighted variable white"> Height</span> and <span
+        class="highlighted variable white"> Weight</span> - what are
+      those?
+      <p />
+      We call these <b>parameters</b>, think of them as placeholders,
+      into which LastCalc can slot any value (we call this "binding").
+      When you are defining a function, any word beginning with a
+      Capital Letter will become a parameter. So now, let's try using
+      our new BMI calculator to do the same calculation we did before:
+      <div class="question">bmi 1.8 90</div>
+      Yay, as we would expect we got the same result as before, but now
+      it is much easier to calculate someone's BMI. In this case, the <span
+        class="highlighted variable white"> Height</span> parameter was
+      "bound" to 1.8, and the <span class="highlighted variable white">
+        Weight</span> parameter was "bound" to 90.
+    </div>
   </div>
-  <div class="lesson">
-    <h2>Basic Conversions</h2>
-    LastCalc understands lots of ways to measure things, weights,
-    distances, durations, and so on. LastCalc will let you convert
-    between different units, some examples:
-    <div class="question">3 weeks in days</div>
-    <div class="question">15 km in miles</div>
-    Or even currency conversions (using up-to-date conversion rates):
-    <div class="question">$23 in Euros</div>
+  <div class="section">
+    <h1>Lists</h1>
+    <div class="lesson">
+      <h2>Creating a list and retrieving items</h2>
+      People frequently deal with lists of things, and so LastCalc
+      let's you have lists of things too, and manipulate those lists.
+      Let's create a list of distances and assign them to a variable:
+      <div class="question">trips = [2, 30, 200]</div>
+      We can retrieve items from the list:
+      <div class="question">get 2nd from trips</div>
+      This does the same thing:
+      <div class="question">get 1 from trips</div>
+      "Huh?" I hear you say?  Why does "get 1" retrieve the second
+      item from the list?  The reason is that lists are "indexed" 
+      starting at 0, so to get the first item you use "get 0 from ...".
+      But, if you use 1st, 2nd, 3rd, etc then it takes care of this for 
+      you.
+      <p/>
+      You can see the trick here:
+      <div class="question">3rd</div>
+      Clever eh?  3rd becomes 2 because that is what will get us the 3rd
+      item in the list.  I hope that's not too confusing.
+    </div>
+    <div class="lesson">
+      <h2>Math with lists</h2>
+      Getting things from lists isn't too exciting, but you can do
+      math with them too:
+      <div class="question">sum of trips</div>
+      <div class="question">size of trips</div>
+      <div class="question">average of trips</div>
+      And something a little more ambitious:
+      <div class="question">average of [2 miles, 3000 meters, 5 km]</div>
+      Neat eh?  We can use units in list calculations.
+    </div>
   </div>
 </body>
 </html>

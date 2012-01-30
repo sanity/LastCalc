@@ -5,6 +5,9 @@ import java.util.Map.Entry;
 
 import com.google.common.collect.*;
 
+import org.jscience.mathematics.number.Number;
+import org.jscience.physics.amount.Amount;
+
 import com.lastcalc.TokenList;
 import com.lastcalc.parsers.PreParser.ListWithTail;
 import com.lastcalc.parsers.PreParser.MapWithTail;
@@ -163,7 +166,18 @@ public class UserDefinedParserParser extends Parser {
 
 			for (final Object o : before) {
 				if (variables.contains(o)) {
-					tpl.add(Object.class);
+					final String var = (String) o;
+					if (var.endsWith("List")) {
+						tpl.add(List.class);
+					} else if (var.endsWith("Map")) {
+						tpl.add(Map.class);
+					} else if (var.endsWith("Num") || var.endsWith("Number")) {
+						tpl.add(Number.class);
+					} else if (var.endsWith("Amount")) {
+						tpl.add(Amount.class);
+					} else {
+						tpl.add(Object.class);
+					}
 				} else if (o instanceof String) {
 					tpl.add(o);
 				} else if (o instanceof MapWithTail || o instanceof Map) {

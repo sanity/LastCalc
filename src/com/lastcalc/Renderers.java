@@ -1,8 +1,11 @@
 package com.lastcalc;
 
 import java.text.*;
+import java.util.*;
 
 import javax.measure.unit.Unit;
+
+import com.google.common.collect.Lists;
 
 import org.jscience.economics.money.Currency;
 import org.jscience.physics.amount.Amount;
@@ -17,9 +20,17 @@ import com.lastcalc.parsers.math.Radix;
 public class Renderers {
 	private static Format currencyFormat = new DecimalFormat("###,###.####");
 
+	private static ArrayList<String> variableColors = Lists.newArrayList("red", "green", "blue", "orange", "rosy",
+			"pink");
+
 	public static Element toHtml(final String baseUri, final TokenList tokens) {
+		return toHtml(baseUri, tokens, Collections.<String, Integer> emptyMap());
+	}
+
+	public static Element toHtml(final String baseUri, final TokenList tokens, final Map<String, Integer> variables) {
 		final Element ret = new Element(Tag.valueOf("span"), baseUri);
 		for (final Object obj : tokens) {
+			ret.append(" ");
 			if (obj instanceof Amount) {
 				final Amount<?> amount = (Amount<?>) obj;
 				final Element amountSpan = ret.appendElement("span");
@@ -61,8 +72,16 @@ public class Renderers {
 				ret.appendElement("span").addClass("number").text(obj.toString());
 			} else if (obj instanceof UserDefinedParser) {
 				ret.appendChild(toHtml(baseUri, ((UserDefinedParser) obj).after));
+			} else if (variables.containsKey(obj)) {
+				final String color = variableColors.get(variables.get(obj) % variableColors.size());
+				ret.appendElement("span").addClass("highlighted").addClass("variable").addClass(color)
+				.text((String) obj);
+			} else if (obj instanceof String && Character.isUpperCase(((String) obj).charAt(0))) {
+				ret.appendElement("span").addClass("highlighted").addClass("variable").addClass("white")
+				.text((String) obj);
+
 			} else {
-				ret.appendChild(new TextNode(" " + obj.toString() + " ", baseUri));
+				ret.appendChild(new TextNode(obj.toString(), baseUri));
 			}
 		}
 		return ret;
