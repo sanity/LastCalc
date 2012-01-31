@@ -206,18 +206,21 @@ $(window).load(function() {
 	$("DIV#help-button").click(function() {
 		var helpIframe = $("IFRAME#helpframe");
 		if (helpIframe.is(":visible")) {
-			$('DIV#worksheet').width('100%');
-			$("DIV#help-button span").text("Show Help");
-			helpIframe.hide("slide", { direction: "right" }, 1000);
+			$('DIV#worksheet').animate({width:'100%'}, 500);
+			helpIframe.hide("fade", 250, function() {
+				$("DIV#help-button span").text("Show Help");
+			});
 		} else {
-			$('DIV#worksheet').width('50%');
+			$('DIV#worksheet').animate({width:'50%'}, 500);
 			$("DIV#help-button span").text("Hide Help");
-			helpIframe.show("slide", { direction: "right" }, 1000);
+			helpIframe.show("fade", 250);
 		}
 	});
 	
 	$("DIV.question").last().focus();
-	$("DIV#worksheet").click(function() {
-		$("DIV.question").last().focus();
+	$("BODY").click(function() {
+		if (!$("DIV.question:focus").length) {
+			$("DIV.question").last().focus();
+		}
 	});
 });

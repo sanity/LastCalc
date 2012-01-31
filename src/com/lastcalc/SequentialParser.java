@@ -48,7 +48,6 @@ public class SequentialParser implements Serializable {
 			final BufferedReader br = new BufferedReader(new InputStreamReader(
 					Bootstrap.class.getResourceAsStream("bootstrap.txt")));
 			final SequentialParser parser = SequentialParser.create();
-			parser.setExtractUDPResult(false);
 			int lineNo = 1;
 			while (true) {
 				String next = br.readLine();
@@ -80,12 +79,6 @@ public class SequentialParser implements Serializable {
 		final long timeout = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? 2000
 				: Integer.MAX_VALUE;
 		return new SequentialParser(priorityParsers, globalParserPickerFactory, lowPriorityParsers, timeout);
-	}
-
-	private boolean extractUdpResult = true;
-
-	private void setExtractUDPResult(final boolean b) {
-		extractUdpResult = false;
 	}
 
 	private static final long serialVersionUID = 3602019924032548636L;
@@ -125,7 +118,12 @@ public class SequentialParser implements Serializable {
 		}
 		lastParseStepCount = parseEngine.getLastParseStepCount();
 		processNextAnswer(answer);
-		if (extractUdpResult && answer.size() == 1 && answer.get(0) instanceof UserDefinedParser) {
+
+		return answer;
+	}
+
+	public TokenList stripUDF(final TokenList answer) {
+		if (answer.size() == 1 && answer.get(0) instanceof UserDefinedParser) {
 			final UserDefinedParser udf = (UserDefinedParser) answer.get(0);
 			if (udf.variables.isEmpty()) {
 				final TokenList parsedResult = parseEngine.parseAndGetLastStep(udf.after, context);

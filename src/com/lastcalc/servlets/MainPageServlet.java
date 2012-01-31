@@ -103,7 +103,7 @@ public class MainPageServlet extends HttpServlet {
 				.attr("href", "https://groups.google.com/forum/?hl=en#!forum/lastcalc")
 				.html("Ideas, Feedback, Questions, or Problems?  <u>Sign up</u> for our Google Group");
 				doc.body().appendElement("iframe").attr("id", "helpframe").attr("src", "/help")
-						.attr("frameBorder", "0");
+				.attr("frameBorder", "0");
 
 				int lineNo = 1;
 				final SequentialParser sp = SequentialParser.create();
@@ -117,18 +117,19 @@ public class MainPageServlet extends HttpServlet {
 					final Element question = lineEl.appendElement("div").attr("class", "question")
 							.attr("contentEditable", "true");
 					question.text(qa.question);
-					final AnswerType aType = qa.answer.size() == 1 && qa.answer.get(0) instanceof UserDefinedParser ? AnswerType.FUNCTION
+					final TokenList strippedAnswer = sp.stripUDF(qa.answer);
+					final AnswerType aType = strippedAnswer.size() == 1
+							&& strippedAnswer.get(0) instanceof UserDefinedParser ? AnswerType.FUNCTION
 							: AnswerType.NORMAL;
 					if (aType.equals(AnswerType.NORMAL)) {
 						lineEl.appendElement("div").attr("class", "equals").text("=");
 						lineEl.appendElement("div").attr("class", "answer")
-						.html(Renderers.toHtml("/", PreParser.flatten(qa.answer)).toString());
+								.html(Renderers.toHtml("/", PreParser.flatten(strippedAnswer)).toString());
 					} else {
 						lineEl.appendElement("div").attr("class", "equals")
 						.html("<span style=\"font-size:10pt;\">&#10003</span>");
 						lineEl.appendElement("div").attr("class", "answer");
 					}
-					sp.processNextAnswer(qa.answer);
 					lineNo++;
 				}
 				doc.body().attr("data-variables", Misc.gson.toJson(sp.getUserDefinedKeywordMap()));

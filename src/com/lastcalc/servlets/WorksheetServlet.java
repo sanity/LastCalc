@@ -86,11 +86,11 @@ public class WorksheetServlet extends HttpServlet {
 
 		for (int x = 0; x < qaPairs.size(); x++) {
 			final TokenList answer = qaPairs.get(x).answer;
-			response.answers.put(x + 1,
-					Renderers.toHtml(req.getRequestURI(), PreParser.flatten(answer))
+			final TokenList strippedAnswer = seqParser.stripUDF(answer);
+			response.answers.put(x + 1, Renderers.toHtml(req.getRequestURI(), PreParser.flatten(strippedAnswer))
 					.toString());
-			response.answerTypes.put(x + 1,
-					answer.size() == 1 && answer.get(0) instanceof UserDefinedParser ? AnswerType.FUNCTION
+			response.answerTypes.put(x + 1, strippedAnswer.size() == 1
+					&& strippedAnswer.get(0) instanceof UserDefinedParser ? AnswerType.FUNCTION
 							: AnswerType.NORMAL);
 		}
 

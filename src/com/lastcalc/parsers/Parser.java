@@ -114,6 +114,7 @@ public abstract class Parser implements Serializable {
 		parsers.add(new BoolFunctionsParser());
 		parsers.add(new EqualityParser());
 		parsers.add(new FoldLeft());
+		parsers.add(new MathOp());
 		parsers.add(new MathBiOp());
 		parsers.add(new RadixConverter());
 
