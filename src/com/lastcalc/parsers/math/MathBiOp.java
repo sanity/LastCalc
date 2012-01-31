@@ -192,7 +192,7 @@ public class MathBiOp extends Parser {
 			else
 				return FloatingPoint.valueOf(a.doubleValue() / b.doubleValue());
 		} else if (op.equals("^")) {
-			if (!(b instanceof LargeInteger))
+			if (!(b instanceof LargeInteger) || ((LargeInteger) b).isNegative())
 				return FloatingPoint.valueOf(Math.pow(a.doubleValue(), b.doubleValue()));
 			else
 				return a.pow(b.intValue());

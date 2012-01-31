@@ -107,6 +107,12 @@ public class SequentialParserTest {
 	}
 
 	@Test
+	public void negativeExpTest() {
+		final SequentialParser sp = SequentialParser.create();
+		Assert.assertEquals(4, ((org.jscience.mathematics.number.Number) sp.parseNext("0.5^-2").get(0)).intValue());
+	}
+
+	@Test
 	public void precedenceTest() {
 		final SequentialParser sp = SequentialParser.create();
 		Assert.assertEquals(13, ((org.jscience.mathematics.number.Number) sp.parseNext("3+5*2").get(0)).intValue());

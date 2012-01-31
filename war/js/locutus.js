@@ -119,6 +119,8 @@ $(window).load(function() {
 		if (!$(this).find("DIV.question").is(":focus")) {
 			$(this).find("DIV.question").focus();
 		}
+		event.stopPropagation();
+		return false;
 	});
 
 	$(document).on("focus", "DIV.question", function(event) {
@@ -214,6 +216,8 @@ $(window).load(function() {
 		}
 	});
 	
-	var last = $("DIV.question").last();
-	last.focus();
+	$("DIV.question").last().focus();
+	$("DIV#worksheet").click(function() {
+		$("DIV.question").last().focus();
+	});
 });

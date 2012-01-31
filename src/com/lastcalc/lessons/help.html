@@ -174,6 +174,28 @@ div.question {
       <div class="question">average of [2 miles, 3000 meters, 5 km]</div>
       Neat eh?  We can use units in list calculations.
     </div>
+    <div class="lesson">
+      <h2>Applying a function to the elements of a list</h2>
+      Imagine you wanted to double every number in a list, how would
+      you do that?  You might hope that we had created a convenient
+      "double list" function, but then we'd spend all of our time
+      writing functions to cover every conceivable circumstance.  
+      Fortunately for you (and our fingers!) LastCalc provides a much
+      more flexible solution to this problem.  Check this out:
+      <div class="question">apply (Num=Num*2) to [1,2,3,4,5]</div>
+      Woah, how did that happen?  We created a function that takes a number
+      and doubles it, and then we apply it to every number in the list.
+      Note that this function is <i>private</i> to this line, it can't
+      be used anywhere else.  Programmers call this a "first-class function",
+      but you can call it "coolness" ;-)
+      <p/>
+      This can be a bit confusing, so let's try another one - we're going
+      to convert a bunch of distances to miles:
+      <div class="question">apply (Distance = Distance in miles) to [30000 feet, 2 km]</div>
+      Ok, one more, we're going to convert a list of lists to a list containing
+      the sizes of each sub-list:
+      <div class="question">apply (List = size of List) to [[1], [1, 1], [1]]</div>
+    </div>
   </div>
 </body>
 </html>

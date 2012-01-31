@@ -8,6 +8,8 @@ euros = eur
 
 # Math
 A x B = A * B
+- Num = (0 - Num)
+- Amount = (0 - Amount)
 square root = sqrt
 cube root = cbrt
 absolute = abs

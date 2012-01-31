@@ -110,11 +110,11 @@ DIV.question:focus {
 	resize: none;
 	-webkit-appearance: textfield;
     background-color: #EEEEFF;
-    background-color: -moz-field;
     border: 1px solid darkgray;
     box-shadow: 1px 1px 1px 0 lightgray inset;
     margin-top: 5px;
     padding: 2px 3px;
+    height: 20px;
 }
 
 DIV.firstLine {
@@ -171,6 +171,7 @@ DIV.answer {
 
 DIV#worksheet {
 	width:50%;
+	height:100%;
 }
 
 IFRAME#helpframe {

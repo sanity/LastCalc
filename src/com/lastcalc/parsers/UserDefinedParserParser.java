@@ -175,6 +175,9 @@ public class UserDefinedParserParser extends Parser {
 						tpl.add(Number.class);
 					} else if (var.endsWith("Amount")) {
 						tpl.add(Amount.class);
+					} else if (var.endsWith("Fun") || var.endsWith("Function")) {
+						tpl.add(UserDefinedParser.class);
+						tpl.add(Amount.class);
 					} else {
 						tpl.add(Object.class);
 					}
