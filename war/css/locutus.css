@@ -102,8 +102,14 @@ DIV.line {
 	border-top-style: solid;
 }
 
-SPAN.type-here {
-	text-color:#999999;
+DIV.helpline {
+	padding: 5;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 0px;
+	border: 1px;
+	border-color: #CCC;
+	border-top-style: solid;
 }
 
 DIV.question:focus {
@@ -122,6 +128,11 @@ DIV.firstLine {
 }
 
 DIV.question {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+DIV.helpquestion {
 	display: inline-block;
 	vertical-align: middle;
 }
@@ -171,14 +182,56 @@ DIV.answer {
 
 DIV#worksheet {
 	width:50%;
-	height:100%;
+	height:85%;
 }
 
-IFRAME#helpframe {
-    position : absolute;
+DIV#helpframe {
+	overflow: auto;
+	position : absolute;
     top      : 60px;
     right    : 10px;
-    height   : 92%;
+    bottom   : 5px;
     width    : 49%;
     border   : 1px;
+}
+
+DIV#helpframe {
+	font-size: 11pt;
+}
+
+DIV#helpframe h1 {
+	font-size: 14pt;
+}
+
+DIV#helpframe h2 {
+	font-size: 12pt;
+}
+
+DIV#helpframe ul {
+	list-style-type: none;
+}
+
+DIV#helpframe li a {
+	text-decoration: none;
+	font-size: 8pt;
+}
+
+DIV#helpframe span.ui-button-text {
+	padding-left: 8px ! important;
+	padding-right: 8px ! important;
+}
+
+DIV#helpframe div.section {
+	clear: both;
+	padding-top: 10px;
+}
+
+DIV#helpframe div.helpquestion {
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+DIV#helpframe div.line {
+    margin-left: 10px;
+    margin-right: 10px;
 }

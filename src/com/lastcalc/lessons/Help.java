@@ -10,9 +10,12 @@ import com.google.common.collect.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 
+import com.google.appengine.api.utils.SystemProperty;
 import com.lastcalc.*;
 import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
+
+import static com.google.appengine.api.utils.SystemProperty.environment;
 
 public class Help {
 	private static final Logger log = Logger.getLogger(Help.class.getName());
@@ -38,7 +41,16 @@ public class Help {
 		}
 	}
 
-	public static Document createHelpDoc() throws IOException {
+	private static Document cachedHelpDoc;
+
+	public static Document getHelpDoc() throws IOException {
+		if (cachedHelpDoc == null || environment.value() == SystemProperty.Environment.Value.Development) {
+			cachedHelpDoc = createHelpDoc();
+		}
+		return cachedHelpDoc;
+	}
+
+	private static Document createHelpDoc() throws IOException {
 		final Document helpDoc = Jsoup.parse(Help.class.getResourceAsStream("help.html"), "UTF-8", "/");
 
 		helpDoc.outputSettings().charset(Charset.forName("UTF-8"));
@@ -54,7 +66,7 @@ public class Help {
 			final String questionText = oldQuestion.text();
 			oldQuestion.text("");
 			oldQuestion.removeClass("question");
-			oldQuestion.addClass("line").addClass("firstLine");
+			oldQuestion.addClass("helpline").addClass("firstLine");
 			final Element line = oldQuestion;
 			final TokenList tokenizedQuestion = Tokenizer.tokenize(questionText);
 			final TokenList answer = sp.parseNext(tokenizedQuestion);
@@ -65,11 +77,11 @@ public class Help {
 					.toString();
 			final TokenList strippedAnswer = sp.stripUDF(answer);
 			final boolean isFunction = strippedAnswer.size() == 1 && strippedAnswer.get(0) instanceof UserDefinedParser;
-			line.appendElement("div").addClass("question").html(questionAsHtml);
+			line.appendElement("div").addClass("helpquestion").html(questionAsHtml);
 			if (!isFunction) {
 				line.appendElement("div").attr("class", "equals").text("=");
 				line.appendElement("div").attr("class", "answer")
-						.html(Renderers.toHtml("/", PreParser.flatten(strippedAnswer)).toString());
+				.html(Renderers.toHtml("/", PreParser.flatten(strippedAnswer)).toString());
 			} else {
 				line.appendElement("div").attr("class", "equals")
 				.html("<span style=\"font-size:10pt;\">&#10003</span>");
@@ -84,7 +96,7 @@ public class Help {
 			final String headerText = header.text();
 			final String anchor = headerText.toLowerCase().replace(' ', '-');
 			header.html("<a name=\"" + anchor + "\">" + headerText + "</a>");
-			menuUl.appendElement("li").appendElement("a").attr("href", "/help#" + anchor).text(headerText);
+			menuUl.appendElement("li").attr("data-section", anchor).text(headerText);
 		}
 		return helpDoc;
 	}

@@ -9,6 +9,7 @@ import org.jsoup.nodes.*;
 import com.googlecode.objectify.*;
 import com.lastcalc.*;
 import com.lastcalc.db.*;
+import com.lastcalc.lessons.Help;
 import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.servlets.WorksheetServlet.AnswerType;
@@ -102,8 +103,15 @@ public class MainPageServlet extends HttpServlet {
 				ws.appendElement("div").attr("class", "groups").appendElement("a")
 				.attr("href", "https://groups.google.com/forum/?hl=en#!forum/lastcalc")
 				.html("Ideas, Feedback, Questions, or Problems?  <u>Sign up</u> for our Google Group");
-				doc.body().appendElement("iframe").attr("id", "helpframe").attr("src", "/help")
-				.attr("frameBorder", "0");
+
+				// doc.body().appendElement("iframe").attr("id",
+				// "helpframe").attr("src", "/help")
+				// .attr("frameBorder", "0");
+
+				final Element helpDiv = doc.body().appendElement("div").attr("id", "helpframe");
+				for (final Node n : Help.getHelpDoc().body().childNodes()) {
+					helpDiv.appendChild(n.clone());
+				}
 
 				int lineNo = 1;
 				final SequentialParser sp = SequentialParser.create();
@@ -120,11 +128,11 @@ public class MainPageServlet extends HttpServlet {
 					final TokenList strippedAnswer = sp.stripUDF(qa.answer);
 					final AnswerType aType = strippedAnswer.size() == 1
 							&& strippedAnswer.get(0) instanceof UserDefinedParser ? AnswerType.FUNCTION
-							: AnswerType.NORMAL;
+									: AnswerType.NORMAL;
 					if (aType.equals(AnswerType.NORMAL)) {
 						lineEl.appendElement("div").attr("class", "equals").text("=");
 						lineEl.appendElement("div").attr("class", "answer")
-								.html(Renderers.toHtml("/", PreParser.flatten(strippedAnswer)).toString());
+						.html(Renderers.toHtml("/", PreParser.flatten(strippedAnswer)).toString());
 					} else {
 						lineEl.appendElement("div").attr("class", "equals")
 						.html("<span style=\"font-size:10pt;\">&#10003</span>");

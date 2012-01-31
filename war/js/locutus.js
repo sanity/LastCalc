@@ -217,6 +217,15 @@ $(window).load(function() {
 		}
 	});
 	
+	// Set up help nav menu
+//Set up help DIV navigation buttons
+	$("DIV#helpframe ul#menu li").button().click(function(event) {
+		var name = $(this).attr("data-section");
+		$('DIV#helpframe').animate({scrollTop: $("div#helpframe").scrollTop()+$("a[name="+name+"]").offset().top-$("div#helpframe").offset().top},'slow');
+	//	event.preventDefault();
+		return true;
+	});
+	
 	$("DIV.question").last().focus();
 	$("BODY").click(function() {
 		if (!$("DIV.question:focus").length) {
