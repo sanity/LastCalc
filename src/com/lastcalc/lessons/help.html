@@ -32,11 +32,12 @@
     <div class="lesson">
       <h2>Conversions</h2>
       LastCalc understands lots of ways to measure things, weights,
-      distances, durations, currencies, and so on. LastCalc will let you
-      convert between different units, some examples:
+      distances, durations, and so on. LastCalc will let you convert
+      between different units, some examples:
       <div class="question">3 weeks in days</div>
       <div class="question">15 km in miles</div>
-      Or even currency conversions (using up-to-date conversion rates):
+      Or even currency conversions (conversion rates updated hourly from
+      Yahoo! Finance):
       <div class="question">$23 in euros</div>
     </div>
   </div>
@@ -45,7 +46,7 @@
     <div class="lesson">
       <h2>Assigning a result to a variable</h2>
       What if you would like to use the result of one calculation in a
-      later calculation? LastCalc let's you do this:
+      later calculation? LastCalc lets you do this:
       <div class="question">homeValue = $80000 + 10%</div>
       Note how "homeValue" is now colored to indicate that it is a
       "variable". This means that wherever LastCalc sees "homeValue", it
@@ -71,22 +72,22 @@
       to assigning a result to a variable, except for the <span
         class="highlighted variable white"> Height</span> and <span
         class="highlighted variable white"> Weight</span> - what are
-      those?
-      <br/>
-      We call these <b>parameters</b>, think of them as placeholders,
-      into which LastCalc can slot any value (we call this "binding").
-      When you are defining a function, any word beginning with a
-      Capital Letter will become a parameter. It is important to
+      those? <br /> We call these <b>parameters</b>, think of them as
+      placeholders, into which LastCalc can slot any value (we call this
+      "binding"). When you are defining a function, any word beginning
+      with a Capital Letter will become a parameter. It is important to
       remember that we can choose any names we want for parameters,
-      LastCalc doesn't care but it may help us remember what is what.
-      We could write:
-      <div class="question">bmi X Y = Y / (X *
-        X)</div>
+      LastCalc doesn't care but it may help us remember what is what. 
+      So we could write:
+      <div class="question">bmi X Y = Y / (X * X)</div>
       This will do the <i>exact same thing</i>, but it is less clear
       what it is doing.
-      <br/>
-      So now, let's try using
-      our new BMI calculator to do the same calculation we did before:
+       <p/>
+      Just don't forget that <b>parameters must begin with a capital
+      letter.</b>
+      <p/>
+      So now, let's try using our new BMI
+      calculator to do the same calculation we did before:
       <div class="question">bmi 1.8 90</div>
       Yay, as we would expect we got the same result as before, but now
       it is much easier to calculate someone's BMI. In this case, the <span
@@ -97,17 +98,17 @@
     <div class="lesson">
       <h2>An observation</h2>
       You may have noticed that assigning a value to a variable is quite
-      similar to creating a function.  In actual fact, a variable
-      is just a special type of function that consists of a single word
-      and has no parameters.  So from LastCalc's perspective, a variable
+      similar to creating a function. In actual fact, a variable is just
+      a special type of function that consists of a single word and has
+      no parameters. So from LastCalc's perspective, a variable
       assignment is just a boring type of function.
     </div>
   </div>
   <div class="section">
-    <h1>Lists</h1>
+    <h1>Simple Lists</h1>
     <div class="lesson">
       <h2>Creating a list and retrieving items</h2>
-      People frequently deal with lists of things, and so LastCalc let's
+      People frequently deal with lists of things, and so LastCalc lets
       you have lists of things too, and manipulate those lists. Let's
       create a list of distances and assign them to a variable:
       <div class="question">trips = [2, 30, 200]</div>
@@ -137,6 +138,71 @@
         km]</div>
       Neat eh? We can use units in list calculations.
     </div>
+  </div>
+
+  <div class="section">
+    <h1>Basic Programming</h1>
+    <div class="lesson">
+      <h2>Pattern Matching</h2>
+      Here we're going to talk about one of the lowest-level features in
+      LastCalc. This can be used as a building-block for many of the
+      features described in the previous section. If you find this
+      confusing please don't worry - you don't need to understand this
+      to use 99% of LastCalc's functionality. <br /> Consider this:
+      <div class="question">first in [First ... Rest] = First</div>
+      <div class="question">first in [5,4,3,2]</div>
+      What happened here? This new structure to the left of the = in the
+      function definition binds to a list, and more specifically it
+      binds the parameter <span class="highlighted variable white">First</span>
+      to the first item in the list, and the parameter <span
+        class="highlighted variable white">Rest</span> to the remaining
+      items in the list. Remember, the names "First" and "Rest" are
+      unimportant, I could just as easily have called them "X" and "Y".
+      We don't use <span class="highlighted variable white">Rest</span>
+      at all, but <span class="highlighted variable white">First</span>
+      is returned from our newly defined function. <br /> You can also
+      bind to more than just the first item in a list, here we define a
+      function that takes a list and returns the sum of its first two
+      items (which we assume are numbers):
+      <div class="question">addFirstTwo [ANum, BNum ... R] =
+        ANum+BNum</div>
+      <div class="question">addFirstTwo [1,2,3,4,5]</div>
+      And lastly, let's define a similar function that strips off the
+      first two elements:
+      <div class="question">stripFirstTwo [ANum, BNum ... R] = R</div>
+      <div class="question">stripFirstTwo [1,2,3,4,5]</div>
+      One last thing: for the addFirstTwo or the stripFirstTwo functions
+      to work, the list must contain at least two items. If they don't
+      the function won't have any effect:
+      <div class="question">stripFirstTwo [1]</div>
+      This is actually quite useful as it allows us to define multiple
+      versions of a function to deal with different situations. We'll
+      use this in the next section.
+    </div>
+    <div class="lesson">
+      <h2>Booleans and Conditions</h2>
+      LastCalc understands boolean operations:
+      <div class="question">true and true</div>
+      <div class="question">false or (true xor false)</div>
+      <div class="question">not true</div>
+      It also understands comparisons:
+      <div class="question">3 == 3</div>
+      <div class="question">3 != 4</div>
+      <div class="question">3 < 4</div>
+      And you can use the outcome of a boolean operation to make
+      decisions:
+      <div class="question">if 3 != 4 then 15 else 17</div>
+      <div class="question">if 3 == 4 then 15 else 17</div>
+      Now let's use this in a function, reusing the BMI function we
+      defined earlier:
+      <div class="question">newbmi H W = if (bmi H W > 20) then
+        overweight else ok</div>
+      <div class="question">newbmi 2 70</div>
+      <div class="question">newbmi 2 90</div>
+    </div>
+  </div>
+  <div class="section">
+    <h1>Programming with Lists</h1>
     <div class="lesson">
       <h2>Applying a function to the elements of a list</h2>
       Imagine you wanted to double every number in a list, how would you
@@ -161,90 +227,95 @@
       <div class="question">apply (List = size of List) to [[1],
         [1, 1], [1]]</div>
     </div>
-  </div>
-  <div class="section">
-    <h1>Advanced List Manipulation</h1>
     <div class="lesson">
-      <h2>Pattern Matching</h2>
-      Here we're going to talk about one of the lowest-level features
-      in LastCalc.  This can be used as a building-block for many of
-      the features described in the previous section.  If you find this
-      confusing please don't worry - you don't need to understand this
-      to use 99% of LastCalc's functionality.
-      <br/>
-      Consider this:
-      <div class="question">first in [First ... Rest] = First</div>
-      <div class="question">first in [5,4,3,2]</div>
-      What happened here?  This new structure to the left of the = in
-      the function definition binds to a list, and more specifically
-      it binds the parameter <span
-        class="highlighted variable white">First</span> to the first
-      item in the list, and the parameter <span
-        class="highlighted variable white">Rest</span> to the remaining
-      items in the list.  Remember, the names "First" and "Rest" are 
-      unimportant, I could just as easily have called them "X" and "Y".
-      We don't use <span
-        class="highlighted variable white">Rest</span> at all, but <span
-        class="highlighted variable white">First</span>
-      is returned from our newly defined function.
-      <br/>
-      You can also bind to more than just the first item in a list, here
-      we define a function that takes a list and returns the sum of
-      its first two items (which we assume are numbers):
-      <div class="question">addFirstTwo [ANum, BNum ... R] = ANum+BNum</div>
-      <div class="question">addFirstTwo [1,2,3,4,5]</div>
-      And lastly, let's define a similar function that strips off the
-      first two elements:
-      <div class="question">stripFirstTwo [ANum, BNum ... R] = R</div>
-      <div class="question">stripFirstTwo [1,2,3,4,5]</div>
-      One last thing: for the addFirstTwo or the stripFirstTwo functions to work,
-      the list must contain at least two items.  If they don't the function
-      won't have any effect:
-            <div class="question">stripFirstTwo [1]</div>
-      This is actually quite useful as it allows us to define multiple versions
-      of a function to deal with different situations.  We'll use this in the
-      next section.
+      <h2>Using a function to filter a list</h2>
+      What if you wanted to filter out particular elements in a list?
+      You can do this in a similar way to applying a function as
+      described in the previous lesson. Here we filter out any element
+      in a list below 2:
+      <div class="question">filter [1,2,3,4] with (X = X>2)</div>
     </div>
     <div class="lesson">
+      <h2>"Folding" a function across a list</h2>
+      This is a trickier one, although it will be familiar to fans of
+      functional programming. You now know how to apply a function to a
+      list, and how to filter a function with a list, but both of these
+      look at each item in the list separately, what if we want to
+      combine them in some way?
+      <p />
+      For example, what if you wanted to multiply all of the numbers in
+      a list together? Here's how to do it:
+      <div class="question">product of List = fold (P E=P*E) over
+        List with 1</div>
+      <div class="question">product of [1,2,3,4,5]</div>
+      So what is going on here? The <b>fold</b> function requires a
+      function that takes two parameters. The first parameter <span
+        class="highlighted variable white">P</span> is bound to the
+      output of the same function being applied to the previous element
+      of the list, or if it's the first element, it's given the value
+      after the <b>with</b>, in this case 1.
+      <p />
+      The second parameter <span class="highlighted variable white">E</span>
+      is bound to the next element in the list.
+      <p />
+      Hopefully you can now see what is going on, <span
+        class="highlighted variable white">P</span> maintains the
+      running product as we cycle through all the elements in the list,
+      multiplying each one by <span class="highlighted variable white">E</span>
+       to produce the next product, and the
+      value produced by the function being applied to the last element
+      is the result of the <b>fold</b> function.
+      <p />
+      Here is one last example, this is actually how the "size of"
+      function is written within LastCalc:
+      <div class="question">size of List = fold (X Y=X+1) over
+        List with 0</div>
+    </div>
+  </div>
+  <div class="section">
+    <h1>Advanced Programming</h1>
+        <div class="lesson">
       <h2>Recursion</h2>
-      Ok, so pattern matching on lists is nice, but how do we put it to
-      use?  To do this we must rely on a concept called "recursion", which
-      basically means a function that refers to itself.  The old programmer
-      joke is that the definition of <i>"recursion"</i> is <i>"see recursion"</i>.
-      <br/>
-      <i>This can be a tricky subject so don't worry if you don't get it, you
-      don't need it for 99% of what you can do with LastCalc.</i>
-      <br/>
-      Let's say we want a function to double every number in a list, and you 
-      had to write it without using the apply ... to ... function we talked 
-      about previously.
-      <br/>
-      Firstly, what would such a function return if given an empty list?  Obviously
-      if there is nothing in the list to double, then it should just return an
-      empty list:
+      How do we put pattern matching on lists to
+      use? To do this we must rely on a concept called "recursion",
+      which basically means a function that refers to itself. The old
+      programmer joke is that the definition of <i>"recursion"</i> is <i>"see
+        recursion"</i>. <br /> <i>This can be a tricky subject so don't
+        worry if you don't get it, you don't need it for 99% of what you
+        can do with LastCalc.</i> <br /> Let's say we want a function to
+      double every number in a list, and you had to write it without
+      using the apply ... to ... function we talked about previously. <br />
+      Firstly, what would such a function return if given an empty list?
+      Obviously if there is nothing in the list to double, then it
+      should just return an empty list:
       <div class="question">double [] = []</div>
-      Here we're using a variation of the list pattern matching that we haven't
-      seen before, [] will only ever bind to an empty list.  In the terminology
-      of recursion, this is our "base case".
-      <br/>
-      So great, we can now double every number in an empty list - not very 
-      useful.  Here is how we define a function to double every item in a non-empty
-      list:
+      Here we're using a variation of the list pattern matching that we
+      haven't seen before, [] will only ever bind to an empty list. In
+      the terminology of recursion, this is our "base case". <br /> So
+      great, we can now double every number in an empty list - not very
+      useful. Here is how we define a function to double every item in a
+      non-empty list:
       <div class="question">double [F ... R] = [F*2 ... double R]</div>
-     <img style="float: right; padding:10;" src="/images/mind-blown.jpg" width="150" height="200"
-        height="100px" width="100px" /> What's going on here?  We take a list and break it into <span
-        class="highlighted variable white">F</span>, the first item, and <span
-        class="highlighted variable white">R</span>, the remaining items.
-      Then on the right of the = we create a new list, with first element <span
-        class="highlighted variable white">F</span>*2, and the rest of the elements
-        are then doubled <b>using this very function</b>!  This is the essence of
-        recursion.
-        <br/>
-        You might then ask - "If this function calls itself, won't it keep going forever"?
-        Fortunately not, because every time it is called it is with a shorter version of the
-        list, until eventually it is called with an empty list, and our "base case" takes
-        care of it.  Let's try it out:
-        <div class="question">double [1,2,3]</div>
+      <img style="float: right; padding: 10;"
+        src="/images/mind-blown.jpg" width="150" height="200"
+        height="100px" width="100px" /> What's going on here? We take a
+      list and break it into <span class="highlighted variable white">F</span>,
+      the first item, and <span class="highlighted variable white">R</span>,
+      the remaining items. Then on the right of the = we create a new
+      list, with first element <span class="highlighted variable white">F</span>*2,
+      and the rest of the elements are then doubled <b>using this
+        very function</b>! This is the essence of recursion. <br /> You
+      might then ask - "If this function calls itself, won't it keep
+      going forever"? Fortunately not, because every time it is called
+      it is with a shorter version of the list, until eventually it is
+      called with an empty list, and our "base case" takes care of it.
+      Let's try it out:
+      <div class="question">double [1,2,3]</div>
+      <b>Important note: </b> While recursion is very flexible, and can
+      be used to do something similar to the <b>apply</b>, <b>filter</b>,
+      and the <b>fold</b> functions mentioned previously, it isn't very
+      efficient. It is much better to use one of these other list
+      manipulation functions if possible.
     </div>
   </div>
 </body>

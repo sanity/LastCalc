@@ -14,7 +14,8 @@ import com.lastcalc.parsers.Parser;
 public class AmountConverterParser extends Parser {
 	private static final long serialVersionUID = -2549484003198615095L;
 	private static final TokenList template = TokenList.createD(Amount.class,
-			Lists.newArrayList("in", "to", "as"), Unit.class);
+ Lists.newArrayList("in", "to", "as"),
+			Object.class);
 
 	@Override
 	public TokenList getTemplate() {
@@ -24,15 +25,21 @@ public class AmountConverterParser extends Parser {
 	@Override
 	public ParseResult parse(final TokenList tokens, final int templatePos) {
 		final Amount<?> amount = (Amount<?>) tokens.get(templatePos);
-		final Unit<?> unit = (Unit<?>) tokens.get(templatePos + 2);
-		try {
+		if (tokens.get(templatePos + 2) instanceof Unit) {
+			final Unit<?> unit = (Unit<?>) tokens.get(templatePos + 2);
+			try {
+				return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(),
+						amount.to(unit)));
+			} catch (final ConversionException e) {
+				// return ParseResult.error("Cannot convert " + amount.getUnit() +
+				// " to " + unit);
+				return ParseResult.fail();
+			}
+		} else if (tokens.get(templatePos + 2).equals("number"))
 			return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(),
-					amount.to(unit)));
-		} catch (final ConversionException e) {
-			// return ParseResult.error("Cannot convert " + amount.getUnit() +
-			// " to " + unit);
+					amount.getEstimatedValue()));
+		else
 			return ParseResult.fail();
-		}
 	}
 
 	@Override

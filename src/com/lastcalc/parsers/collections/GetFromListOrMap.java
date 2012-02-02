@@ -52,7 +52,7 @@ public class GetFromListOrMap extends Parser {
 
 	@Override
 	public int hashCode() {
-		return "GetFromMap".hashCode();
+		return "GetFromListOrMap".hashCode();
 	}
 
 	@Override

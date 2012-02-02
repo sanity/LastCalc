@@ -1,3 +1,4 @@
+# Units synonyms
 pounds = gbp
 pound = gbp
 dollars = usd
@@ -5,11 +6,11 @@ dollar = usd
 yen = jpy
 euro = eur
 euros = eur
+kilo = kilogram
 
 # Math
+ANum % BNum = ANum mod BNum
 A x B = A * B
-- Num = (0 - Num)
-- Amount = (0 - Amount)
 square root = sqrt
 cube root = cbrt
 absolute = abs
@@ -66,9 +67,27 @@ size of List = fold (X Y=X+1) over List with 0
 maximum List = max of List
 maximum of List = max List
 max List = max of List
-max of List = fold (X Y = if X > Y then X else Y) over List with 0
+max of List = fold (X Y = if (X == false) then Y else (if X > Y then X else Y)) over List with false
 minimum of List = min List
 min of List = fold (X Y = if (X == false) then Y else (if X < Y then X else Y)) over List with false
 average of List = avg of List
 avg of List = (sum of List) / (size of List)
-standard deviation of List = stdev of List
+
+# Support applying basic math operations 
+# to lists
+List + Num = apply (X=X+Num) to List
+List - Num = apply (X=X-Num) to List
+List * Num = apply (X=X*Num) to List
+List / Num = apply (X=X/Num) to List
+List mod Num = apply (X=X mod Num) to List
+List % Num = apply (X=X % Num) to List
+
+Num + List = apply (X=Num+X) to List
+Num - List = apply (X=Num-X) to List
+Num * List = apply (X=Num*X) to List
+Num / List = apply (X=Num/X) to List
+Num mod List = apply(X=Num mod X) to List
+Num % List = apply(X=Num % X) to List
+
+# Currency
+rmb = cny

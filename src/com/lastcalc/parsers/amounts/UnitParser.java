@@ -15,8 +15,8 @@ import com.lastcalc.parsers.Parser;
 public class UnitParser extends Parser {
 
 	private static final long serialVersionUID = 3254703564962161446L;
-	TokenList template;
-	private final Unit<?> unit;
+	public final TokenList template;
+	public final Unit<?> unit;
 
 	public UnitParser(final Unit<?> unit, final TokenList template) {
 		this.unit = unit;
@@ -37,6 +37,32 @@ public class UnitParser extends Parser {
 	public static Set<UnitParser> getParsers() {
 		final Set<UnitParser> ret = Sets.newHashSet();
 		addParsers(ret, SI.class);
+
+		// Add various prefixes, iterate through a copy of ret
+		// to prevent concurrent modification exception
+
+		for (final UnitParser up : Sets.newHashSet(ret)) {
+			ret.add(new UnitParser(SI.ATTO(up.unit), TokenList.createD("atto" + up.template.get(0))));
+			ret.add(new UnitParser(SI.CENTI(up.unit), TokenList.createD("centi" + up.template.get(0))));
+			ret.add(new UnitParser(SI.DECI(up.unit), TokenList.createD("deci" + up.template.get(0))));
+			ret.add(new UnitParser(SI.DEKA(up.unit), TokenList.createD("deka" + up.template.get(0))));
+			ret.add(new UnitParser(SI.EXA(up.unit), TokenList.createD("exa" + up.template.get(0))));
+			ret.add(new UnitParser(SI.FEMTO(up.unit), TokenList.createD("femto" + up.template.get(0))));
+			ret.add(new UnitParser(SI.GIGA(up.unit), TokenList.createD("giga" + up.template.get(0))));
+			ret.add(new UnitParser(SI.HECTO(up.unit), TokenList.createD("hecto" + up.template.get(0))));
+			ret.add(new UnitParser(SI.KILO(up.unit), TokenList.createD("kilo" + up.template.get(0))));
+			ret.add(new UnitParser(SI.MEGA(up.unit), TokenList.createD("mega" + up.template.get(0))));
+			ret.add(new UnitParser(SI.MICRO(up.unit), TokenList.createD("micro" + up.template.get(0))));
+			ret.add(new UnitParser(SI.MILLI(up.unit), TokenList.createD("milli" + up.template.get(0))));
+			ret.add(new UnitParser(SI.NANO(up.unit), TokenList.createD("nano" + up.template.get(0))));
+			ret.add(new UnitParser(SI.PETA(up.unit), TokenList.createD("peta" + up.template.get(0))));
+			ret.add(new UnitParser(SI.PICO(up.unit), TokenList.createD("pico" + up.template.get(0))));
+			ret.add(new UnitParser(SI.TERA(up.unit), TokenList.createD("tera" + up.template.get(0))));
+			ret.add(new UnitParser(SI.YOCTO(up.unit), TokenList.createD("yocto" + up.template.get(0))));
+			ret.add(new UnitParser(SI.ZEPTO(up.unit), TokenList.createD("zepto" + up.template.get(0))));
+			ret.add(new UnitParser(SI.ZETTA(up.unit), TokenList.createD("zetta" + up.template.get(0))));
+		}
+
 		addParsers(ret, NonSI.class);
 		verboseNamesPlur.put(NonSI.FOOT, "feet");
 		ret.add(new UnitParser(NonSI.FOOT, TokenList.createD("feet")));

@@ -10,6 +10,14 @@ import org.junit.Test;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class SequentialParserTest {
+
+	@Test
+	public void negativesTest() {
+		final SequentialParser sp = SequentialParser.create();
+		final TokenList res = sp.parseNext("-15+3");
+		Assert.assertEquals(LargeInteger.valueOf(-12), res.get(0));
+	}
+
 	@Test
 	public void parseWithPrevAnswer() {
 		final SequentialParser sp = SequentialParser.create();
@@ -162,5 +170,17 @@ public class SequentialParserTest {
 		sp.parseNext("range(X) = range(0)(X)");
 		final TokenList result = sp.parseNext("step(range(2))");
 		Assert.assertEquals("[0, [1]]", result.get(0).toString());
+	}
+
+	@Test
+	public void mathOpTest() {
+		final SequentialParser sp = SequentialParser.create();
+		Assert.assertTrue(sp.parseNext("sin 3").get(0) instanceof Number);
+	}
+
+	@Test
+	public void toLowerCaseTest() {
+		final SequentialParser sp = SequentialParser.create();
+		Assert.assertEquals(sp.parseNext("pi"), sp.parseNext("Pi"));
 	}
 }

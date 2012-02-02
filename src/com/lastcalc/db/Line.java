@@ -14,6 +14,7 @@ public class Line implements Serializable {
 		this.answer = answer;
 	}
 
+	@Unindexed
 	public String question;
 
 	@Unindexed

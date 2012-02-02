@@ -44,6 +44,8 @@ public class SequentialParser implements Serializable {
 		priorityParsers.addParser(new IfThenElse());
 		priorityParsers.addParser(new UserDefinedParserParser());
 
+		lowPriorityParsers.addParser(new ToLowerCase());
+
 		try {
 			final BufferedReader br = new BufferedReader(new InputStreamReader(
 					Bootstrap.class.getResourceAsStream("bootstrap.txt")));
@@ -165,5 +167,9 @@ public class SequentialParser implements Serializable {
 
 	public int getLastParseStepCount() {
 		return lastParseStepCount;
+	}
+
+	public FixedOrderParserPickerFactory getUserDefinedParsers() {
+		return userDefinedParsers;
 	}
 }

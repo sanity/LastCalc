@@ -19,6 +19,7 @@ public class FixedOrderParserPickerFactory extends ParserPickerFactory {
 		this.parsers = parsers;
 	}
 
+	@Override
 	public void addParser(final Parser parser) {
 		parsers.add(parser);
 	}
@@ -48,6 +49,10 @@ public class FixedOrderParserPickerFactory extends ParserPickerFactory {
 			return next;
 		}
 
+	}
+
+	public List<Parser> getParserList() {
+		return parsers;
 	}
 
 }

@@ -150,7 +150,7 @@ public class MathBiOp extends Parser {
 			return a.minus(b);
 		else if (op.equals("*"))
 			return a.times(b);
-		else if (op.equals("/"))
+		else if (op.equals("/") && b.getEstimatedValue() != 0)
 			return a.divide(b);
 		else if (op.equals("^")) {
 			if (b.getExactValue() != b.getEstimatedValue() || b.getExactValue() > Integer.MAX_VALUE)
@@ -187,6 +187,8 @@ public class MathBiOp extends Parser {
 				return FloatingPoint.valueOf(a.doubleValue()).times(FloatingPoint.valueOf(b.doubleValue()));
 		}
 		else if (op.equals("/")) {
+			if (b.doubleValue() == 0.0)
+				return null;
 			if (a instanceof LargeInteger && b instanceof LargeInteger)
 				return org.jscience.mathematics.number.Rational.valueOf((LargeInteger) a, (LargeInteger) b);
 			else

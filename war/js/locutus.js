@@ -1,5 +1,3 @@
-// TODO: Investigate selecting and copying an entry to the clipboard
-
 variables = {};
 
 recognizedWords = [];
@@ -41,10 +39,12 @@ function highlightSyntax(element) {
 	element.find("font,div,span:not(.rangySelectionBoundary)").replaceWith(function() {
 		return $(this).contents();
 	});
-	inSpan = false;
+	console.log("Scanning...");
+	console.log("HTML: "+element.html());
 	element.html(element.html().replace(
-			/\.\.\.|\?|[0-9]*\.?[0-9]+|[a-zA-Z0-9]+|"(?:[^"\\]|\\.)*"/g,
+			/<span.*span>|\.\.\.|[0-9]*\.?[0-9]+|[a-zA-Z][a-zA-Z0-9]*/g,
 			function(str) {
+				console.log("token: \""+str+"\"");
 				// We have to do this because of the <span> inserted by rangy which was
 				// tripping
 				// up the regexp. Ugly but it works.
@@ -52,10 +52,6 @@ function highlightSyntax(element) {
 					return str;
 				}
 				if (str.match(/span/)) {
-					inSpan = !inSpan;
-					return str;
-				}
-				if (inSpan) {
 					return str;
 				}
 				// if (str.match(/^"(?:[^"\\]|\\.)*"$/)) {
@@ -201,21 +197,33 @@ $(window).load(function() {
 		highlightSyntax($(this));
 	});
 	
+	// Stupid change to force upload of file
+	var helpDiv = $("DIV#helpframe");
 	// Set up help button
 	$("DIV#help-button").button();
 	$("DIV#help-button").click(function() {
-		var helpIframe = $("IFRAME#helpframe");
-		if (helpIframe.is(":visible")) {
+		if (helpDiv.is(":visible")) {
 			$('DIV#worksheet').animate({width:'100%'}, 500);
-			helpIframe.hide("fade", 250, function() {
+			helpDiv.hide("fade", 250, function() {
 				$("DIV#help-button span").text("Show Help");
+				$.cookie('help-div', 'hidden', { expires: 30});
 			});
 		} else {
-			$('DIV#worksheet').animate({width:'50%'}, 500);
+			$('DIV#worksheet').animate({width:'50%'}, 250);
 			$("DIV#help-button span").text("Hide Help");
-			helpIframe.show("fade", 250);
+			helpDiv.show("fade", 500);
+			$.cookie('help-div', 'visible', { expires: 30});
 		}
 	});
+	
+	// Show the help DIV if the cookie says we should
+	// or if there is no cookie
+	if ($.cookie('help-div') == null || $.cookie('help-div') == 'visible') {
+		$('DIV#worksheet').animate({width:'50%'}, 250);
+		$("DIV#help-button span").text("Hide Help");
+		helpDiv.show("fade", 500);
+		$.cookie('help-div', 'visible', { expires: 30});
+	}
 	
 	// Set up help nav menu
 //Set up help DIV navigation buttons

@@ -13,8 +13,8 @@ public class MathOp extends Parser {
 
 	private static TokenList template = TokenList.createD(
 			Lists.<Object> newArrayList("sqrt", "abs", "cos", "acos",
-			"asin", "atan", "cbrt", "cosh", "exp", "cosh", "log", "ln", "round", "sin", "sinh", "tan", "tanh"),
-			Number.class);
+					"asin", "atan", "cbrt", "cosh", "exp", "cosh", "log", "ln", "round", "sin", "sinh", "tan", "tanh", "-"),
+					Number.class);
 
 	@Override
 	public TokenList getTemplate() {
@@ -32,7 +32,9 @@ public class MathOp extends Parser {
 		final String op = (String) tokens.get(templatePos);
 		final Number number = (Number) tokens.get(templatePos + 1);
 		Number result = null;
-		if (op.equals("sqrt")) {
+		if (op.equals("-") && (templatePos == 0 || !(tokens.get(templatePos-1) instanceof Number))) {
+			result = (Number) number.opposite();
+		} else if (op.equals("sqrt")) {
 			result = FloatingPoint.valueOf(Math.sqrt(number.doubleValue()));
 		} else if (op.equals("abs")) {
 			if (number instanceof FloatingPoint) {

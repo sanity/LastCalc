@@ -22,7 +22,7 @@ public class Currencies {
 	public static volatile Map<String, Currency> currenciesByCode;
 
 	public static boolean shouldUpdate() {
-		return System.currentTimeMillis() - lastExchangeRateUpdateAttempt > 24l * 60l * 60l * 1000l;
+		return System.currentTimeMillis() - lastExchangeRateUpdateAttempt > 60l * 60l * 1000l;
 	}
 
 	public static List<Parser> getParsers() {

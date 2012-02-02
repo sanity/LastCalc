@@ -86,7 +86,7 @@ public class MainPageServlet extends HttpServlet {
 				.attr("src", "http://cdn.jquerytools.org/1.2.6/all/jquery.tools.min.js");
 				doc.head().appendElement("script")
 				.attr("src", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js");
-
+				doc.head().appendElement("script").attr("src", "/js/jquery.cookie.js");
 				doc.head().appendElement("script").attr("src", "/js/rangy-core.js");
 				doc.head().appendElement("script").attr("src", "/js/rangy-selectionsaverestore.js");
 				doc.head().appendElement("script").attr("src", "/js/locutus.js");
@@ -98,7 +98,7 @@ public class MainPageServlet extends HttpServlet {
 				doc.body().attr("data-worksheet-ro-id", worksheet.readOnlyId);
 				final Element header = doc.body().appendElement("div").attr("id", "header");
 				header.appendElement("div").attr("id", "logo").text("LastCalc");
-				header.appendElement("div").attr("id", "help-button").text("Hide Help");
+				header.appendElement("div").attr("id", "help-button").text("Show Help");
 				final Element ws = doc.body().appendElement("div").attr("id", "worksheet");
 				ws.appendElement("div").attr("class", "groups").appendElement("a")
 				.attr("href", "https://groups.google.com/forum/?hl=en#!forum/lastcalc")
@@ -108,7 +108,8 @@ public class MainPageServlet extends HttpServlet {
 				// "helpframe").attr("src", "/help")
 				// .attr("frameBorder", "0");
 
-				final Element helpDiv = doc.body().appendElement("div").attr("id", "helpframe");
+				final Element helpDiv = doc.body().appendElement("div").attr("id", "helpframe")
+						.attr("style", "display: none;");
 				for (final Node n : Help.getHelpDoc().body().childNodes()) {
 					helpDiv.appendChild(n.clone());
 				}

@@ -78,6 +78,8 @@ public class WorksheetServlet extends HttpServlet {
 			}
 		}
 
+		worksheet.definedParsers = seqParser.getUserDefinedParsers().getParserList();
+
 		obj.put(worksheet);
 
 		response.answers = Maps.newHashMap();

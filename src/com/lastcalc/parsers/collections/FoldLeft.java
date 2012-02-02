@@ -42,7 +42,7 @@ public class FoldLeft extends Parser {
 
 	@Override
 	public int hashCode() {
-		return "ApplyToList".hashCode();
+		return "FoldLeft".hashCode();
 	}
 
 	@Override

@@ -109,13 +109,16 @@ public abstract class Parser implements Serializable {
 		parsers.add(new AmountConverterParser());
 		parsers.add(new GetFromListOrMap());
 		parsers.add(new ApplyTo());
+		parsers.add(new Filter());
 		parsers.add(new FoldLeft());
 		parsers.add(new BoolParser());
+		parsers.add(new NotParser());
 		parsers.add(new BoolFunctionsParser());
 		parsers.add(new EqualityParser());
 		parsers.add(new FoldLeft());
-		parsers.add(new MathOp());
+		parsers.add(new ToLowerCase());
 		parsers.add(new MathBiOp());
+		parsers.add(new MathOp());
 		parsers.add(new RadixConverter());
 
 	}

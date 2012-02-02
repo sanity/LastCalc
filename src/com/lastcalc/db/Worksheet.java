@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 
 import com.googlecode.objectify.annotation.*;
 import com.lastcalc.Misc;
+import com.lastcalc.parsers.Parser;
 
 @Cached
 public class Worksheet {
@@ -18,7 +19,7 @@ public class Worksheet {
 		id = Misc.randomString(7);
 		readOnlyId = Misc.randomString(8);
 		qaPairs = Lists.newArrayList();
-
+		created = new Date();
 	}
 
 	@Id
@@ -28,14 +29,22 @@ public class Worksheet {
 
 	public String readOnlyId;
 
+	public String description;
+
+	public boolean used;
+
 	@Serialized
 	public ArrayList<Line> qaPairs;
 
-	public Date lastModified;
+	@Serialized
+	public List<Parser> definedParsers;
+
+	public Date created, lastModified;
 
 	@SuppressWarnings("unused")
 	@PrePersist
 	private void prePersist() {
 		lastModified = new Date();
+		used = qaPairs.size() > 0;
 	}
 }

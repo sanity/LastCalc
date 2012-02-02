@@ -173,6 +173,8 @@ public class UserDefinedParserParser extends Parser {
 						tpl.add(Map.class);
 					} else if (var.endsWith("Num") || var.endsWith("Number")) {
 						tpl.add(Number.class);
+					} else if (var.endsWith("Bool") || var.endsWith("Boolean")) {
+						tpl.add(Boolean.class);
 					} else if (var.endsWith("Amount")) {
 						tpl.add(Amount.class);
 					} else if (var.endsWith("Fun") || var.endsWith("Function")) {
