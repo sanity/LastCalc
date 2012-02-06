@@ -5,6 +5,7 @@ import javax.measure.unit.Unit;
 
 import com.google.common.collect.Lists;
 
+import org.jscience.mathematics.number.FloatingPoint;
 import org.jscience.physics.amount.Amount;
 
 import com.lastcalc.TokenList;
@@ -14,7 +15,7 @@ import com.lastcalc.parsers.Parser;
 public class AmountConverterParser extends Parser {
 	private static final long serialVersionUID = -2549484003198615095L;
 	private static final TokenList template = TokenList.createD(Amount.class,
- Lists.newArrayList("in", "to", "as"),
+			Lists.newArrayList("in", "to", "as"),
 			Object.class);
 
 	@Override
@@ -37,7 +38,7 @@ public class AmountConverterParser extends Parser {
 			}
 		} else if (tokens.get(templatePos + 2).equals("number"))
 			return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(),
-					amount.getEstimatedValue()));
+					FloatingPoint.valueOf(amount.getEstimatedValue())));
 		else
 			return ParseResult.fail();
 	}

@@ -12,10 +12,13 @@ public class UserServlet extends HttpServlet {
 	}
 
 	public static class UserServletRequest {
+		public String username, saltedPasswordHash;
 
+		public RegisterRequest register;
 	}
 
 	public static class RegisterRequest {
-		public String username, saltedPasswordHash, email;
+		public String email;
 	}
+
 }

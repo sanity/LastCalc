@@ -47,7 +47,7 @@ public class SequentialParserTest {
 		sp.setDumpSteps(false);
 		System.out.println("Increment steps required: \t" + sp.getLastParseStepCount() + " \t"
 				+ (System.currentTimeMillis() - startTime) + "ms");
-		Assert.assertTrue(sp.getLastParseStepCount() <= 35);
+		Assert.assertTrue(sp.getLastParseStepCount() <= 44);
 		Assert.assertEquals("Expected [2,3,4,5,6,7,8,9] but was " + inc, 1, inc.size());
 		Assert.assertTrue(inc.get(0) instanceof List);
 		final List<Object> list = (List<Object>) inc.get(0);
@@ -71,7 +71,7 @@ public class SequentialParserTest {
 		final TokenList inc = sp.parseNext("aboveFive [4,5,6,7,8,9,10,11,12,13,14,15, 16, 17, 18, 19, 20]");
 		System.out.println("Filter steps required: \t" + sp.getLastParseStepCount() + " \t"
 				+ (System.currentTimeMillis() - startTime) + "ms");
-		Assert.assertTrue(sp.getLastParseStepCount() <= 202);
+		Assert.assertTrue(sp.getLastParseStepCount() <= 222);
 		Assert.assertEquals("Expected list but was " + inc, 1, inc.size());
 		Assert.assertTrue(inc.get(0) instanceof List);
 		final List<Object> list = (List<Object>) inc.get(0);
@@ -103,7 +103,7 @@ public class SequentialParserTest {
 		final TokenList res = sp.parseNext("concat [[1, 2], [3, 4]]");
 		System.out.println("Concat steps required: \t" + sp.getLastParseStepCount() + "\t"
 				+ (System.currentTimeMillis() - startTime) + "ms");
-		Assert.assertTrue(sp.getLastParseStepCount() <= 30);
+		Assert.assertTrue(sp.getLastParseStepCount() <= 36);
 		Assert.assertEquals(1, res.size());
 		Assert.assertTrue(res.get(0) instanceof List);
 		final List<Object> list = (List<Object>) res.get(0);
@@ -182,5 +182,15 @@ public class SequentialParserTest {
 	public void toLowerCaseTest() {
 		final SequentialParser sp = SequentialParser.create();
 		Assert.assertEquals(sp.parseNext("pi"), sp.parseNext("Pi"));
+	}
+
+	// @Test
+	public void recurseTest() {
+		final SequentialParser sp = SequentialParser.create();
+		sp.parseNext("double X = X * 2");
+		sp.parseNext("F List = apply (X=F X) to List");
+		sp.setDumpSteps(true);
+		final TokenList res = sp.parseNext("double [1,2,3]");
+		Assert.assertEquals(1, res.size());
 	}
 }

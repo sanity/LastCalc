@@ -79,7 +79,7 @@ public class SequentialParser implements Serializable {
 
 	public static SequentialParser create() {
 		final long timeout = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? 2000
-				: Integer.MAX_VALUE;
+				: 2000;
 		return new SequentialParser(priorityParsers, globalParserPickerFactory, lowPriorityParsers, timeout);
 	}
 

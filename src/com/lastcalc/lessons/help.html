@@ -77,17 +77,17 @@
       "binding"). When you are defining a function, any word beginning
       with a Capital Letter will become a parameter. It is important to
       remember that we can choose any names we want for parameters,
-      LastCalc doesn't care but it may help us remember what is what. 
-      So we could write:
+      LastCalc doesn't care but it may help us remember what is what. So
+      we could write:
       <div class="question">bmi X Y = Y / (X * X)</div>
       This will do the <i>exact same thing</i>, but it is less clear
       what it is doing.
-       <p/>
+      <p />
       Just don't forget that <b>parameters must begin with a capital
-      letter.</b>
-      <p/>
-      So now, let's try using our new BMI
-      calculator to do the same calculation we did before:
+        letter.</b>
+      <p />
+      So now, let's try using our new BMI calculator to do the same
+      calculation we did before:
       <div class="question">bmi 1.8 90</div>
       Yay, as we would expect we got the same result as before, but now
       it is much easier to calculate someone's BMI. In this case, the <span
@@ -151,6 +151,9 @@
       to use 99% of LastCalc's functionality. <br /> Consider this:
       <div class="question">first in [First ... Rest] = First</div>
       <div class="question">first in [5,4,3,2]</div>
+      (Don't forget that <span class="highlighted variable white">Parameters</span>
+      in functions <b>must</b> be Capitalized!).
+      <p/>
       What happened here? This new structure to the left of the = in the
       function definition binds to a list, and more specifically it
       binds the parameter <span class="highlighted variable white">First</span>
@@ -197,6 +200,8 @@
       defined earlier:
       <div class="question">newbmi H W = if (bmi H W > 20) then
         overweight else ok</div>
+        (Don't forget that <span class="highlighted variable white">Parameters</span>
+      in functions <b>must</b> be Capitalized!).
       <div class="question">newbmi 2 70</div>
       <div class="question">newbmi 2 90</div>
     </div>
@@ -226,6 +231,8 @@
       containing the sizes of each sub-list:
       <div class="question">apply (List = size of List) to [[1],
         [1, 1], [1]]</div>
+      (Don't forget that <span class="highlighted variable white">Parameters</span>
+      in functions <b>must</b> be Capitalized!).
     </div>
     <div class="lesson">
       <h2>Using a function to filter a list</h2>
@@ -262,9 +269,9 @@
         class="highlighted variable white">P</span> maintains the
       running product as we cycle through all the elements in the list,
       multiplying each one by <span class="highlighted variable white">E</span>
-       to produce the next product, and the
-      value produced by the function being applied to the last element
-      is the result of the <b>fold</b> function.
+      to produce the next product, and the value produced by the
+      function being applied to the last element is the result of the <b>fold</b>
+      function.
       <p />
       Here is one last example, this is actually how the "size of"
       function is written within LastCalc:
@@ -274,18 +281,18 @@
   </div>
   <div class="section">
     <h1>Advanced Programming</h1>
-        <div class="lesson">
+    <div class="lesson">
       <h2>Recursion</h2>
-      How do we put pattern matching on lists to
-      use? To do this we must rely on a concept called "recursion",
-      which basically means a function that refers to itself. The old
-      programmer joke is that the definition of <i>"recursion"</i> is <i>"see
-        recursion"</i>. <br /> <i>This can be a tricky subject so don't
-        worry if you don't get it, you don't need it for 99% of what you
-        can do with LastCalc.</i> <br /> Let's say we want a function to
-      double every number in a list, and you had to write it without
-      using the apply ... to ... function we talked about previously. <br />
-      Firstly, what would such a function return if given an empty list?
+      How do we put pattern matching on lists to use? To do this we must
+      rely on a concept called "recursion", which basically means a
+      function that refers to itself. The old programmer joke is that
+      the definition of <i>"recursion"</i> is <i>"see recursion"</i>. <br />
+      <i>This can be a tricky subject so don't worry if you don't
+        get it, you don't need it for 99% of what you can do with
+        LastCalc.</i> <br /> Let's say we want a function to double every
+      number in a list, and you had to write it without using the apply
+      ... to ... function we talked about previously. <br /> Firstly,
+      what would such a function return if given an empty list?
       Obviously if there is nothing in the list to double, then it
       should just return an empty list:
       <div class="question">double [] = []</div>
@@ -316,6 +323,51 @@
       and the <b>fold</b> functions mentioned previously, it isn't very
       efficient. It is much better to use one of these other list
       manipulation functions if possible.
+    </div>
+    <div class="lesson">
+      <h2>Pulling data from the web</h2>
+      The Internet is full of data, but often it isn't in a very convenient
+      format - and of course the <b>most</b> convenient format would be 
+      as a value you could calculate with in LastCalc!
+      <p/>
+      Well, fortunately LastCalc allows you to pull data from almost any 
+      webpage into LastCalc, and use it in subsequent calculations!
+      <p/>
+      We will demonstrate how you can grab the current <a 
+      target="_blank" href="http://bitcoin.org/">Bitcoin</a> to US Dollar
+      exchange rate from a website, and then use it to teach LastCalc
+      how to convert from Bitcoins to and from various other currencies.
+      <p/>
+      The first stage is to find a webpage that contains the data we need,
+      <a target="_blank" href="http://bitcoincharts.com/">bitcoincharts.com</a>
+      will do nicely, so let's grab it and store the result in
+      a variable:
+      <div class="question">page = retrieve "http://bitcoincharts.com/"</div>
+      Note that LastCalc doesn't display the entire retrieved page because it
+      would be way too big.  Next, we need to isolate the HTML elements in the
+      page that we're interested in:
+      <div class="question">elements = select "td.right" from page</div>
+      We use a <a target="_blank" href="http://jsoup.org/cookbook/extracting-data/selector-syntax">CSS selector</a>
+      to isolate specific elements in the page.  Since more than one element
+      matches the selector we get a list (note how LastCalc doesn't show the
+      whole list because it is very long), so let's grab the first one:
+      <div class="question">firstElement = get 1st from elements</div>
+      Now let's grab the text of the element:
+      <div class="question">valAsText = get text from firstElement</div>
+      LastCalc is treating this text as a string, but we'd like LastCalc to
+      interpret it so that it treats it as a number:
+      <div class="question">bitcoinInUsd = interpret valAsText</div>
+      Now we have the value of Bitcoins in US Dollars as a number!  Let's
+      teach LastCalc how to convert to and from Bitcoins:
+      <div class="question">X Currency in btc = (((X Currency in usd) as number) / bitcoinInUsd) btc</div>
+      (Don't forget that <span class="highlighted variable white">Parameters</span>
+      in functions <b>must</b> be Capitalized!).
+      <div class="question">3 euros in btc</div>
+      It works!  Let's teach LastCalc how to convert from Bitcoins now:
+      <div class="question">X btc in Currency = ((X * bitcoinInUsd) usd) in Currency</div>
+      <div class="question">2 btc in usd</div>
+      It works too!  Now LastCalc will let you calculate with almost any
+      information you can find on the Internet!
     </div>
   </div>
 </body>

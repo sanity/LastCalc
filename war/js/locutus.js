@@ -24,12 +24,12 @@ function highlightSyntax(element) {
 	rangy.init();
 	
 	if (element.length != 1) {
-		alert("highlightSyntax() called with " + element.length
+		$.error("highlightSyntax() called with " + element.length
 				+ " elements (should be 1)");
 	}
 	
 	if (!rangy.getSelection().isCollapsed) {
-		console.log("Aborting highlight because selection size > 0");
+		$.error("Aborting highlight because selection size > 0");
 		return;
 	}
 	
@@ -39,12 +39,10 @@ function highlightSyntax(element) {
 	element.find("font,div,span:not(.rangySelectionBoundary)").replaceWith(function() {
 		return $(this).contents();
 	});
-	console.log("Scanning...");
-	console.log("HTML: "+element.html());
+	// Removed \"(\\.|[^\"])*\"| because it screwed up rangy
 	element.html(element.html().replace(
 			/<span.*span>|\.\.\.|[0-9]*\.?[0-9]+|[a-zA-Z][a-zA-Z0-9]*/g,
 			function(str) {
-				console.log("token: \""+str+"\"");
 				// We have to do this because of the <span> inserted by rangy which was
 				// tripping
 				// up the regexp. Ugly but it works.
@@ -54,13 +52,23 @@ function highlightSyntax(element) {
 				if (str.match(/span/)) {
 					return str;
 				}
-				// if (str.match(/^"(?:[^"\\]|\\.)*"$/)) {
-				// return "<span class=\"highlighted quoted\">"+str+"</span>";
-				// }
+//				if (str.match(/^".*"$/) && !str.match(/style/)) {
+//					return "<span class=\"highlighted quoted\">" + str + "</span>";
+//				}
 				if (str.match(/^[-+]?[0-9]*\.?[0-9]+$/)) {
 					return "<span class=\"highlighted number\">" + str + "</span>";
 				}
 				if (str.match(/^[A-Z]+[a-zA-Z0-9]*$/)) {
+					var isPos = element.text().indexOf("=");
+					if (isPos == -1) {
+						isPos  = element.text().indexOf("is");
+					}
+					if (isPos == -1) {
+						return str;
+					}
+					if (element.text().substring(0, isPos).indexOf(str) == -1) {
+						return str;
+					}
 					return "<span class=\"highlighted variable white\">" + str
 							+ "</span>";
 

@@ -202,7 +202,8 @@ public class UserDefinedParserParser extends Parser {
 			if (tokens.get(PreParser.findEdgeOrObjectBackwards(tokens, templatePos, "then")).equals("then"))
 				return ParseResult.fail();
 
-			final List<Object> result = Lists.newArrayListWithCapacity(after.size());
+			final List<Object> result = Lists.newArrayListWithCapacity(after.size() + 2);
+			result.add("(");
 			final TokenList input = tokens.subList(templatePos, templatePos + template.size());
 			final Map<String, Object> varMap = Maps.newHashMapWithExpectedSize(variables.size());
 			try {
@@ -218,6 +219,7 @@ public class UserDefinedParserParser extends Parser {
 			} catch (final BindException e) {
 				return ParseResult.fail();
 			}
+			result.add(")");
 			final TokenList resultTL = TokenList.create(result);
 			final TokenList flattened = PreParser.flatten(resultTL);
 			return ParseResult.success(

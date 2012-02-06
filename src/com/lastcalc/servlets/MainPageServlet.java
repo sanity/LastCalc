@@ -10,7 +10,6 @@ import com.googlecode.objectify.*;
 import com.lastcalc.*;
 import com.lastcalc.db.*;
 import com.lastcalc.lessons.Help;
-import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.servlets.WorksheetServlet.AnswerType;
 
@@ -21,6 +20,11 @@ public class MainPageServlet extends HttpServlet {
 	protected void doGet(final javax.servlet.http.HttpServletRequest req,
 			final javax.servlet.http.HttpServletResponse resp) throws javax.servlet.ServletException,
 			java.io.IOException {
+		if (req.getHeader("User-Agent").contains("MSIE") && !req.getRequestURL().toString().contains("skipuacheck")) {
+			resp.sendRedirect("/noie.html");
+			return;
+		}
+
 		final URL requestURL = new URL(req.getRequestURL().toString());
 
 		final String path = requestURL.getPath();
@@ -80,6 +84,7 @@ public class MainPageServlet extends HttpServlet {
 				doc.head().appendElement("link").attr("rel", "stylesheet")
 				.attr("href", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css")
 				.attr("type", "text/css");
+				doc.head().appendElement("script").attr("src", "/js/json2.js");
 				doc.head().appendElement("script")
 				.attr("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
 				doc.head().appendElement("script")
@@ -102,6 +107,7 @@ public class MainPageServlet extends HttpServlet {
 				final Element ws = doc.body().appendElement("div").attr("id", "worksheet");
 				ws.appendElement("div").attr("class", "groups").appendElement("a")
 				.attr("href", "https://groups.google.com/forum/?hl=en#!forum/lastcalc")
+				.attr("target", "_blank")
 				.html("Ideas, Feedback, Questions, or Problems?  <u>Sign up</u> for our Google Group");
 
 				// doc.body().appendElement("iframe").attr("id",
@@ -133,7 +139,7 @@ public class MainPageServlet extends HttpServlet {
 					if (aType.equals(AnswerType.NORMAL)) {
 						lineEl.appendElement("div").attr("class", "equals").text("=");
 						lineEl.appendElement("div").attr("class", "answer")
-						.html(Renderers.toHtml("/", PreParser.flatten(strippedAnswer)).toString());
+						.html(Renderers.toHtml("/", strippedAnswer).toString());
 					} else {
 						lineEl.appendElement("div").attr("class", "equals")
 						.html("<span style=\"font-size:10pt;\">&#10003</span>");

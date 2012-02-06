@@ -12,7 +12,6 @@ import org.jsoup.nodes.*;
 
 import com.google.appengine.api.utils.SystemProperty;
 import com.lastcalc.*;
-import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 
 import static com.google.appengine.api.utils.SystemProperty.environment;
@@ -81,7 +80,7 @@ public class Help {
 			if (!isFunction) {
 				line.appendElement("div").attr("class", "equals").text("=");
 				line.appendElement("div").attr("class", "answer")
-				.html(Renderers.toHtml("/", PreParser.flatten(strippedAnswer)).toString());
+						.html(Renderers.toHtml("/", strippedAnswer).toString());
 			} else {
 				line.appendElement("div").attr("class", "equals")
 				.html("<span style=\"font-size:10pt;\">&#10003</span>");

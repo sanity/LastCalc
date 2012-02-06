@@ -139,6 +139,7 @@ DIV.helpquestion {
 
 DIV.question.editing {
 	width: 95%;
+	display: block;
 }
 
 DIV.equals {
