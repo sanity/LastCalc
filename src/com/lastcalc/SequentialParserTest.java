@@ -1,6 +1,6 @@
 package com.lastcalc;
 
-import java.util.List;
+import java.util.*;
 
 import junit.framework.Assert;
 
@@ -182,6 +182,16 @@ public class SequentialParserTest {
 	public void toLowerCaseTest() {
 		final SequentialParser sp = SequentialParser.create();
 		Assert.assertEquals(sp.parseNext("pi"), sp.parseNext("Pi"));
+	}
+
+	@Test
+	public void mapMatchTest() {
+		final SequentialParser sp = SequentialParser.create();
+		sp.parseNext("tst {K:V ... R} {K:V2 ... R2} = R2");
+		final TokenList res = sp.parseNext("tst {1:3, 2:3} {1:4}");
+		Assert.assertEquals(1, res.size());
+		Assert.assertTrue(res.get(0) instanceof Map);
+		Assert.assertTrue(((Map<Object, Object>) res.get(0)).isEmpty());
 	}
 
 	// @Test

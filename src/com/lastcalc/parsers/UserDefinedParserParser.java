@@ -100,7 +100,7 @@ public class UserDefinedParserParser extends Parser {
 					if (value == null)
 						throw new BindException("Map doesn't contain key '" + e.getKey() + "'");
 					bind(e.getValue(), value, variables, bound);
-					tail.remove(e.getKey());
+					tail.remove(aKey);
 				}
 			}
 			bind(fromMWT.tail, tail, variables, bound);
