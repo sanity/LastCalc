@@ -13,7 +13,9 @@
       notepad for calculations, you start on the top line and work your
       way down. The good news is that, unlike with a notepad and pencil,
       LastCalc does the hard work of figuring out the answers for you!
-
+      <p />
+      Another great thing about LastCalc is that you can go back and
+      edit previous lines just by clicking on them.
       <h2>Simple math</h2>
       LastCalc lets you do basic math, note that <b>*</b> means multiply
       and <b>/</b> means divide, for example:
@@ -54,6 +56,14 @@
       can calculate:
       <div class="question">homeValue + $2000</div>
       You can define as many variables as you like!
+    </div>
+    <div class="lesson">
+      <h2>Editing a previous line</h2>
+      What if you assign a result to a variable, and do some subsequent
+      calculations with it, but then you want to edit the first line
+      so that a different result is assigned to that variable?  No problem!
+      Just go back, edit it, and all subsequent lines will be updated
+      immediately, just like with a spreadsheet.
     </div>
     <div class="lesson">
       <h2>Functions</h2>
@@ -153,7 +163,7 @@
       <div class="question">first in [5,4,3,2]</div>
       (Don't forget that <span class="highlighted variable white">Parameters</span>
       in functions <b>must</b> be Capitalized!).
-      <p/>
+      <p />
       What happened here? This new structure to the left of the = in the
       function definition binds to a list, and more specifically it
       binds the parameter <span class="highlighted variable white">First</span>
@@ -200,7 +210,7 @@
       defined earlier:
       <div class="question">newbmi H W = if (bmi H W > 20) then
         overweight else ok</div>
-        (Don't forget that <span class="highlighted variable white">Parameters</span>
+      (Don't forget that <span class="highlighted variable white">Parameters</span>
       in functions <b>must</b> be Capitalized!).
       <div class="question">newbmi 2 70</div>
       <div class="question">newbmi 2 90</div>
@@ -326,47 +336,53 @@
     </div>
     <div class="lesson">
       <h2>Pulling data from the web</h2>
-      The Internet is full of data, but often it isn't in a very convenient
-      format - and of course the <b>most</b> convenient format would be 
-      as a value you could calculate with in LastCalc!
-      <p/>
-      Well, fortunately LastCalc allows you to pull data from almost any 
+      The Internet is full of data, but often it isn't in a very
+      convenient format - and of course the <b>most</b> convenient
+      format would be as a value you could calculate with in LastCalc!
+      <p />
+      Well, fortunately LastCalc allows you to pull data from almost any
       webpage into LastCalc, and use it in subsequent calculations!
-      <p/>
-      We will demonstrate how you can grab the current <a 
-      target="_blank" href="http://bitcoin.org/">Bitcoin</a> to US Dollar
-      exchange rate from a website, and then use it to teach LastCalc
-      how to convert from Bitcoins to and from various other currencies.
-      <p/>
-      The first stage is to find a webpage that contains the data we need,
-      <a target="_blank" href="http://bitcoincharts.com/">bitcoincharts.com</a>
-      will do nicely, so let's grab it and store the result in
-      a variable:
-      <div class="question">page = retrieve "http://bitcoincharts.com/"</div>
-      Note that LastCalc doesn't display the entire retrieved page because it
-      would be way too big.  Next, we need to isolate the HTML elements in the
-      page that we're interested in:
+      <p />
+      We will demonstrate how you can grab the current <a
+        target="_blank" href="http://bitcoin.org/">Bitcoin</a> to US
+      Dollar exchange rate from a website, and then use it to teach
+      LastCalc how to convert from Bitcoins to and from various other
+      currencies.
+      <p />
+      The first stage is to find a webpage that contains the data we
+      need, <a target="_blank" href="http://bitcoincharts.com/">bitcoincharts.com</a>
+      will do nicely, so let's grab it and store the result in a
+      variable:
+      <div class="question">page = retrieve
+        "http://bitcoincharts.com/"</div>
+      Note that LastCalc doesn't display the entire retrieved page
+      because it would be way too big. Next, we need to isolate the HTML
+      elements in the page that we're interested in:
       <div class="question">elements = select "td.right" from page</div>
-      We use a <a target="_blank" href="http://jsoup.org/cookbook/extracting-data/selector-syntax">CSS selector</a>
-      to isolate specific elements in the page.  Since more than one element
-      matches the selector we get a list (note how LastCalc doesn't show the
-      whole list because it is very long), so let's grab the first one:
+      We use a <a target="_blank"
+        href="http://jsoup.org/cookbook/extracting-data/selector-syntax">CSS
+        selector</a> to isolate specific elements in the page. Since more
+      than one element matches the selector we get a list (note how
+      LastCalc doesn't show the whole list because it is very long), so
+      let's grab the first one:
       <div class="question">firstElement = get 1st from elements</div>
       Now let's grab the text of the element:
       <div class="question">valAsText = get text from firstElement</div>
-      LastCalc is treating this text as a string, but we'd like LastCalc to
-      interpret it so that it treats it as a number:
+      LastCalc is treating this text as a string, but we'd like LastCalc
+      to interpret it so that it treats it as a number:
       <div class="question">bitcoinInUsd = interpret valAsText</div>
-      Now we have the value of Bitcoins in US Dollars as a number!  Let's
+      Now we have the value of Bitcoins in US Dollars as a number! Let's
       teach LastCalc how to convert to and from Bitcoins:
-      <div class="question">X Currency in btc = (((X Currency in usd) as number) / bitcoinInUsd) btc</div>
+      <div class="question">X Currency in btc = (((X Currency in
+        usd) as number) / bitcoinInUsd) btc</div>
       (Don't forget that <span class="highlighted variable white">Parameters</span>
       in functions <b>must</b> be Capitalized!).
       <div class="question">3 euros in btc</div>
-      It works!  Let's teach LastCalc how to convert from Bitcoins now:
-      <div class="question">X btc in Currency = ((X * bitcoinInUsd) usd) in Currency</div>
+      It works! Let's teach LastCalc how to convert from Bitcoins now:
+      <div class="question">X btc in Currency = ((X *
+        bitcoinInUsd) usd) in Currency</div>
       <div class="question">2 btc in usd</div>
-      It works too!  Now LastCalc will let you calculate with almost any
+      It works too! Now LastCalc will let you calculate with almost any
       information you can find on the Internet!
     </div>
   </div>
