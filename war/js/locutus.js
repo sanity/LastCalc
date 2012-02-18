@@ -20,6 +20,21 @@ function reassignIds() {
 	});
 }
 
+function checkFunctionVarDef(text) {
+	if ($.cookie("fun-warn") == null) {
+	  var ep = text.indexOf("=");
+	  if (ep !== -1) {
+	  	var firstPart = text.substring(0, ep);
+	  	if (firstPart.match(/[a-zA-Z][a-zA-Z0-9]*/g).length > 1) {
+		  	if (!firstPart.match(/[A-Z][a-zA-Z0-9]*/g)) {
+		  		$.cookie("fun-warn", true);
+		  		alert("Sorry to interrupt but it appears that you might be trying to define a function.  Please remember that function parameters Must Be Capitalized!");
+		  	}
+	  	}
+	  }
+	}
+}
+
 function highlightSyntax(element) {
 	rangy.init();
 	
@@ -134,6 +149,7 @@ $(window).load(function() {
 	});
 
 	$(document).on("focusout", "DIV.question", function(event) {
+		checkFunctionVarDef($(this).text());
 		var thisLine = $(this).parent("DIV.line");
 		var thisLineNumber = getLineNumber(thisLine);
 		var q = thisLine.find("DIV.question");
