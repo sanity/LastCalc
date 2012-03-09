@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * LastCalc - The last calculator you'll ever need
+ * Copyright (C) 2011, 2012 Uprizer Labs LLC
+ * 
+ * This program is free software: you can redistribute it and/or modify it 
+ * under the terms of the GNU Affero General Public License as published 
+ * by the Free Software Foundation, either version 3 of the License, or 
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE.  See the GNU Affero General Public License for more 
+ * details.
+ ******************************************************************************/
 package com.lastcalc.servlets;
 
 import java.net.URL;
@@ -20,7 +35,8 @@ public class MainPageServlet extends HttpServlet {
 	protected void doGet(final javax.servlet.http.HttpServletRequest req,
 			final javax.servlet.http.HttpServletResponse resp) throws javax.servlet.ServletException,
 			java.io.IOException {
-		if (req.getHeader("User-Agent").contains("MSIE") && !req.getRequestURL().toString().contains("skipuacheck")) {
+		final boolean skipUACheck = req.getParameterMap().containsKey("skipuacheck");
+		if (!skipUACheck && req.getHeader("User-Agent").contains("MSIE")) {
 			resp.sendRedirect("/noie.html");
 			return;
 		}
@@ -42,7 +58,7 @@ public class MainPageServlet extends HttpServlet {
 
 			obj.put(worksheet);
 
-			resp.sendRedirect("/" + worksheet.id);
+			resp.sendRedirect("/" + worksheet.id + (skipUACheck ? "?skipuacheck=1" : ""));
 		} else {
 
 			final String worksheetId = path.substring(1);
@@ -87,8 +103,8 @@ public class MainPageServlet extends HttpServlet {
 				doc.head().appendElement("script").attr("src", "/js/json2.js");
 				doc.head().appendElement("script")
 				.attr("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
-				doc.head().appendElement("script")
-				.attr("src", "http://cdn.jquerytools.org/1.2.6/all/jquery.tools.min.js");
+				// doc.head().appendElement("script").attr("src",
+				// "/js/jquery.tools.min.js");
 				doc.head().appendElement("script")
 				.attr("src", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js");
 				doc.head().appendElement("script").attr("src", "/js/jquery.cookie.js");
