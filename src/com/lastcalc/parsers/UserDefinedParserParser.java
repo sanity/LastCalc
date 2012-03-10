@@ -2,15 +2,15 @@
  * LastCalc - The last calculator you'll ever need
  * Copyright (C) 2011, 2012 Uprizer Labs LLC
  * 
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Affero General Public License as published 
- * by the Free Software Foundation, either version 3 of the License, or 
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the GNU Affero General Public License for more 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU Affero General Public License for more
  * details.
  ******************************************************************************/
 package com.lastcalc.parsers;
@@ -218,7 +218,10 @@ public class UserDefinedParserParser extends Parser {
 				return ParseResult.fail();
 
 			final List<Object> result = Lists.newArrayListWithCapacity(after.size() + 2);
-			result.add("(");
+			final boolean useBrackets = tokens.size() > template.size();
+			if (useBrackets) {
+				result.add("(");
+			}
 			final TokenList input = tokens.subList(templatePos, templatePos + template.size());
 			final Map<String, Object> varMap = Maps.newHashMapWithExpectedSize(variables.size());
 			try {
@@ -234,7 +237,9 @@ public class UserDefinedParserParser extends Parser {
 			} catch (final BindException e) {
 				return ParseResult.fail();
 			}
-			result.add(")");
+			if (useBrackets) {
+				result.add(")");
+			}
 			final TokenList resultTL = TokenList.create(result);
 			final TokenList flattened = PreParser.flatten(resultTL);
 			return ParseResult.success(
