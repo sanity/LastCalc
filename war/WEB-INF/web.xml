@@ -13,6 +13,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-class>com.lastcalc.servlets.WorksheetServlet</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>Stateless</servlet-name>
+		<servlet-class>com.lastcalc.servlets.StatelessServlet</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>Help</servlet-name>
 		<servlet-class>com.lastcalc.servlets.HelpServlet</servlet-class>
 	</servlet>
@@ -23,6 +27,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<servlet-mapping>
 		<servlet-name>Worksheet</servlet-name>
 		<url-pattern>/ws</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Stateless</servlet-name>
+		<url-pattern>/sl</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Help</servlet-name>
