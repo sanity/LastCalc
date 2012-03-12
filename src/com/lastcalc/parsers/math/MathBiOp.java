@@ -2,15 +2,15 @@
  * LastCalc - The last calculator you'll ever need
  * Copyright (C) 2011, 2012 Uprizer Labs LLC
  * 
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Affero General Public License as published 
- * by the Free Software Foundation, either version 3 of the License, or 
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the GNU Affero General Public License for more 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU Affero General Public License for more
  * details.
  ******************************************************************************/
 package com.lastcalc.parsers.math;
@@ -36,6 +36,7 @@ public class MathBiOp extends Parser {
 	private static Map<String, Integer> precidenceMap = Maps.newHashMap();
 	static {
 		precidenceMap.put("^", 2);
+		precidenceMap.put("xor", 2);
 		precidenceMap.put("*", 3);
 		precidenceMap.put("/", 3);
 		precidenceMap.put("mod", 3);
