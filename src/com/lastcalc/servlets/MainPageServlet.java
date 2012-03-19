@@ -2,15 +2,15 @@
  * LastCalc - The last calculator you'll ever need
  * Copyright (C) 2011, 2012 Uprizer Labs LLC
  * 
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Affero General Public License as published 
- * by the Free Software Foundation, either version 3 of the License, or 
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the GNU Affero General Public License for more 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU Affero General Public License for more
  * details.
  ******************************************************************************/
 package com.lastcalc.servlets;
@@ -122,9 +122,8 @@ public class MainPageServlet extends HttpServlet {
 				header.appendElement("div").attr("id", "help-button").text("Show Help");
 				final Element ws = doc.body().appendElement("div").attr("id", "worksheet");
 				ws.appendElement("div").attr("class", "groups").appendElement("a")
-				.attr("href", "https://groups.google.com/forum/?hl=en#!forum/lastcalc")
-				.attr("target", "_blank")
-				.html("Ideas, Feedback, Questions, or Problems?  <u>Sign up</u> for our Google Group");
+				.attr("href", "https://github.com/sanity/LastCalc/wiki/OpenSourceAnnouncement")
+						.attr("target", "_blank").html("LastCalc is now Open Source!  Read more...");
 
 				// doc.body().appendElement("iframe").attr("id",
 				// "helpframe").attr("src", "/help")
