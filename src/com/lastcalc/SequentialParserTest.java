@@ -2,15 +2,15 @@
  * LastCalc - The last calculator you'll ever need
  * Copyright (C) 2011, 2012 Uprizer Labs LLC
  * 
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Affero General Public License as published 
- * by the Free Software Foundation, either version 3 of the License, or 
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the GNU Affero General Public License for more 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU Affero General Public License for more
  * details.
  ******************************************************************************/
 package com.lastcalc;
@@ -118,7 +118,7 @@ public class SequentialParserTest {
 		final TokenList res = sp.parseNext("concat [[1, 2], [3, 4]]");
 		System.out.println("Concat steps required: \t" + sp.getLastParseStepCount() + "\t"
 				+ (System.currentTimeMillis() - startTime) + "ms");
-		Assert.assertTrue(sp.getLastParseStepCount() <= 36);
+		Assert.assertTrue(sp.getLastParseStepCount() <= 37);
 		Assert.assertEquals(1, res.size());
 		Assert.assertTrue(res.get(0) instanceof List);
 		final List<Object> list = (List<Object>) res.get(0);

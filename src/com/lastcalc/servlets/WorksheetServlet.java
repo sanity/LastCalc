@@ -2,15 +2,15 @@
  * LastCalc - The last calculator you'll ever need
  * Copyright (C) 2011, 2012 Uprizer Labs LLC
  * 
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Affero General Public License as published 
- * by the Free Software Foundation, either version 3 of the License, or 
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the GNU Affero General Public License for more 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU Affero General Public License for more
  * details.
  ******************************************************************************/
 package com.lastcalc.servlets;
@@ -105,9 +105,7 @@ public class WorksheetServlet extends HttpServlet {
 			final TokenList strippedAnswer = seqParser.stripUDF(answer);
 			response.answers.put(x + 1, Renderers.toHtml(req.getRequestURI(), strippedAnswer)
 					.toString());
-			response.answerTypes.put(x + 1, strippedAnswer.size() == 1
-					&& strippedAnswer.get(0) instanceof UserDefinedParser ? AnswerType.FUNCTION
-							: AnswerType.NORMAL);
+			response.answerTypes.put(x + 1,  getAnswerType(strippedAnswer));
 		}
 
 		resp.setContentType("application/json; charset=UTF-8");
@@ -116,6 +114,21 @@ public class WorksheetServlet extends HttpServlet {
 		if (Currencies.shouldUpdate()) {
 			Currencies.updateExchangeRates();
 		}
+	}
+
+	public static AnswerType getAnswerType(final TokenList answer) {
+		if (answer.size() == 1) {
+			if (answer.get(0) instanceof UserDefinedParser)
+				return AnswerType.FUNCTION;
+			else if (answer.get(0) instanceof Collection) {
+				for (final Object o : ((Collection<?>) answer.get(0))) {
+					if (!(o instanceof UserDefinedParser))
+						return AnswerType.NORMAL;
+				}
+				return AnswerType.FUNCTION;
+			}
+		}
+		return AnswerType.NORMAL;
 	}
 
 	public static class WorksheetRequest {

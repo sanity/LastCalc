@@ -25,7 +25,6 @@ import com.googlecode.objectify.*;
 import com.lastcalc.*;
 import com.lastcalc.db.*;
 import com.lastcalc.lessons.Help;
-import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.servlets.WorksheetServlet.AnswerType;
 
 public class MainPageServlet extends HttpServlet {
@@ -148,9 +147,7 @@ public class MainPageServlet extends HttpServlet {
 							.attr("contentEditable", "true");
 					question.text(qa.question);
 					final TokenList strippedAnswer = sp.stripUDF(qa.answer);
-					final AnswerType aType = strippedAnswer.size() == 1
-							&& strippedAnswer.get(0) instanceof UserDefinedParser ? AnswerType.FUNCTION
-									: AnswerType.NORMAL;
+					final AnswerType aType = WorksheetServlet.getAnswerType(strippedAnswer);
 					if (aType.equals(AnswerType.NORMAL)) {
 						lineEl.appendElement("div").attr("class", "equals").text("=");
 						lineEl.appendElement("div").attr("class", "answer")
