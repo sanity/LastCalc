@@ -2,15 +2,15 @@
  * LastCalc - The last calculator you'll ever need
  * Copyright (C) 2011, 2012 Uprizer Labs LLC
  * 
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Affero General Public License as published 
- * by the Free Software Foundation, either version 3 of the License, or 
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the GNU Affero General Public License for more 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU Affero General Public License for more
  * details.
  ******************************************************************************/
 package com.lastcalc.lessons;
@@ -27,7 +27,8 @@ import org.jsoup.nodes.*;
 
 import com.google.appengine.api.utils.SystemProperty;
 import com.lastcalc.*;
-import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
+import com.lastcalc.servlets.*;
+import com.lastcalc.servlets.WorksheetServlet.AnswerType;
 
 import static com.google.appengine.api.utils.SystemProperty.environment;
 
@@ -90,12 +91,12 @@ public class Help {
 			final String questionAsHtml = Renderers.toHtml("/", tokenizedQuestion, sp.getUserDefinedKeywordMap())
 					.toString();
 			final TokenList strippedAnswer = sp.stripUDF(answer);
-			final boolean isFunction = strippedAnswer.size() == 1 && strippedAnswer.get(0) instanceof UserDefinedParser;
+			final AnswerType answerType = WorksheetServlet.getAnswerType(strippedAnswer);
 			line.appendElement("div").addClass("helpquestion").html(questionAsHtml);
-			if (!isFunction) {
+			if (answerType.equals(AnswerType.NORMAL)) {
 				line.appendElement("div").attr("class", "equals").text("=");
 				line.appendElement("div").attr("class", "answer")
-						.html(Renderers.toHtml("/", strippedAnswer).toString());
+				.html(Renderers.toHtml("/", strippedAnswer).toString());
 			} else {
 				line.appendElement("div").attr("class", "equals")
 				.html("<span style=\"font-size:10pt;\">&#10003</span>");

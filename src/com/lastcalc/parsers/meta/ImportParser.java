@@ -19,6 +19,8 @@ public class ImportParser extends Parser {
 	}
 	@Override
 	public ParseResult parse(final TokenList tokens, final int templatePos, final ParserContext context) {
+		if (context.importDepth > 5)
+			return ParseResult.fail();
 		URL url;
 		try {
 			url = new URL(((QuotedString) tokens.get(templatePos + 1)).value);
