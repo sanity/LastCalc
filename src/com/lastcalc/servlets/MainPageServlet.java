@@ -123,7 +123,7 @@ public class MainPageServlet extends HttpServlet {
 				final Element ws = doc.body().appendElement("div").attr("id", "worksheet");
 				ws.appendElement("div").attr("class", "groups").appendElement("a")
 				.attr("href", "https://github.com/sanity/LastCalc/wiki/OpenSourceAnnouncement")
-						.attr("target", "_blank").html("LastCalc is now Open Source!  Read more...");
+				.attr("target", "_blank").html("LastCalc is now Open Source!  Read more...");
 
 				// doc.body().appendElement("iframe").attr("id",
 				// "helpframe").attr("src", "/help")

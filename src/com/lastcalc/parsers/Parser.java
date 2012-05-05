@@ -26,6 +26,7 @@ import com.lastcalc.parsers.bool.*;
 import com.lastcalc.parsers.collections.*;
 import com.lastcalc.parsers.currency.Currencies;
 import com.lastcalc.parsers.math.*;
+import com.lastcalc.parsers.meta.ImportParser;
 import com.lastcalc.parsers.strings.StringAppender;
 import com.lastcalc.parsers.web.*;
 
@@ -143,6 +144,7 @@ public abstract class Parser implements Serializable {
 		parsers.add(new GetFromElement());
 		parsers.add(new Interpret());
 		parsers.add(new StringAppender());
+		parsers.add(new ImportParser());
 
 	}
 

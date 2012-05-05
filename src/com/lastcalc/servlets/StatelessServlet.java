@@ -16,23 +16,15 @@
 package com.lastcalc.servlets;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
 import com.google.common.collect.Maps;
-import com.lastcalc.Misc;
-import com.lastcalc.Renderers;
-import com.lastcalc.SequentialParser;
-import com.lastcalc.TokenList;
-import com.lastcalc.Tokenizer;
+
+import com.lastcalc.*;
 import com.lastcalc.db.Line;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.parsers.currency.Currencies;

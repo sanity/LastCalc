@@ -2,15 +2,15 @@
  * LastCalc - The last calculator you'll ever need
  * Copyright (C) 2011, 2012 Uprizer Labs LLC
  * 
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU Affero General Public License as published 
- * by the Free Software Foundation, either version 3 of the License, or 
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR 
- * PURPOSE.  See the GNU Affero General Public License for more 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU Affero General Public License for more
  * details.
  ******************************************************************************/
 package com.lastcalc;
@@ -98,11 +98,17 @@ public class SequentialParser implements Serializable {
 		return new SequentialParser(priorityParsers, globalParserPickerFactory, lowPriorityParsers, timeout);
 	}
 
+	public static SequentialParser create(final ParserContext pc) {
+		final long timeout = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? 2000
+				: 2000;
+		return new SequentialParser(priorityParsers, globalParserPickerFactory, lowPriorityParsers, timeout, pc);
+	}
+
 	private static final long serialVersionUID = 3602019924032548636L;
-	private final FixedOrderParserPickerFactory userDefinedParsers;
+	private final KeywordParserPickerFactory userDefinedParsers;
 	private final BacktrackingParseEngine parseEngine;
 	private final ParserContext context;
-	private final Map<String, Integer> userDefinedKeywords;
+	private final Map<String, Integer> userDefinedKeywords = Maps.newConcurrentMap();
 	private int pos;
 
 	private TokenList previousAnswer = null;
@@ -112,13 +118,22 @@ public class SequentialParser implements Serializable {
 	public SequentialParser(final ParserPickerFactory priorityParsers, final ParserPickerFactory allParsers,
 			final ParserPickerFactory lowPriorityParsers,
 			final long timeout) {
-
-		userDefinedParsers = new FixedOrderParserPickerFactory();
+		userDefinedParsers = new KeywordParserPickerFactory();
 		final CombinedParserPickerFactory ppf = new CombinedParserPickerFactory(priorityParsers, userDefinedParsers,
 				allParsers, lowPriorityParsers);
 		parseEngine = new BacktrackingParseEngine(ppf);
-		context = new ParserContext(parseEngine, 2000);
-		userDefinedKeywords = Maps.newHashMap();
+		context = new ParserContext(parseEngine, timeout);
+	}
+
+	public SequentialParser(final ParserPickerFactory priorityParsers, final ParserPickerFactory allParsers,
+			final ParserPickerFactory lowPriorityParsers,
+			final long timeout, final ParserContext context) {
+
+		userDefinedParsers = new KeywordParserPickerFactory();
+		final CombinedParserPickerFactory ppf = new CombinedParserPickerFactory(priorityParsers, userDefinedParsers,
+				allParsers, lowPriorityParsers);
+		parseEngine = new BacktrackingParseEngine(ppf);
+		this.context = context;
 	}
 
 	public TokenList parseNext(final String question) {
@@ -168,6 +183,25 @@ public class SequentialParser implements Serializable {
 			}
 			userDefinedParsers.addParser(udp);
 		}
+
+		// We can also get a list of UDFs, for example from an import
+		if (answer.size() == 1 && answer.get(0) instanceof Collection && ((Collection) answer.get(0)).size() > 0) {
+			final List<UserDefinedParser> udfs = Lists.newArrayListWithCapacity(((Collection) answer.get(0)).size());
+			// We do it this way to ensure that all items in the list are really
+			// UserDefinedParsers
+			for (final Object o : ((Collection<?>) answer.get(0))) {
+				if (! (o instanceof UserDefinedParser)) {
+					udfs.clear();
+					break;
+				} else {
+					udfs.add((UserDefinedParser) o);
+				}
+			}
+			for (final UserDefinedParser udf : udfs) {
+				userDefinedParsers.addParser(udf);
+			}
+		}
+
 		pos++;
 		previousAnswer = answer;
 	}
@@ -184,7 +218,7 @@ public class SequentialParser implements Serializable {
 		return lastParseStepCount;
 	}
 
-	public FixedOrderParserPickerFactory getUserDefinedParsers() {
+	public ParserPickerFactory getUserDefinedParsers() {
 		return userDefinedParsers;
 	}
 }

@@ -21,8 +21,6 @@ import junit.framework.Assert;
 
 import com.google.common.collect.Lists;
 
-import org.junit.Test;
-
 import com.lastcalc.*;
 import com.lastcalc.engines.*;
 import com.lastcalc.parsers.*;

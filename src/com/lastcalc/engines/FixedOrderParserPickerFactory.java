@@ -66,7 +66,7 @@ public class FixedOrderParserPickerFactory extends ParserPickerFactory {
 
 	}
 
-	public List<Parser> getParserList() {
+	public List<Parser> getParsers() {
 		return parsers;
 	}
 

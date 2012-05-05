@@ -92,7 +92,7 @@ public class WorksheetServlet extends HttpServlet {
 			}
 		}
 
-		worksheet.definedParsers = seqParser.getUserDefinedParsers().getParserList();
+		worksheet.definedParsers = seqParser.getUserDefinedParsers().getParsers();
 
 		obj.put(worksheet);
 
