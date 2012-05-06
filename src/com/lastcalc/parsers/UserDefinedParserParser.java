@@ -244,7 +244,8 @@ public class UserDefinedParserParser extends Parser {
 			final TokenList flattened = PreParser.flatten(resultTL);
 			return ParseResult.success(
 					tokens.replaceWithTokenList(templatePos, templatePos + template.size(), flattened),
-					Math.min(0, -flattened.size()));
+					Math.min(0, -flattened.size())
+					);
 		}
 
 		@Override

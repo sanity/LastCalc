@@ -183,17 +183,6 @@ public class SequentialParserTest {
 	}
 
 	@Test
-	public void stepRangeTest() {
-		final SequentialParser sp = SequentialParser.create();
-		sp.parseNext("step([]) = []");
-		sp.parseNext("step([H...T]) = if T!=[] then [H,step(T)] else [H]");
-		sp.parseNext("range(X)(Y) = if X<Y then [X...range(X+1)(Y)] else []");
-		sp.parseNext("range(X) = range(0)(X)");
-		final TokenList result = sp.parseNext("step(range(2))");
-		Assert.assertEquals("[0, [1]]", result.get(0).toString());
-	}
-
-	@Test
 	public void mathOpTest() {
 		final SequentialParser sp = SequentialParser.create();
 		Assert.assertTrue(sp.parseNext("sin 3").get(0) instanceof Number);
@@ -213,6 +202,16 @@ public class SequentialParserTest {
 		Assert.assertEquals(1, res.size());
 		Assert.assertTrue(res.get(0) instanceof Map);
 		Assert.assertTrue(((Map<Object, Object>) res.get(0)).isEmpty());
+	}
+
+	@Test
+	public void fibTest() {
+		final SequentialParser sp = SequentialParser.create();
+		sp.parseNext("fib 0 = 0");
+		sp.parseNext("fib 1 = 1");
+		sp.parseNext("fib N = fib (N-1) + fib (N-2)");
+		final TokenList res = sp.parseNext("fib 2");
+		Assert.assertEquals("1", res.toString());
 	}
 
 	// @Test

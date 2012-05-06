@@ -25,8 +25,8 @@ import com.lastcalc.parsers.*;
 
 public class KeywordParserPickerFactory extends ParserPickerFactory {
 	private static final long serialVersionUID = -2346529366052255216L;
-	private final Map<String, Set<Parser>> parsersMap;
-	Set<Parser> noKeywords = Sets.newHashSet();
+	private final Map<String, ParserSet> parsersMap;
+	Set<Parser> noKeywords = new ParserSet();
 
 	public KeywordParserPickerFactory(final Parser... parsers) {
 		this(Lists.newArrayList(parsers));
@@ -41,12 +41,12 @@ public class KeywordParserPickerFactory extends ParserPickerFactory {
 
 	@Override
 	public void addParser(final Parser parser) {
-		List<Set<Parser>> addTo = null;
+		List<ParserSet> addTo = null;
 		outer: for (final Object o : parser.getTemplate()) {
 			if (o instanceof String) {
-				Set<Parser> ll = parsersMap.get(o);
+				ParserSet ll = parsersMap.get(o);
 				if (ll == null) {
-					ll = Sets.newHashSet();
+					ll = new ParserSet();
 					parsersMap.put((String) o, ll);
 				}
 				if (addTo == null || addTo.size() > 1 || addTo.get(0).size() > ll.size()) {
@@ -54,14 +54,14 @@ public class KeywordParserPickerFactory extends ParserPickerFactory {
 				}
 			} else if (o instanceof List) {
 				final List<?> ol = (List<?>) o;
-				final List<Set<Parser>> ma = Lists.newLinkedList();
+				final List<ParserSet> ma = Lists.newLinkedList();
 				for (final Object oi : ol) {
 					if (!(oi instanceof String)) {
 						continue outer;
 					}
-					Set<Parser> ll = parsersMap.get(oi);
+					ParserSet ll = parsersMap.get(oi);
 					if (ll == null) {
-						ll = Sets.newHashSet();
+						ll = new ParserSet();
 						parsersMap.put((String) oi, ll);
 					}
 					ma.add(ll);
@@ -105,11 +105,11 @@ public class KeywordParserPickerFactory extends ParserPickerFactory {
 
 	public static class KeywordParserPicker extends ParserPicker {
 
-		private final Map<String, Set<Parser>> parsersMap;
+		private final Map<String, ParserSet> parsersMap;
 		private final Set<Parser> noKeywords;
 
 		public KeywordParserPicker(final Map<Attempt, Integer> prevAttemptPos,
-				final Map<String, Set<Parser>> parsersMap, final Set<Parser> noKeywords) {
+				final Map<String, ParserSet> parsersMap, final Set<Parser> noKeywords) {
 			super(prevAttemptPos);
 			this.parsersMap = parsersMap;
 			this.noKeywords = noKeywords;
