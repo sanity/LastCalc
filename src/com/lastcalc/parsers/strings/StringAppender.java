@@ -46,7 +46,7 @@ public class StringAppender extends Parser {
 
 	@Override
 	public int hashCode() {
-		return "BoolFunctionsParser".hashCode();
+		return "StringAppender".hashCode();
 	}
 
 	@Override
