@@ -114,6 +114,8 @@ public class MainPageServlet extends HttpServlet {
 				.appendElement("script")
 				.attr("type", "text/javascript")
 				.text("function woopraReady(tracker) {tracker.setDomain('lastcalc.com');tracker.setIdleTimeout(300000);tracker.track();return false;}(function(){var wsc = document.createElement('script');wsc.src = document.location.protocol+'//static.woopra.com/js/woopra.js';wsc.type = 'text/javascript';wsc.async = true;var ssc = document.getElementsByTagName('script')[0];ssc.parentNode.insertBefore(wsc, ssc);})();");
+
+				doc.head().append("<script type=\"text/javascript\"> var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-354970-27']); _gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>");
 				doc.body().attr("data-worksheet-id", worksheet.id);
 				doc.body().attr("data-worksheet-ro-id", worksheet.readOnlyId);
 				final Element header = doc.body().appendElement("div").attr("id", "header");
