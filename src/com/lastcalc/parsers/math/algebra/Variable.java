@@ -14,4 +14,10 @@ public class Variable extends Expression {
 		return "<mi>"+name+"</mi>";
 	}
 
+	@Override
+	public Expression evaluate() {
+		// You can't evaluate a variable
+		return this;
+	}
+
 }

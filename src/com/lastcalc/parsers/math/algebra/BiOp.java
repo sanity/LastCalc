@@ -22,4 +22,10 @@ public class BiOp extends Expression {
 		return null;
 	}
 
+	@Override
+	public Expression evaluate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
