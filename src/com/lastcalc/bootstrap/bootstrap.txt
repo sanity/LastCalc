@@ -16,6 +16,8 @@
 # Units synonyms
 pounds = gbp
 pound = gbp
+pounds = lb
+pound = lb
 dollars = usd
 dollar = usd
 yen = jpy
