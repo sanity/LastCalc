@@ -35,7 +35,7 @@ public class MainPageServlet extends HttpServlet {
 			final javax.servlet.http.HttpServletResponse resp) throws javax.servlet.ServletException,
 			java.io.IOException {
 		final boolean skipUACheck = req.getParameterMap().containsKey("skipuacheck");
-		if (!skipUACheck && req.getHeader("User-Agent").contains("MSIE")) {
+		if (!skipUACheck && (req.getHeader("User-Agent").contains("MSIE") && !req.getHeader("User-Agent").contains("MSIE 10"))) {
 			resp.sendRedirect("/noie.html");
 			return;
 		}
