@@ -145,6 +145,10 @@ public class MainPageServlet extends HttpServlet {
 					if (lineNo == 1) {
 						lineEl.addClass("firstLine");
 					}
+					
+					final Element lineNumber=lineEl.appendElement("div").attr("class","lineNumberMarker");
+					lineNumber.text(lineNo+".");
+					
 					final Element question = lineEl.appendElement("div").attr("class", "question")
 							.attr("contentEditable", "true");
 					question.text(qa.question);
@@ -166,6 +170,8 @@ public class MainPageServlet extends HttpServlet {
 				if (lineNo == 1) {
 					lineEl.addClass("firstLine");
 				}
+				final Element lineNumber=lineEl.appendElement("div").attr("class","lineNumberMarker");
+				lineNumber.text(lineNo+".");
 				final Element question = lineEl.appendElement("div").attr("class", "question")
 						.attr("contentEditable", "true");
 				final Element equals = lineEl.appendElement("div").attr("class", "equals").text("=")
