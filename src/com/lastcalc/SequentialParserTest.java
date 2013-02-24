@@ -223,4 +223,15 @@ public class SequentialParserTest {
 		final TokenList res = sp.parseNext("double [1,2,3]");
 		Assert.assertEquals(1, res.size());
 	}
+	
+	@Test
+	public void ansTest(){
+		final SequentialParser sp = SequentialParser.create();
+		sp.parseNext("23452345");
+		TokenList randomans=sp.parseNext("ans+5");
+		
+		//sp.parseNext("5+ans");
+		Assert.assertEquals("23452350", randomans.toString());
+	}
+	
 }

@@ -50,8 +50,10 @@ public class MathBiOp extends Parser {
 		precidenceMap.put("!=", 7);
 	}
 
-	private static TokenList template = TokenList.createD(Object.class,
-			Lists.<Object> newArrayList(precidenceMap.keySet()), Object.class);
+	private static TokenList template = TokenList.createD(
+			Object.class,
+			Lists.<Object> newArrayList(precidenceMap.keySet()),
+			Object.class);
 
 	@Override
 	public TokenList getTemplate() {
@@ -66,92 +68,86 @@ public class MathBiOp extends Parser {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ParseResult parse(final TokenList tokens, final int templatePos) {
-		try {
-			Object a = tokens.get(templatePos);
-			Object b = tokens.get(templatePos + 2);
-			int outputRadix = 10;
-			if (a instanceof Radix && b instanceof Radix) {
-				final Radix ra = (Radix) a;
-				final Radix rb = (Radix) b;
-				if (ra.radix == rb.radix) {
-					outputRadix = ra.radix;
-				}
+		Object a = tokens.get(templatePos);
+		Object b = tokens.get(templatePos + 2);
+		int outputRadix = 10;
+		if (a instanceof Radix && b instanceof Radix) {
+			final Radix ra = (Radix) a;
+			final Radix rb = (Radix) b;
+			if (ra.radix == rb.radix) {
+				outputRadix = ra.radix;
 			}
-			if (a instanceof Radix) {
-				a = LargeInteger.valueOf(((Radix) a).integer);
-			}
-			if (b instanceof Radix) {
-				b = LargeInteger.valueOf(((Radix) b).integer);
-			}
-			if ((!(a instanceof org.jscience.mathematics.number.Number) && !(a instanceof Amount))
-					|| (!(b instanceof org.jscience.mathematics.number.Number) && !(b instanceof Amount)))
-				return ParseResult.fail();
-			final String op = (String) tokens.get(templatePos + 1);
-
-			final Integer opPrecidence = precidenceMap.get(op);
-			boolean samePrecidenceOk = false;
-			for (final Object token : PreParser.enclosedByStructure(tokens, templatePos)) {
-				if (token == op) {
-					// Operators of the same precedence are permitted *after*
-					// this
-					// operator
-					samePrecidenceOk = true;
-					continue;
-				}
-				final Integer tPrecidence = precidenceMap.get(token);
-				if (samePrecidenceOk) {
-					if (tPrecidence != null && tPrecidence < opPrecidence)
-						return Parser.ParseResult.fail();
-				} else if (tPrecidence != null && tPrecidence <= opPrecidence)
-					return Parser.ParseResult.fail();
-			}
-
-			Object result;
-			if (a instanceof Amount || b instanceof Amount) {
-				final boolean opSameUnit = opsRequiringSameUnit.contains(op);
-				if (a instanceof org.jscience.mathematics.number.Number) {
-					final Unit<?> unit = opSameUnit ? ((Amount) b).getUnit() : Unit.ONE;
-					a = numToAmount((org.jscience.mathematics.number.Number) a, unit);
-				} else if (b instanceof org.jscience.mathematics.number.Number) {
-					final Unit<?> unit = opSameUnit ? ((Amount) a).getUnit() : Unit.ONE;
-					b = numToAmount((org.jscience.mathematics.number.Number) b, unit);
-				}
-				result = calcAmount((Amount) a, op, (Amount) b);
-			} else {
-				// If either a or b is FloatingPoint, ensure both are
-				if (a instanceof FloatingPoint || b instanceof FloatingPoint) {
-					if (!(a instanceof FloatingPoint)) {
-						a = FloatingPoint.valueOf(((org.jscience.mathematics.number.Number) a).doubleValue());
-					}
-					if (!(b instanceof FloatingPoint)) {
-						b = FloatingPoint.valueOf(((org.jscience.mathematics.number.Number) b).doubleValue());
-					}
-				}
-				// If either a or b is Rational, ensure both are
-				if (a instanceof Rational || b instanceof Rational) {
-					if (!(a instanceof Rational)) {
-						a = Rational.valueOf(((org.jscience.mathematics.number.Number) a).longValue(), 1);
-					}
-					if (!(b instanceof Rational)) {
-						b = Rational.valueOf(((org.jscience.mathematics.number.Number) b).longValue(), 1);
-					}
-				}
-
-				result = calcNumber((org.jscience.mathematics.number.Number) a, op,
-						(org.jscience.mathematics.number.Number) b);
-
-				if (outputRadix != 10 && result instanceof LargeInteger) {
-					result = new Radix(((LargeInteger) result).longValue(), outputRadix);
-				}
-			}
-			if (result == null)
-				return ParseResult.fail();
-			else
-				return ParseResult
-						.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), result));
-		} catch (final Exception e) {
-			return ParseResult.fail();
 		}
+		if (a instanceof Radix) {
+			a = LargeInteger.valueOf(((Radix) a).integer);
+		}
+		if (b instanceof Radix) {
+			b = LargeInteger.valueOf(((Radix) b).integer);
+		}
+		if ((!(a instanceof org.jscience.mathematics.number.Number) && !(a instanceof Amount))
+				|| (!(b instanceof org.jscience.mathematics.number.Number) && !(b instanceof Amount)))
+			return ParseResult.fail();
+		final String op = (String) tokens.get(templatePos + 1);
+
+		final Integer opPrecidence = precidenceMap.get(op);
+		boolean samePrecidenceOk = false;
+		for (final Object token : PreParser.enclosedByStructure(tokens, templatePos)) {
+			if (token == op) {
+				// Operators of the same precedence are permitted *after* this
+				// operator
+				samePrecidenceOk = true;
+				continue;
+			}
+			final Integer tPrecidence = precidenceMap.get(token);
+			if (samePrecidenceOk) {
+				if (tPrecidence != null && tPrecidence < opPrecidence)
+					return Parser.ParseResult.fail();
+			} else if (tPrecidence != null && tPrecidence <= opPrecidence)
+				return Parser.ParseResult.fail();
+		}
+
+		Object result;
+		if (a instanceof Amount || b instanceof Amount) {
+			final boolean opSameUnit = opsRequiringSameUnit.contains(op);
+			if (a instanceof org.jscience.mathematics.number.Number) {
+				final Unit<?> unit = opSameUnit ? ((Amount) b).getUnit() : Unit.ONE;
+				a = numToAmount((org.jscience.mathematics.number.Number) a, unit);
+			} else if (b instanceof org.jscience.mathematics.number.Number) {
+				final Unit<?> unit = opSameUnit ? ((Amount) a).getUnit() : Unit.ONE;
+				b = numToAmount((org.jscience.mathematics.number.Number) b, unit);
+			}
+			result = calcAmount((Amount) a, op, (Amount) b);
+		} else {
+			// If either a or b is FloatingPoint, ensure both are
+			if (a instanceof FloatingPoint || b instanceof FloatingPoint) {
+				if (!(a instanceof FloatingPoint)) {
+					a = FloatingPoint.valueOf(((org.jscience.mathematics.number.Number) a).doubleValue());
+				}
+				if (!(b instanceof FloatingPoint)) {
+					b = FloatingPoint.valueOf(((org.jscience.mathematics.number.Number) b).doubleValue());
+				}
+			}
+			// If either a or b is Rational, ensure both are
+			if (a instanceof Rational || b instanceof Rational) {
+				if (!(a instanceof Rational)) {
+					a = Rational.valueOf(((org.jscience.mathematics.number.Number) a).longValue(), 1);
+				}
+				if (!(b instanceof Rational)) {
+					b = Rational.valueOf(((org.jscience.mathematics.number.Number) b).longValue(), 1);
+				}
+			}
+
+			result = calcNumber((org.jscience.mathematics.number.Number) a, op,
+					(org.jscience.mathematics.number.Number) b);
+
+			if (outputRadix != 10 && result instanceof LargeInteger) {
+				result = new Radix(((LargeInteger) result).longValue(), outputRadix);
+			}
+		}
+		if (result == null)
+			return ParseResult.fail();
+		else
+			return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), result));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -205,7 +201,8 @@ public class MathBiOp extends Parser {
 				return a.times(b);
 			else
 				return FloatingPoint.valueOf(a.doubleValue()).times(FloatingPoint.valueOf(b.doubleValue()));
-		} else if (op.equals("/")) {
+		}
+		else if (op.equals("/")) {
 			if (b.doubleValue() == 0.0)
 				return null;
 			if (a instanceof LargeInteger && b instanceof LargeInteger)

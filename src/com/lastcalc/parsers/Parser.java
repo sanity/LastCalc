@@ -145,11 +145,19 @@ public abstract class Parser implements Serializable {
 		parsers.add(new Interpret());
 		parsers.add(new StringAppender());
 		parsers.add(new ImportParser());
-
+		
 	}
 
 	public static final class ParseResult {
-
+		
+		public final double scoreBias;
+		public final TokenList output;
+		
+		private ParseResult(final TokenList output, final double scoreBias) {
+			this.output = output;
+			this.scoreBias = scoreBias;
+		}
+		
 		public static ParseResult fail() {
 			return new ParseResult(null, 0);
 		}
@@ -162,14 +170,7 @@ public abstract class Parser implements Serializable {
 			return new ParseResult(tokens, scoreBias);
 		}
 
-		private ParseResult(final TokenList output, final double scoreBias) {
-			this.output = output;
-			this.scoreBias = scoreBias;
-		}
-
-		public final double scoreBias;
-
-		public final TokenList output;
+		
 		public boolean isSuccess() {
 			return output != null;
 		}

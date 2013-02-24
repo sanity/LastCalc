@@ -28,7 +28,7 @@ public class MathOp extends Parser {
 
 	private static TokenList template = TokenList.createD(
 			Lists.<Object> newArrayList("sqrt", "abs", "cos", "acos",
-					"asin", "atan", "cbrt", "cosh", "exp", "cosh", "log", "ln", "round", "sin", "sinh", "tan", "tanh", "-"),
+					"asin", "atan", "cbrt", "cosh", "exp", "cosh", "log", "ln", "round", "sin", "sinh", "tan", "tanh", "-", "factorial"),
 					Number.class);
 
 	@Override
@@ -93,12 +93,29 @@ public class MathOp extends Parser {
 			result = FloatingPoint.valueOf(Math.tan(number.doubleValue()));
 		} else if (op.equals("tanh")) {
 			result = FloatingPoint.valueOf(Math.tanh(number.doubleValue()));
+		} else if (op.equals("factorial")){
+			//to do: check to make sure its an int first
+			//number.doublevale==number.longvalue
+			int num=number.intValue();
+			if(num>=0)	{
+				//result = Integer.valueOf(factorial(num));
+			}
 		}
+		
 		if (result != null)
 			return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos+template.size(), result));
 		else
 			return ParseResult.fail();
 	}
+	
+	/*private int factorial(double n) {
+		if(n == 0) {
+            return 1;
+        }
+        else {
+            return n * factorial(n - 1);
+        }
+	}*/
 
 	@Override
 	public int hashCode() {

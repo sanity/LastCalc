@@ -195,6 +195,7 @@ public abstract class TokenList implements Iterable<Object>, Serializable {
 	}
 
 	public static final class CompositeTokenList extends TokenList {
+		
 		private static final long serialVersionUID = 96315179953921395L;
 		public final ArrayList<TokenList> tokenLists;
 		private final int[] sizes;

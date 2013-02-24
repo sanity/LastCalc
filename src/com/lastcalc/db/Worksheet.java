@@ -16,7 +16,6 @@
 package com.lastcalc.db;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 import javax.persistence.*;
 
@@ -28,7 +27,6 @@ import com.lastcalc.parsers.Parser;
 
 @Cached
 public class Worksheet {
-	private static final Logger log = Logger.getLogger(Worksheet.class.getName());
 
 	public Worksheet() {
 		id = Misc.randomString(7);
@@ -56,7 +54,6 @@ public class Worksheet {
 
 	public Date created, lastModified;
 
-	@SuppressWarnings("unused")
 	@PrePersist
 	private void prePersist() {
 		lastModified = new Date();

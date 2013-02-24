@@ -49,6 +49,7 @@ public class SequentialParser implements Serializable {
 				}
 			}
 		}
+		recognizedWords.add("ans");
 		// globalParserPickerFactory = new
 		// RecentFirstParserPickerFactory(allParsers);
 		globalParserPickerFactory = new KeywordParserPickerFactory(allParsers);
@@ -140,8 +141,17 @@ public class SequentialParser implements Serializable {
 		return parseNext(Tokenizer.tokenize(question));
 	}
 
-	public TokenList parseNext(final TokenList question) {
+	public TokenList parseNext(TokenList question) {
 		TokenList answer = null;
+		
+		if(previousAnswer!=null){
+			for(int i=0;i<question.size();i++){
+				if(question.get(i).equals("ans")){
+					question=question.replaceWithTokenList(i, i+1, previousAnswer);
+				}
+			}
+		}
+		
 		if (previousAnswer != null && previousAnswer.size() == 1 && (previousAnswer.get(0) instanceof Amount || previousAnswer.get(0) instanceof Number)) {
 			final TokenList questionWithPrevious = new TokenList.CompositeTokenList(previousAnswer, question);
 			answer = parseEngine.parseAndGetLastStep(question, context, questionWithPrevious);
