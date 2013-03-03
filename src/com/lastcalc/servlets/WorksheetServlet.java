@@ -80,12 +80,13 @@ public class WorksheetServlet extends HttpServlet {
 
 		// Recompute worksheet
 		final SequentialParser seqParser = SequentialParser.create();
+		
 		for (final Line qap : qaPairs) {
 			if (qap.question.trim().length() == 0) {
 				qap.answer = TokenList.createD();
 			} else {
 				if (qap.answer == null) {
-					qap.answer = seqParser.parseNext(Tokenizer.tokenize(qap.question));
+					qap.answer = seqParser.parseNext(Tokenizer.tokenize(qap.question));//original ian's code
 				} else {
 					seqParser.processNextAnswer(qap.answer);
 				}

@@ -15,12 +15,14 @@
  ******************************************************************************/
 package com.lastcalc.parsers;
 
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.*;
 
 import com.google.common.collect.*;
 
 import com.lastcalc.TokenList;
+import com.lastcalc.parsers.Parser.ParseResult;
 
 
 public class PreParser extends Parser {
@@ -34,7 +36,7 @@ public class PreParser extends Parser {
 
 	public static Set<String> close = Sets.newHashSet(")", "}", "]");
 
-	public static Set<String> reserved = Sets.newHashSet(",", ":", "...");
+	public static Set<String> reserved = Sets.newHashSet(",", ":", "...", "ans");
 
 	static {
 		reserved.addAll(open);
@@ -289,6 +291,10 @@ public class PreParser extends Parser {
 				return ParseResult.success(tokens.replaceWithTokens(startBracket, templatePos + 1, new MapWithTail(map,
 						tail)));
 
+		}
+		else if(tokens.get(templatePos).equals("ans"))
+		{
+			return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos, new Integer(1)));
 		}
 		return ParseResult.fail();
 	}

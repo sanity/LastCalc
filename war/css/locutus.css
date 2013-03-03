@@ -96,10 +96,16 @@ DIV.line {
 	padding: 5;
 	margin-left: 40px;
 	margin-right: 40px;
-	margin-bottom: 0px;
+	
+	margin-top: -1px;
 	border: 1px;
 	border-color: #CCC;
-	border-top-style: solid;
+	/*border-top-style: solid;*/
+	/*border-left-style: solid;*/
+	border-bottom-style: solid;
+	
+	/*border-radius: 15px;*/
+	
 }
 
 DIV.helpline {
@@ -109,27 +115,39 @@ DIV.helpline {
 	margin-bottom: 0px;
 	border: 1px;
 	border-color: #CCC;
-	border-top-style: solid;
+	/*border-top-style: solid;*/
 }
 
 DIV.question:focus {
 	resize: none;
 	-webkit-appearance: textfield;
     background-color: #EEEEFF;
-    border: 1px solid darkgray;
-    box-shadow: 1px 1px 1px 0 lightgray inset;
-    margin-top: 5px;
+    /*border: 1px solid darkgray;*/
+    /*box-shadow: 1px 1px 1px 0 lightgray inset;*/
+    /*margin-top: 5px;
     padding: 2px 3px;
-    height: 20px;
+    height: 20px;*/
+    
+	width: 90%;
+	display: inline-block;
 }
 
 DIV.firstLine {
-	border-top-style: none;
+	/*border-top-style: none;*/
+	/*margin-top: 4px;*/
 }
 
+/*DIV.lastLine {
+	border-bottom-style: solid;
+}*/
+
 DIV.question {
-	display: inline-block;
+	border: 2px solid #CCCCCC;
+	/*background-color: #EEEFFF;*/
+	border-radius: 4px;
+	
 	vertical-align: middle;
+	display: inline-block;
 }
 
 DIV.helpquestion {
@@ -137,9 +155,13 @@ DIV.helpquestion {
 	vertical-align: middle;
 }
 
-DIV.question.editing {
+/*DIV.question.editing {
 	width: 95%;
 	display: block;
+}*/
+
+DIV.lineNumberMarker{
+	display: inline-block;
 }
 
 DIV.equals {
@@ -174,11 +196,17 @@ DIV.equals {
 	-webkit-box-shadow: 1px 1px 1px 1px #888;
 	-moz-box-shadow: 1px 1px 1px 1px #888;
 	box-shadow: 1px 1px 1px 1px #888;
+	
+	horizontal-align: right;
 }
 
 DIV.answer {
 	display: inline-block;
 	vertical-align: middle;
+	
+	/*not sure the following command does anything*/
+	align: right;
+	
 }
 
 DIV#worksheet {
