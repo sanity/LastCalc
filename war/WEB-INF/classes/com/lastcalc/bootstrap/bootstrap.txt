@@ -22,6 +22,10 @@ yen = jpy
 euro = eur
 euros = eur
 kilo = kilogram
+rmb = cny
+pound=lb
+pounds=lb
+
 
 # Math
 ANum % BNum = ANum mod BNum
@@ -109,5 +113,3 @@ Num / List = apply (X=Num/X) to List
 Num mod List = apply(X=Num mod X) to List
 Num % List = apply(X=Num % X) to List
 
-# Currency
-rmb = cny
