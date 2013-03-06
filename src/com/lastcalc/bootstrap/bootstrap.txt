@@ -71,11 +71,6 @@ X - PNum% = X * (1-PNum/100)
 PNum% of X = X*(PNum/100)
 X * PNum% = X*(PNum/100)
 PNum% * X = X*(PNum/100)
-X + (PNum%) = X * (1+PNum/100)
-X - (PNum%) = X * (1-PNum/100)
-(PNum%) of X = X*(PNum/100)
-X * (PNum%) = X*(PNum/100)
-(PNum%) * X = X*(PNum/100)
 
 # Various constants
 speed of light = 299792458 meters per second
@@ -113,3 +108,4 @@ Num / List = apply (X=Num/X) to List
 Num mod List = apply(X=Num mod X) to List
 Num % List = apply(X=Num % X) to List
 
+Num ! = factorial Num
