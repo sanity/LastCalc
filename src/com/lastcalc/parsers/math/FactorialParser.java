@@ -13,7 +13,7 @@
  * PURPOSE.  See the GNU Affero General Public License for more 
  * details.
  ******************************************************************************/
-package com.lastcalc.parsers;
+package com.lastcalc.parsers.math;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -26,6 +26,7 @@ import org.jscience.mathematics.number.Number;
 import com.google.common.collect.*;
 
 import com.lastcalc.TokenList;
+import com.lastcalc.parsers.Parser;
 import com.lastcalc.parsers.Parser.ParseResult;
 
 
