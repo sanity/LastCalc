@@ -166,8 +166,9 @@ public class MathBiOp extends Parser {
 			return a.minus(b);
 		else if (op.equals("*"))
 			return a.times(b);
-		else if (op.equals("/") && b.getEstimatedValue() != 0)
+		else if (op.equals("/") && b.getEstimatedValue() != 0){
 			return a.divide(b);
+		}
 		else if (op.equals("^")) {
 			if (b.getExactValue() != b.getEstimatedValue() || b.getExactValue() > Integer.MAX_VALUE)
 				return null;

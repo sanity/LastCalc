@@ -57,7 +57,7 @@ public class UnitParser extends Parser {
 		// to prevent concurrent modification exception
 		
 		for (final UnitParser up : Sets.newHashSet(ret)) {
-			//if (up.template.size() > 1) continue;
+			if (up.template.size() > 1){ continue;}
 			ret.add(new UnitParser(SI.ATTO(up.unit), TokenList.createD("atto" + up.template.get(0))));
 			ret.add(new UnitParser(SI.CENTI(up.unit), TokenList.createD("centi" + up.template.get(0))));
 			ret.add(new UnitParser(SI.DECI(up.unit), TokenList.createD("deci" + up.template.get(0))));

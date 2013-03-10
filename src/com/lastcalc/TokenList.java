@@ -22,6 +22,11 @@ import com.google.common.collect.*;
 
 public abstract class TokenList implements Iterable<Object>, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6411043222094812410L;
+
 	public static SimpleTokenList create(final List<Object> list) {
 		return new SimpleTokenList(Lists.newArrayList(list));
 	}
