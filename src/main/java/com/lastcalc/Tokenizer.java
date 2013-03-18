@@ -15,17 +15,19 @@
  ******************************************************************************/
 package com.lastcalc;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.regex.*;
-
 import com.google.common.base.Joiner;
-import com.google.common.collect.*;
-
-import org.jscience.mathematics.number.*;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lastcalc.parsers.math.Radix;
+import org.jscience.mathematics.number.LargeInteger;
+import org.jscience.mathematics.number.Rational;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Tokenizer {
 	private static Pattern anyMatcher;
@@ -43,7 +45,7 @@ public class Tokenizer {
 		tokenMatchers.put("float", "[0-9]+\\.[0-9]+");
 		tokenMatchers.put("integer", "[0-9]+");
 		tokenMatchers.put("token", "[a-zA-Z][a-zA-Z0-9]*");
-		tokenMatchers.put("miscSymbols", "[()\\[\\]\\{\\}\\:\\+-/*$۴�%@#\\^]");
+		tokenMatchers.put("miscSymbols", "[()\\[\\]\\{\\}\\:\\+-/*$۴�%@#\\^]");
 		tokenMatchers.put("equalitySymbols", "[=<>!]+");
 		tokenMatchers.put("quotedString", "\"(?:[^\"\\\\]|\\\\.)*\"");
 		final String anyMatcher = Joiner.on('|').join(tokenMatchers.values());

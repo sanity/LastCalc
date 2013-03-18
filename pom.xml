@@ -108,7 +108,7 @@
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-jsr107cache</artifactId>
-            <version>1.7.5</version>
+            <version>${appengine.target.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
