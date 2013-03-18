@@ -15,10 +15,12 @@
  ******************************************************************************/
 package com.lastcalc.db;
 
+import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Unindex;
 
 import javax.persistence.Id;
 
+@Entity
 public class Question {
 	@Id
 	public long id;

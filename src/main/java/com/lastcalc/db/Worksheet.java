@@ -17,6 +17,7 @@ package com.lastcalc.db;
 
 import com.google.common.collect.Lists;
 import com.googlecode.objectify.annotation.Cache;
+import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Serialize;
 import com.lastcalc.Misc;
@@ -28,6 +29,7 @@ import java.util.Collection;
 import java.util.Date;
 
 @Cache
+@Entity
 public class Worksheet {
 
 	public Worksheet() {
