@@ -67,10 +67,10 @@ public class FactorialParser extends Parser {
 	
 	protected long factorial(long input){
 		long fact = 1;
-		  for (long x = input; x > 1; x--){
-		     fact *= x;
-		  }
-		 return fact;
+		for (long x = input; x > 1; x--){
+			fact *= x;
+		}
+	 return fact;
 	}
 
 	@Override
