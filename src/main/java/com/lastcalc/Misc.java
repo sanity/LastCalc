@@ -19,7 +19,6 @@ import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Random;
 
@@ -47,11 +46,12 @@ public class Misc {
 
 	public static final Gson gson = new GsonBuilder().create();
 
-	public static NumberFormat numberFormat = new DecimalFormat();
+	public static NumberFormat numberFormat;
 	static {
-/*		numberFormat = NumberFormat.getInstance();
+		numberFormat = NumberFormat.getInstance();
+        numberFormat.setGroupingUsed(false);
 		numberFormat.setParseIntegerOnly(false);
-		numberFormat.setMaximumFractionDigits(20);*/
+		numberFormat.setMaximumFractionDigits(20);
 	}
 
 	public static final Joiner joiner = Joiner.on(' ');
