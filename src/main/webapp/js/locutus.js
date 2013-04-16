@@ -221,11 +221,11 @@ $(window).load(function() {
 				"questions" : {}
 			};
 
-			$("DIV.line").each(function(lineNoM1, lineElement) {
+			$("DIV.line").each(
+			function(lineNoM1, lineElement) {
 				var lineNo = lineNoM1 + 1;
 				if (lineNo >= thisLineNumber) {
-					var qText = $.trim($(this).find("DIV.question")
-							.text());
+					var qText = $.trim($(this).find("DIV.question").text());
 					if (qText.length > 0) {
 						toSend.questions[lineNo] = qText;
 					}
@@ -239,7 +239,8 @@ $(window).load(function() {
 				dataType : "json",
 				success : function(response) {
 					variables = response.variables;
-					$("DIV.line").each(function() {
+					$("DIV.line").each(
+					function() {
 						var ln = getLineNumber($(this));
 						if (response.answers[ln]) {
 							// If we have a new answer for this

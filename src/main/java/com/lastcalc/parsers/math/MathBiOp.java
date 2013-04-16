@@ -86,7 +86,7 @@ public class MathBiOp extends Parser {
 		}
 		if ((!(a instanceof org.jscience.mathematics.number.Number) && !(a instanceof Amount))
 				|| (!(b instanceof org.jscience.mathematics.number.Number) && !(b instanceof Amount)))
-			return ParseResult.fail();
+			return ParseResult.fail();  //if not BOTH Numbers or Amounts, then fail
 		final String op = (String) tokens.get(templatePos + 1);
 
 		final Integer opPrecidence = precidenceMap.get(op);

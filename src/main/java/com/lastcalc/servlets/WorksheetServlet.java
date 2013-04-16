@@ -89,7 +89,8 @@ public class WorksheetServlet extends HttpServlet {
 			} else {
 				if (qap.answer == null) {
 					qap.answer = seqParser.parseNext(Tokenizer.tokenize(qap.question));//original ian's code
-				} else {
+				}
+                else {
 					seqParser.processNextAnswer(qap.answer);
 				}
 			}
