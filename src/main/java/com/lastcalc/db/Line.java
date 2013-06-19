@@ -32,6 +32,15 @@ public class Line implements Serializable {
 		this.answer = answer;
 	}
 
+    public Line(final int lineNum, final String question, final TokenList answer)
+            throws IOException {
+        this.lineNum=lineNum;
+        this.question = question;
+        this.answer = answer;
+    }
+
+    public int lineNum;
+
 	@Unindex
 	public String question;
 
