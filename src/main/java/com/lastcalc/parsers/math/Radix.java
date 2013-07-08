@@ -18,7 +18,7 @@ package com.lastcalc.parsers.math;
 import java.io.Serializable;
 
 
-public class Radix implements Serializable {
+public class Radix extends Number implements Serializable {
 	private static final long serialVersionUID = 6793205833102927654L;
 	public final long integer;
 	public final int radix;
@@ -51,4 +51,24 @@ public class Radix implements Serializable {
 		}
 		return prefix + Long.toString(integer, radix);
 	}
+
+    @Override
+    public int intValue() {
+        return (int)integer;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public long longValue() {
+        return integer;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public float floatValue() {
+        return (float)integer;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public double doubleValue() {
+        return (double)integer;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
