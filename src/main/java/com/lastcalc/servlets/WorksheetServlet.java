@@ -16,6 +16,7 @@
 package com.lastcalc.servlets;
 
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.googlecode.objectify.Objectify;
 import com.lastcalc.*;
 import com.lastcalc.db.DAO;
@@ -58,8 +59,11 @@ public class WorksheetServlet extends HttpServlet {
             return;
         }
 
+
+        //System.out.println("Request to worksheet: \n"+Misc.gson.toJson(request));
+
         final WorksheetResponse response = getWorksheetResponse(worksheet, request, requestURI);
-        //System.out.println("Response: "+Misc.gsonpp.toJson(response));
+        //System.out.println("WorksheetResponse: "+Misc.gson.toJson(response));
 
 
         obj.save().entity(worksheet);
