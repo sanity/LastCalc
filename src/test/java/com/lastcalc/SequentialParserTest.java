@@ -15,13 +15,13 @@
  ******************************************************************************/
 package com.lastcalc;
 
-import java.util.*;
-
 import junit.framework.Assert;
-
-import org.jscience.mathematics.number.*;
+import org.jscience.mathematics.number.LargeInteger;
 import org.jscience.mathematics.number.Number;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class SequentialParserTest {
@@ -76,6 +76,17 @@ public class SequentialParserTest {
 		Assert.assertEquals(8, ((LargeInteger) list.get(6)).intValue());
 		Assert.assertEquals(9, ((LargeInteger) list.get(7)).intValue());
 	}
+
+    @Test
+    public void firstLineFunctionDefinition() {
+        final SequentialParser sp = SequentialParser.create();
+        sp.parseNext("double X = X * 2");
+        final TokenList result = sp.parseNext("double 5");
+        Assert.assertEquals(1, result.size());
+        Assert.assertTrue("Assert that "+result.get(0).getClass()+" is a Number", result.get(0) instanceof Number);
+        double value = ((Number) result.get(0)).doubleValue();
+        Assert.assertEquals(10.0, value);
+    }
 
 	@Test
 	public void filterTest() {

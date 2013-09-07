@@ -96,41 +96,7 @@ public class MainPageServlet extends HttpServlet {
 					return;
 				}
 
-				final Document doc = Document.createShell(requestURL.toString());
-				doc.head().appendElement("title").text("LastCalc");
-				doc.head().appendElement("link").attr("rel", "stylesheet").attr("href", "/css/highlighting.css")
-				.attr("type", "text/css");
-				doc.head().appendElement("link").attr("rel", "stylesheet").attr("href", "/css/locutus.css")
-				.attr("type", "text/css");
-				doc.head().appendElement("link").attr("rel", "stylesheet")
-				.attr("href", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css")
-				.attr("type", "text/css");
-				doc.head().appendElement("script").attr("src", "/js/json2.js");
-				doc.head().appendElement("script")
-				.attr("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
-				// doc.head().appendElement("script").attr("src",
-				// "/js/jquery.tools.min.js");
-				doc.head().appendElement("script")
-				.attr("src", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js");
-				doc.head().appendElement("script").attr("src", "/js/jquery.cookie.js");
-				doc.head().appendElement("script").attr("src", "/js/rangy-core.js");
-				doc.head().appendElement("script").attr("src", "/js/rangy-selectionsaverestore.js");
-				doc.head().appendElement("script").attr("src", "/js/locutus.js");
-				doc.head()
-				.appendElement("script")
-				.attr("type", "text/javascript")
-				.text("function woopraReady(tracker) {tracker.setDomain('lastcalc.com');tracker.setIdleTimeout(300000);tracker.track();return false;}(function(){var wsc = document.createElement('script');wsc.src = document.location.protocol+'//static.woopra.com/js/woopra.js';wsc.type = 'text/javascript';wsc.async = true;var ssc = document.getElementsByTagName('script')[0];ssc.parentNode.insertBefore(wsc, ssc);})();");
-
-				doc.head().append("<script type=\"text/javascript\"> var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-354970-27']); _gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>");
-				doc.body().attr("data-worksheet-id", worksheet.id);
-				doc.body().attr("data-worksheet-ro-id", worksheet.readOnlyId);
-				final Element header = doc.body().appendElement("div").attr("id", "header");
-				header.appendElement("div").attr("id", "logo").text("LastCalc");
-				header.appendElement("div").attr("id", "help-button").text("Show Help");
-				final Element ws = doc.body().appendElement("div").attr("id", "worksheet");
-				ws.appendElement("div").attr("class", "groups").appendElement("a")
-				.attr("href", "https://github.com/sanity/LastCalc/wiki/OpenSourceAnnouncement")
-				.attr("target", "_blank").html("LastCalc is now Open Source!  Read more...");
+                final Document doc = createDocument(requestURL, worksheet);
 
 				// doc.body().appendElement("iframe").attr("id",
 				// "helpframe").attr("src", "/help")
@@ -144,9 +110,10 @@ public class MainPageServlet extends HttpServlet {
 
 				int lineNo = 1;
 				final SequentialParser sp = SequentialParser.create();
+                Element worksheetElement = doc.body().select("#worksheet").first();
 				for (final Line qa : worksheet.qaPairs) {
 					sp.processNextAnswer(qa.answer);
-					final Element lineEl = ws.appendElement("div").addClass("line")
+					final Element lineEl = worksheetElement.appendElement("div").addClass("line")
 							.attr("id", "line" + lineNo);
 					if (lineNo == 1) {
 						lineEl.addClass("firstLine");
@@ -172,7 +139,7 @@ public class MainPageServlet extends HttpServlet {
 					lineNo++;
 				}
 				doc.body().attr("data-variables", Misc.gson.toJson(sp.getUserDefinedKeywordMap()));
-				final Element lineEl = ws.appendElement("div").addClass("line").attr("id", "line" + lineNo);
+				final Element lineEl = worksheetElement.appendElement("div").addClass("line").attr("id", "line" + lineNo);
 				if (lineNo == 1) {
 					lineEl.addClass("firstLine");
 				}
@@ -186,7 +153,46 @@ public class MainPageServlet extends HttpServlet {
 				resp.setContentType("text/html; charset=UTF-8");
 				resp.getWriter().append(doc.toString());
 			}
-		};
+		}
 
 	}
+
+    private Document createDocument(final URL requestURL, final Worksheet worksheet) {
+        final Document doc = Document.createShell(requestURL.toString());
+        doc.head().appendElement("title").text("LastCalc");
+        doc.head().appendElement("link").attr("rel", "stylesheet").attr("href", "/css/highlighting.css")
+        .attr("type", "text/css");
+        doc.head().appendElement("link").attr("rel", "stylesheet").attr("href", "/css/locutus.css")
+        .attr("type", "text/css");
+        doc.head().appendElement("link").attr("rel", "stylesheet")
+        .attr("href", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css")
+        .attr("type", "text/css");
+        doc.head().appendElement("script").attr("src", "/js/json2.js");
+        doc.head().appendElement("script")
+        .attr("src", "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js");
+        // doc.head().appendElement("script").attr("src",
+        // "/js/jquery.tools.min.js");
+        doc.head().appendElement("script")
+        .attr("src", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js");
+        doc.head().appendElement("script").attr("src", "/js/jquery.cookie.js");
+        doc.head().appendElement("script").attr("src", "/js/rangy-core.js");
+        doc.head().appendElement("script").attr("src", "/js/rangy-selectionsaverestore.js");
+        doc.head().appendElement("script").attr("src", "/js/locutus.js");
+        doc.head()
+        .appendElement("script")
+        .attr("type", "text/javascript")
+        .text("function woopraReady(tracker) {tracker.setDomain('lastcalc.com');tracker.setIdleTimeout(300000);tracker.track();return false;}(function(){var wsc = document.createElement('script');wsc.src = document.location.protocol+'//static.woopra.com/js/woopra.js';wsc.type = 'text/javascript';wsc.async = true;var ssc = document.getElementsByTagName('script')[0];ssc.parentNode.insertBefore(wsc, ssc);})();");
+
+        doc.head().append("<script type=\"text/javascript\"> var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-354970-27']); _gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>");
+        doc.body().attr("data-worksheet-id", worksheet.id);
+        doc.body().attr("data-worksheet-ro-id", worksheet.readOnlyId);
+        final Element header = doc.body().appendElement("div").attr("id", "header");
+        header.appendElement("div").attr("id", "logo").text("LastCalc");
+        header.appendElement("div").attr("id", "help-button").text("Show Help");
+        final Element ws = doc.body().appendElement("div").attr("id", "worksheet");
+        ws.appendElement("div").attr("class", "groups").appendElement("a")
+        .attr("href", "https://github.com/sanity/LastCalc/wiki/OpenSourceAnnouncement")
+        .attr("target", "_blank").html("LastCalc is now Open Source!  Read more...");
+        return doc;
+    }
 }
