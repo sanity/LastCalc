@@ -16,7 +16,6 @@
 package com.lastcalc.servlets;
 
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import com.googlecode.objectify.Objectify;
 import com.lastcalc.*;
 import com.lastcalc.db.DAO;
