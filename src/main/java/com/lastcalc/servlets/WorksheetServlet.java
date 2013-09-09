@@ -16,7 +16,6 @@
 package com.lastcalc.servlets;
 
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import com.googlecode.objectify.Objectify;
 import com.lastcalc.*;
 import com.lastcalc.db.DAO;
@@ -66,6 +65,7 @@ public class WorksheetServlet extends HttpServlet {
         //System.out.println("WorksheetResponse: "+Misc.gson.toJson(response));
 
 
+
         obj.save().entity(worksheet);
 
         resp.setContentType("application/json; charset=UTF-8");
@@ -80,7 +80,7 @@ public class WorksheetServlet extends HttpServlet {
         final ArrayList<Line> qaPairs = worksheet.qaPairs;
 
         if (request.questions != null) {
-            int earliestModified = Integer.MAX_VALUE;
+            //int earliestModified = Integer.MAX_VALUE;
             final TreeMap<Integer, String> orderedQuestions = Maps.newTreeMap();
             orderedQuestions.putAll(request.questions);
             for (final Entry<Integer, String> question : orderedQuestions.entrySet()) {
@@ -89,12 +89,12 @@ public class WorksheetServlet extends HttpServlet {
                     final Line qaPair = qaPairs.get(pos);
                     qaPair.lineNum=question.getKey();
                     qaPair.question = question.getValue();
-                    earliestModified = Math.min(earliestModified, pos);
+                    //earliestModified = Math.min(earliestModified, pos);
                 } else {
                     qaPairs.add(new Line(question.getKey(),question.getValue(), null));
                 }
             }
-            for (int x = earliestModified; x < qaPairs.size(); x++) {
+            for (int x = 0; x < qaPairs.size(); x++) {
                 final Line qaPair = qaPairs.get(x);
                 qaPair.answer = null;
             }

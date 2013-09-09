@@ -209,8 +209,7 @@ $(window).load(function() {
 			if (thisLine.next("DIV.line").length != 0) {
 				thisLine.remove();
 				reassignIds();
-			} else { // It is the last one, so hide the equals and
-				// the answer
+			} else { // It is the last one, so hide the equals sign and hide the answer
 				thisLine.find("DIV.answer").hide();
 				thisLine.find("DIV.equals").hide();
 			}
@@ -223,13 +222,10 @@ $(window).load(function() {
 
 			$("DIV.line").each(function(lineNoM1, lineElement) {
 				var lineNo = lineNoM1 + 1;
-				if (lineNo >= thisLineNumber) {
-					var qText = $.trim($(this).find("DIV.question")
-							.text());
-					if (qText.length > 0) {
-						toSend.questions[lineNo] = qText;
-					}
-				}
+                var qText = $.trim($(this).find("DIV.question")	.text());
+                if (qText.length > 0) {
+                    toSend.questions[lineNo] = qText;
+                }
 			});
 			$.ajax({
 				type : "POST",
