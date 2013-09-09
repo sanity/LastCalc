@@ -6,3 +6,4 @@ annotations/
 .idea/
 .settings/
 target/
+*.iml
