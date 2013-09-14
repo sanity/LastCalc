@@ -84,6 +84,9 @@ public class UserDefinedParserParser extends Parser {
 		if (from.equals(to) || from.equals("?"))
 			return;
 		if (from instanceof String && variables.contains(from)) {
+            if (bound.containsKey(from) && !bound.get(from).equals(to)) {
+                throw new BindException("Variable "+from+" is already bound to "+bound.get(from)+" which isn't the same as "+to);
+            }
 			bound.put((String) from, to);
 		} else if (from instanceof Iterable && to instanceof Iterable) {
 			final Iterator<Object> fromL = ((Iterable<Object>) from).iterator();
