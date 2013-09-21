@@ -191,8 +191,8 @@ public class MainPageServlet extends HttpServlet {
         header.appendElement("div").attr("id", "help-button").text("Show Help");
         final Element ws = doc.body().appendElement("div").attr("id", "worksheet");
         ws.appendElement("div").attr("class", "groups").appendElement("a")
-        .attr("href", "https://github.com/sanity/LastCalc/wiki/OpenSourceAnnouncement")
-        .attr("target", "_blank").html("LastCalc is now Open Source!  Read more...");
+        .attr("href", "https://github.com/sanity/LastCalc/wiki")
+        .attr("target", "_blank").html("LastCalc is open source!  Read more...");
         return doc;
     }
 }
