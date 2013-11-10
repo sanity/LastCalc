@@ -334,6 +334,7 @@
       efficient. It is much better to use one of these other list
       manipulation functions if possible.
     </div>
+      <!--
     <div class="lesson">
       <h2>Pulling data from the web</h2>
       The Internet is full of data, but often it isn't in a very
@@ -350,16 +351,16 @@
       currencies.
       <p />
       The first stage is to find a webpage that contains the data we
-      need, <a target="_blank" href="http://bitcoincharts.com/">bitcoincharts.com</a>
+      need, <a target="_blank" href="http://mtgox.com/">mtgox.com</a>
       will do nicely, so let's grab it and store the result in a
       variable:
 
-     <div class="question">page = retrieve "http://bitcoincharts.com/"</div>      
+     <div class="question">page = retrieve "http://mtgox.com/"</div>
 
       Note that LastCalc doesn't display the entire retrieved page
       because it would be way too big. Next, we need to isolate the HTML
       elements in the page that we're interested in:
-      <div class="question">elements = select "td.right" from page</div>
+      <div class="question">elements = select "li#lastPrice span" from page</div>
       We use a <a target="_blank"
         href="http://jsoup.org/cookbook/extracting-data/selector-syntax">CSS
         selector</a> to isolate specific elements in the page. Since more
@@ -387,6 +388,7 @@
       information you can find on the Internet!
     </div>
   </div>
+  -->
   <div class="lesson">
       <h2>Sharing your LastCalc functions</h2>
       So you've created some really useful functions and you'd like to share

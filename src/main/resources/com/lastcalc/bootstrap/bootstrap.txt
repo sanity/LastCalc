@@ -88,6 +88,7 @@ e = 2.71828183
 # Various math operations on lists
 sum List = sum of List
 sum of List = fold (X Y=X+Y) over List with 0
+product of List = fold (X Y=X*Y) over List with 0
 size List = size of List
 size of List = fold (X Y=X+1) over List with 0
 maximum List = max of List
@@ -116,3 +117,5 @@ Num mod List = apply(X=Num mod X) to List
 Num % List = apply(X=Num % X) to List
 
 Num ! = factorial Num
+
+# Algebra
