@@ -124,4 +124,3 @@ is Num prime ? =isprime Num
 is Num prime= isprime Num
 is prime Num= isprime Num
 primality of Num=isprime Num
-
