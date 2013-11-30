@@ -118,14 +118,10 @@ Num % List = apply(X=Num % X) to List
 
 Num ! = factorial Num
 
-<<<<<<< HEAD
 # Algebra
-=======
 is Num a prime= isprime Num
 is Num prime ? =isprime Num
 is Num prime= isprime Num
 is prime Num= isprime Num
 primality of Num=isprime Num
 
-
->>>>>>> primes functionality
