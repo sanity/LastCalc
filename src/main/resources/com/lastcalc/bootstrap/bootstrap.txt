@@ -116,11 +116,17 @@ Num / List = apply (X=Num/X) to List
 Num mod List = apply(X=Num mod X) to List
 Num % List = apply(X=Num % X) to List
 
+
+# number theory functions
 Num ! = factorial Num
 
-# Algebra
 is Num a prime= isprime Num
 is Num prime ? =isprime Num
 is Num prime= isprime Num
 is prime Num= isprime Num
 primality of Num=isprime Num
+
+primes under Num=primesunder Num
+
+
+# Algebra
