@@ -3,6 +3,7 @@ package com.lastcalc.parsers.math;
 import com.google.common.collect.Lists;
 import com.lastcalc.TokenList;
 import com.lastcalc.parsers.Parser;
+import org.jscience.mathematics.number.LargeInteger;
 
 
 /**
@@ -24,7 +25,7 @@ import com.lastcalc.parsers.Parser;
  */
 public class IsPrimeParser extends Parser {
 
-    private static TokenList template = TokenList.createD(Lists.<Object> newArrayList("isprime"),Integer.class);
+    private static TokenList template = TokenList.createD(Lists.<Object> newArrayList("isprime"),Number.class);
 
     @Override
     public TokenList getTemplate() {
@@ -36,30 +37,46 @@ public class IsPrimeParser extends Parser {
     public ParseResult parse(final TokenList tokens, final int templatePos) {
 
         final String op = (String) tokens.get(templatePos);
-        final Integer input = (Integer) tokens.get(templatePos + 1);
+        final Integer input = ((LargeInteger)tokens.get(templatePos + 1)).intValue();
 
         
         if(op.equals("isprime")){
             
+            //first, we check if the number is greater than the last element of the primeslist.
+            
+            //if yes, then we expand the primeslist to be big enough until the last element 
+            //      of the primeslist is the largest prime that is still less than the input number.  if the input number is prime
+            //      then return true else false
+            
+            
+            //if the input number is less than the last element of the primeslist, then we see if it is in the primeslist
+            
+            //if it's there then it's prime, if not the false.
+            
+            
+            //run the sqrt n primality test algorithm
+            
             final Integer inputSqrRoot=(int)Math.sqrt((double)input);
             
             if(input ==1){
-                return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), "false"));
+                return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), false));
             }
             else if(input==2 || input==3){
-                return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), "true"));
+                return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), true));
             }
             
             for(int i=2;i<=inputSqrRoot;i++){
                 if(input%i==0){
-                    return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), "false"));
+                    return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), false));
                 }
             }
 
-            return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), "true"));
+            return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), true));
             
         }
-        return ParseResult.fail();
+        else{
+            return ParseResult.fail();
+        }
     }
 
     @Override

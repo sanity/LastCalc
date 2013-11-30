@@ -30,12 +30,37 @@ import java.util.Iterator;
  */
 public class PrimesUnderParser extends Parser {
 
+    //all the primes under 1000.  This parser doesnt work for numbers above 1000
+    final private ArrayList<Integer> allprimes=new ArrayList<Integer>();
 
-    private static TokenList template = TokenList.createD(Lists.<Object> newArrayList("primesunder"),Integer.class);
+
+
+    private static TokenList template = TokenList.createD(Lists.<Object> newArrayList("primesunder"),Number.class);
 
     @Override
     public TokenList getTemplate() {
         return template;
+    }
+    
+    public PrimesUnderParser(){//put the primes into the array list
+
+        final BufferedReader br;
+        final String [] primesString;
+        try{
+            br = new BufferedReader(new InputStreamReader(
+                    Bootstrap.class.getResourceAsStream("prime_numbers.txt")));
+                    //found in src/main/resources/com/lastcalc/bootstrap/prime_numbers.txt
+
+            primesString = br.readLine().split(", ");
+        }
+        catch(Exception e){
+            System.err.println("prime_numbers.txt input error");
+            return;
+        }
+
+        for(int i=0;i<primesString.length;i++){
+            allprimes.add(Integer.parseInt(primesString[i]));
+        }
     }
 
 
@@ -43,31 +68,10 @@ public class PrimesUnderParser extends Parser {
     public ParseResult parse(final TokenList tokens, final int templatePos) {
 
         final String op = (String) tokens.get(templatePos);
-        final Integer input = (Integer) tokens.get(templatePos + 1);
+        final Integer input = ((LargeInteger)tokens.get(templatePos + 1)).intValue();
 
         //result.append(new TokenList.SimpleTokenList("42"));
         if(op.equals("primesunder")){
-
-
-            final BufferedReader br;
-            final String [] primesString;
-            try{
-                br = new BufferedReader(new InputStreamReader(
-                        Bootstrap.class.getResourceAsStream("prime_numbers.txt")));//src/main/resources/com/lastcalc/bootstrap/prime_numbers.txt
-
-                primesString = br.readLine().split(", ");
-            }
-            catch(Exception e){
-                System.err.println("prime_numbers.txt input error");
-                return ParseResult.fail();
-            }
-            
-            ArrayList<Integer> allprimes=new ArrayList<Integer>();
-
-            for(int i=0;i<primesString.length;i++){
-                allprimes.add(Integer.parseInt(primesString[i]));
-            }
-            
 
             Iterator<Integer> allprimesiterator = allprimes.iterator();
 

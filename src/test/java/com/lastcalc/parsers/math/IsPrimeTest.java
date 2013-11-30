@@ -34,30 +34,30 @@ public class IsPrimeTest {
     public void isPrimeTest(){
 
         final IsPrimeParser ist = new IsPrimeParser();
-        Parser.ParseResult pr=ist.parse(TokenList.createD("blah", "isprime", Integer.valueOf(3), "blah"),1);
+        Parser.ParseResult pr=ist.parse(TokenList.createD("blah", "isprime", LargeInteger.valueOf(3), "blah"),1);
         Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
-        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", "true","blah"), pr.output);
+        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", true,"blah"), pr.output);
 
-        pr=ist.parse(TokenList.createD("blah", "isprime", Integer.valueOf(5), "blah"),1);
+        pr=ist.parse(TokenList.createD("blah", "isprime", LargeInteger.valueOf(5), "blah"),1);
         Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
-        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", "true","blah"), pr.output);
+        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", true,"blah"), pr.output);
 
 
-        pr=ist.parse(TokenList.createD("blah", "isprime", Integer.valueOf(10), "blah"),1);
+        pr=ist.parse(TokenList.createD("blah", "isprime", LargeInteger.valueOf(10), "blah"),1);
         Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
-        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", "false","blah"), pr.output);
+        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", false,"blah"), pr.output);
 
-        pr=ist.parse(TokenList.createD("blah", "isprime", Integer.valueOf(29), "blah"),1);
+        pr=ist.parse(TokenList.createD("blah", "isprime", LargeInteger.valueOf(29), "blah"),1);
         Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
-        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", "true","blah"), pr.output);
+        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", true,"blah"), pr.output);
 
-        pr=ist.parse(TokenList.createD("blah", "isprime", Integer.valueOf(100), "blah"),1);
+        pr=ist.parse(TokenList.createD("blah", "isprime", LargeInteger.valueOf(100), "blah"),1);
         Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
-        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", "false","blah"), pr.output);
+        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", false,"blah"), pr.output);
 
-        pr=ist.parse(TokenList.createD("blah", "isprime", Integer.valueOf(7919 ), "blah"),1);
+        pr=ist.parse(TokenList.createD("blah", "isprime", LargeInteger.valueOf(7919 ), "blah"),1);
         Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
-        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", "true","blah"), pr.output);
+        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", true,"blah"), pr.output);
 
 
 

@@ -116,3 +116,11 @@ Num mod List = apply(X=Num mod X) to List
 Num % List = apply(X=Num % X) to List
 
 Num ! = factorial Num
+
+is Num a prime= isprime Num
+is Num prime ? =isprime Num
+is Num prime= isprime Num
+is prime Num= isprime Num
+primality of Num=isprime Num
+
+

@@ -34,7 +34,7 @@ public class PrimesUnderTest {
     public void primesUnderTest(){
 
         final PrimesUnderParser pup = new PrimesUnderParser();
-        Parser.ParseResult pr=pup.parse(TokenList.createD("blah", "primesunder", Integer.valueOf(3), "blah"),1);
+        Parser.ParseResult pr=pup.parse(TokenList.createD("blah", "primesunder", LargeInteger.valueOf(3), "blah"),1);
         Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
         Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", Lists.newArrayList(2,3),"blah"), pr.output);
     }
