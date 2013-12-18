@@ -77,9 +77,7 @@ public abstract class Parser implements Serializable {
 		for (final Object x : input.subList(0, templatePos)) {
 			response.add(x);
 		}
-		for (final Object x : values) {
-			response.add(x);
-		}
+        Collections.addAll(response, values);
 		for (final Object x : input.subList(templatePos + tSize, input.size())) {
 			response.add(x);
 		}
@@ -105,7 +103,7 @@ public abstract class Parser implements Serializable {
 		return -1;
 	}
 
-	private final boolean match(final Object templ, final Object src) {
+	private boolean match(final Object templ, final Object src) {
 		if (templ instanceof Class) {
 			final Class<?> templC = (Class<?>) templ;
 			return !reservedTokens.contains(src) && templC.isAssignableFrom(src.getClass());
@@ -148,6 +146,7 @@ public abstract class Parser implements Serializable {
 		parsers.add(new FactorialParser());
         parsers.add(new PrimesUnderParser());
         parsers.add(new IsPrimeParser());
+        parsers.add(new GCDParser());
 		
 	}
 
