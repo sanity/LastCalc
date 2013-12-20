@@ -128,5 +128,7 @@ primality of Num=isprime Num
 
 primes under Num=primesunder Num
 
+gcf Num = gcd Num
+hcf Num = gcd Num
 
 # Algebra

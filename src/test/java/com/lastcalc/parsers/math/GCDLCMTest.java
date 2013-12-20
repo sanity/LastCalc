@@ -23,16 +23,28 @@ import org.junit.Test;
  * details.
  * ****************************************************************************
  */
-public class GCDTest {
+public class GCDLCMTest {
 
 
     @Test
-    public void gcdTest(){
+    public void gcdlcmTest(){
 
-        final GCDParser gcdParser = new GCDParser();
+        final GCDLCMParser gcdParser = new GCDLCMParser();
         Parser.ParseResult pr=gcdParser.parse(TokenList.createD("blah", "gcd", LargeInteger.valueOf(3), LargeInteger.valueOf(4), "blah"),1);
         Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
         Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", 1,"blah"), pr.output);
+
+        pr=gcdParser.parse(TokenList.createD("blah", "gcd", LargeInteger.valueOf(100), LargeInteger.valueOf(90), "blah"),1);
+        Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
+        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", 10,"blah"), pr.output);
+
+        pr=gcdParser.parse(TokenList.createD("blah", "lcm", LargeInteger.valueOf(3), LargeInteger.valueOf(4), "blah"),1);
+        Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
+        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", 12,"blah"), pr.output);
+
+        pr=gcdParser.parse(TokenList.createD("blah", "lcm", LargeInteger.valueOf(100), LargeInteger.valueOf(90), "blah"),1);
+        Assert.assertTrue("Ensure parse was successful: ", pr.isSuccess());
+        Assert.assertEquals("Ensure parse result is what it's supposed to be: ",TokenList.createD("blah", 900,"blah"), pr.output);
 
 
     }

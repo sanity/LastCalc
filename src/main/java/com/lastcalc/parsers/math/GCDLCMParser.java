@@ -22,10 +22,10 @@ import org.jscience.mathematics.number.LargeInteger;
  * details.
  * ****************************************************************************
  */
-public class GCDParser extends Parser{
+public class GCDLCMParser extends Parser{
 
 
-    private static TokenList template = TokenList.createD(Lists.<Object> newArrayList("gcd"),Number.class, Number.class);
+    private static TokenList template = TokenList.createD(Lists.<Object> newArrayList("gcd", "lcm"),Number.class, Number.class);
 
     @Override
     public TokenList getTemplate() {
@@ -43,7 +43,13 @@ public class GCDParser extends Parser{
 
         if(op.equals("gcd")){
 
-            int result=gcd_iter(input1,input2);
+            Integer result=gcd_iter(input1,input2);
+
+            return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), result));
+        }
+        else if(op.equals("lcm")){
+
+            Integer result=lcm(input1,input2);
 
             return ParseResult.success(tokens.replaceWithTokens(templatePos, templatePos + template.size(), result));
         }
@@ -52,14 +58,19 @@ public class GCDParser extends Parser{
         }
     }
 
-    private int gcd_iter(int u, int v) {
-        int t;
+    private Integer gcd_iter(Integer u, Integer v) {
+        Integer t;
         while (v!=0) {
             t = u;
             u = v;
             v = t % v;
         }
         return u < 0 ? -u : u; /* abs(u) */
+    }
+
+    private Integer lcm(Integer a, Integer b)
+    {
+        return a * (b / gcd_iter(a, b));
     }
 
     @Override
