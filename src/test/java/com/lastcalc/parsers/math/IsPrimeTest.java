@@ -1,6 +1,5 @@
 package com.lastcalc.parsers.math;
 
-import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.lastcalc.TokenList;
 import com.lastcalc.parsers.Parser;
 import junit.framework.Assert;
