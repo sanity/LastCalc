@@ -17,6 +17,8 @@ package com.lastcalc.parsers.amounts;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.measure.unit.*;
 
@@ -28,6 +30,8 @@ import com.lastcalc.parsers.Parser;
 
 
 public class UnitParser extends Parser {
+	private static final Logger log = Logger.getLogger(UnitParser.class.getName());
+
 
 	private static final long serialVersionUID = 3254703564962161446L;
 	public final TokenList template;
@@ -130,10 +134,9 @@ public class UnitParser extends Parser {
 						}
 					}
 				} catch (final IllegalArgumentException e) {
-					e.printStackTrace();
+					log.log(Level.WARNING, "Error parsing unit", e);
 				} catch (final IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.log(Level.WARNING, "Error parsing unit", e);
 				}
 			}
 		}

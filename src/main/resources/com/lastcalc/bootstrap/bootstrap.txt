@@ -23,9 +23,10 @@ euro = eur
 euros = eur
 kilo = kilogram
 rmb = cny
-pound=lb
-pounds=lb
-
+pound = lb
+pounds = lb
+c = celsius
+f = fahrenheit
 
 # Math
 ANum % BNum = ANum mod BNum

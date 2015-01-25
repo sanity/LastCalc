@@ -15,26 +15,38 @@
  ******************************************************************************/
 package com.lastcalc;
 
-import java.text.*;
-import java.util.*;
-import java.util.Map.Entry;
-
-import javax.measure.unit.Unit;
-
 import com.google.common.collect.Lists;
-
-import org.jscience.economics.money.Currency;
-import org.jscience.physics.amount.Amount;
-import org.jsoup.nodes.*;
-import org.jsoup.parser.Tag;
-
 import com.lastcalc.cache.DocumentWrapper;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.parsers.amounts.UnitParser;
 import com.lastcalc.parsers.math.Radix;
+import org.jscience.economics.money.Currency;
+import org.jscience.physics.amount.Amount;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
+import org.jsoup.parser.Tag;
+
+import javax.measure.quantity.Quantity;
+import javax.measure.quantity.Temperature;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
+import javax.measure.unit.TransformedUnit;
+import javax.measure.unit.Unit;
+import java.text.DecimalFormat;
+import java.text.Format;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Renderers {
+    private static final Logger log = Logger.getLogger(Renderers.class.getName());
+
+
     private static Format currencyFormat = new DecimalFormat("###,###.####");
 
     private static ArrayList<String> variableColors = Lists.newArrayList("red", "green", "blue", "orange", "rosy",
@@ -96,11 +108,14 @@ public class Renderers {
             }
         } else if (obj instanceof Amount) {
             final Amount<?> amount = (Amount<?>) obj;
-            final Element amountSpan = renderTo.appendElement("span");
+            Unit<? extends Quantity> unit = amount.getUnit();
+            log.log(Level.INFO, "Amount: " + amount + ", unit type: " + unit.getClass().getCanonicalName());
+            final Element amountSpan = renderTo.appendElement("span").addClass("amount");
             final double estimatedValue = amount.getEstimatedValue();
-            if (amount.getUnit() instanceof Currency) {
+
+            if (unit instanceof Currency) {
                 final Element currencySpan = amountSpan.appendElement("span").addClass("currency");
-                final Currency currency = (Currency) amount.getUnit();
+                final Currency currency = (Currency) unit;
                 if (currency.getCode().equalsIgnoreCase("USD")) {
                     currencySpan.html("US$" + currencyFormat.format(estimatedValue));
                 } else if (currency.getCode().equalsIgnoreCase("GBP")) {
@@ -112,18 +127,22 @@ public class Renderers {
                 } else {
                     currencySpan.text(currencyFormat.format(estimatedValue) + currency.getCode());
                 }
+            } else if (unit.equals(NonSI.FAHRENHEIT) || unit.equals(SI.CELSIUS) || unit.equals(SI.KELVIN)) {
+                // Avoid "33 fahrenheits"
+                final Element temperatureSpan = amountSpan.appendElement("span").addClass("temperature");
+                temperatureSpan.text(estimatedValue + unit.toString());
             } else {
                 final String numStr = Misc.numberFormat.format(estimatedValue);
                 amountSpan.appendElement("span").addClass("number").text(numStr);
                 amountSpan.appendText(" ");
-                if (!amount.getUnit().equals(Unit.ONE)) {
+                if (!unit.equals(Unit.ONE)) {
                     final Element unitSpan = amountSpan.appendElement("span").addClass("recognized");
-                    final String verboseName = estimatedValue == 1.0 ? UnitParser.verboseNamesSing.get(amount.getUnit())
-                            : UnitParser.verboseNamesPlur.get(amount.getUnit());
+                    final String verboseName = estimatedValue == 1.0 ? UnitParser.verboseNamesSing.get(unit)
+                            : UnitParser.verboseNamesPlur.get(unit);
                     if (verboseName != null) {
                         unitSpan.text(verboseName);
                     } else {
-                        unitSpan.text(amount.getUnit().toString());
+                        unitSpan.text(unit.toString());
                     }
                 }
             }

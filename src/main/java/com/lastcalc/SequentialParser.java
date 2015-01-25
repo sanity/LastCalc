@@ -32,7 +32,7 @@ import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
 import com.lastcalc.parsers.bool.IfThenElse;
 
 public class SequentialParser implements Serializable {
-	private static final Logger log = Logger.getLogger(Bootstrap.class.getName());
+	private static final Logger log = Logger.getLogger(SequentialParser.class.getName());
 
 	public static final Set<String> recognizedWords = Sets.newHashSet();
 	public static ParserPickerFactory globalParserPickerFactory;
