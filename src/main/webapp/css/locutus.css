@@ -216,7 +216,7 @@ DIV#worksheet {
 
 DIV#helpframe {
 	overflow: auto;
-	position : absolute;
+	position : fixed;
     top      : 60px;
     right    : 10px;
     bottom   : 5px;
