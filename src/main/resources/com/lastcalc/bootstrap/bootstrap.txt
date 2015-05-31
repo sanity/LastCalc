@@ -27,6 +27,8 @@ pound = lb
 pounds = lb
 c = celsius
 f = fahrenheit
+oz = ounces
+g = grams
 
 # Math
 ANum % BNum = ANum mod BNum
@@ -50,7 +52,7 @@ Num billion =     Num*1000000000
 Num trillion =    Num*1000000000000
 Num quadrillion = Num*1000000000000000
 Num quintillion = Num*1000000000000000000
-Num seNumtillion =  Num*1000000000000000000000
+Num sextillion =  Num*1000000000000000000000
 Num septillion =  Num*1000000000000000000000000
 1st = 0
 first = 0
