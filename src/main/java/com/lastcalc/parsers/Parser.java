@@ -15,20 +15,29 @@
  ******************************************************************************/
 package com.lastcalc.parsers;
 
-import java.io.Serializable;
-import java.util.*;
-
 import com.google.common.collect.Sets;
-
 import com.lastcalc.TokenList;
-import com.lastcalc.parsers.amounts.*;
-import com.lastcalc.parsers.bool.*;
-import com.lastcalc.parsers.collections.*;
+import com.lastcalc.parsers.amounts.AmountConverterParser;
+import com.lastcalc.parsers.amounts.AmountParser;
+import com.lastcalc.parsers.amounts.UnitParser;
+import com.lastcalc.parsers.bool.BoolFunctionsParser;
+import com.lastcalc.parsers.bool.BoolParser;
+import com.lastcalc.parsers.bool.EqualityParser;
+import com.lastcalc.parsers.bool.NotParser;
+import com.lastcalc.parsers.collections.ApplyTo;
+import com.lastcalc.parsers.collections.Filter;
+import com.lastcalc.parsers.collections.FoldLeft;
+import com.lastcalc.parsers.collections.GetFromListOrMap;
 import com.lastcalc.parsers.currency.Currencies;
 import com.lastcalc.parsers.math.*;
 import com.lastcalc.parsers.meta.ImportParser;
 import com.lastcalc.parsers.strings.StringAppender;
-import com.lastcalc.parsers.web.*;
+import com.lastcalc.parsers.web.GetFromElement;
+import com.lastcalc.parsers.web.HttpRetriever;
+import com.lastcalc.parsers.web.Select;
+
+import java.io.Serializable;
+import java.util.*;
 
 
 public abstract class Parser implements Serializable {
@@ -147,6 +156,7 @@ public abstract class Parser implements Serializable {
         parsers.add(new PrimesUnderParser());
         parsers.add(new IsPrimeParser());
         parsers.add(new GCDLCMParser());
+		parsers.add(new VarMultiply());
 		
 	}
 
