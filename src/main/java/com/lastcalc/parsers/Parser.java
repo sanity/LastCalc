@@ -156,7 +156,7 @@ public abstract class Parser implements Serializable {
         parsers.add(new PrimesUnderParser());
         parsers.add(new IsPrimeParser());
         parsers.add(new GCDLCMParser());
-		parsers.add(new VarMultiply());
+		parsers.add(new ImplicitMultiply());
 		
 	}
 
