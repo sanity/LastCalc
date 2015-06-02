@@ -100,8 +100,15 @@ max List = max of List
 max of List = fold (X Y = if (X == false) then Y else (if X > Y then X else Y)) over List with false
 minimum of List = min List
 min of List = fold (X Y = if (X == false) then Y else (if X < Y then X else Y)) over List with false
-average of List = avg of List
-avg of List = (sum of List) / (size of List)
+avg = average
+average of List = (sum of List) / (size of List)
+
+reverse [] = []
+reverse [F ... L] = (reverse L) append [F]
+
+# Support common syntax for retrieving value from Lists and Maps
+Map[X] = get X from Map
+List[Num]=get Num from List
 
 # Support applying basic math operations 
 # to lists
@@ -118,7 +125,6 @@ Num * List = apply (X=Num*X) to List
 Num / List = apply (X=Num/X) to List
 Num mod List = apply(X=Num mod X) to List
 Num % List = apply(X=Num % X) to List
-
 
 # number theory functions
 Num ! = factorial Num

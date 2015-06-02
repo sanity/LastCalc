@@ -24,10 +24,7 @@ import com.lastcalc.parsers.bool.BoolFunctionsParser;
 import com.lastcalc.parsers.bool.BoolParser;
 import com.lastcalc.parsers.bool.EqualityParser;
 import com.lastcalc.parsers.bool.NotParser;
-import com.lastcalc.parsers.collections.ApplyTo;
-import com.lastcalc.parsers.collections.Filter;
-import com.lastcalc.parsers.collections.FoldLeft;
-import com.lastcalc.parsers.collections.GetFromListOrMap;
+import com.lastcalc.parsers.collections.*;
 import com.lastcalc.parsers.currency.Currencies;
 import com.lastcalc.parsers.math.*;
 import com.lastcalc.parsers.meta.ImportParser;
@@ -157,7 +154,7 @@ public abstract class Parser implements Serializable {
         parsers.add(new IsPrimeParser());
         parsers.add(new GCDLCMParser());
 		parsers.add(new ImplicitMultiply());
-		
+		parsers.add(new AppendList());
 	}
 
 	public static final class ParseResult {
