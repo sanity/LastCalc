@@ -25,7 +25,8 @@ public class ImplicitMultiply extends Parser {
         Number number2 = (Number) tokens.get(templatePos + 1);
 
         TokenList.CompositeTokenList newTokens = tokens.replaceWithTokens(templatePos, templatePos + 2, number1, "*", number2);
-        return ParseResult.success(newTokens);
+        // Add a score bias so that "twenty five" is parsed as "20+5" and not "20*5"
+        return ParseResult.success(newTokens, 1);
     }
 
     @Override
