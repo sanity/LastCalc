@@ -81,6 +81,44 @@ PNum% * X = X*(PNum/100)
 -X * (PNum%) = X*(PNum/100)
 -(PNum%) * X = X*(PNum/100)
 
+# Numbers
+zero = 0
+one = 1
+two = 2
+three = 3
+four = 4
+five = 5
+six = 6
+seven = 7
+eight = 8
+nine = 9
+ten = 10
+eleven = 11
+twelve = 12
+thirteen = 13
+fourteen = 14
+fifteen = 15
+sixteen = 16
+seventeen = 17
+eighteen = 18
+nineteen = 19
+twenty = 20
+twenty Num = 20 + Num
+thirty = 30
+thirty Num = 30 + Num
+forty = 40
+forty Num = 40 + Num
+fifty = 50
+fifty Num = 50 + Num
+sixty = 60
+sixty Num = 60 + Num
+seventy = 90
+seventy Num = 70 + Num
+eighty = 80
+eighty Num = 80 + Num
+ninety = 90
+ninety = 90 + Num
+ANum hundred and BNum = ANum+100 + BNum
 
 # Various constants
 speed of light = 299792458 meters per second
@@ -90,16 +128,16 @@ e = 2.71828183
 
 # Various math operations on lists
 sum List = sum of List
-sum of List = fold (X Y=X+Y) over List with 0
-product of List = fold (X Y=X*Y) over List with 0
+sum of List = fold (XNum YNum=XNum+YNum) over List with 0
+product of List = fold (XNum YNum=XNum*YNum) over List with 0
 size List = size of List
 size of List = fold (X Y=X+1) over List with 0
 maximum List = max of List
 maximum of List = max List
 max List = max of List
-max of List = fold (X Y = if (X == false) then Y else (if X > Y then X else Y)) over List with false
+max of List = fold (XNum YNum = if (XNum == false) then YNum else (if XNum > YNum then XNum else YNum)) over List with false
 minimum of List = min List
-min of List = fold (X Y = if (X == false) then Y else (if X < Y then X else Y)) over List with false
+min of List = fold (XNum YNum = if (XNum == false) then YNum else (if XNum < YNum then XNum else YNum)) over List with false
 avg = average
 average of List = (sum of List) / (size of List)
 

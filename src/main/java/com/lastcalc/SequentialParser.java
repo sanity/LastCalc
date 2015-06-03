@@ -29,7 +29,7 @@ import com.lastcalc.bootstrap.Bootstrap;
 import com.lastcalc.engines.*;
 import com.lastcalc.parsers.*;
 import com.lastcalc.parsers.UserDefinedParserParser.UserDefinedParser;
-import com.lastcalc.parsers.bool.IfThenElse;
+import com.lastcalc.parsers.bool.IfThenElseParser;
 
 public class SequentialParser implements Serializable {
 	private static final Logger log = Logger.getLogger(SequentialParser.class.getName());
@@ -57,7 +57,7 @@ public class SequentialParser implements Serializable {
 		// Recompute worksheet
 		// The first thing we do is parse any datastructures like lists or maps
 		priorityParsers.addParser(new PreParser());
-		priorityParsers.addParser(new IfThenElse());
+		priorityParsers.addParser(new IfThenElseParser());
 		priorityParsers.addParser(new UserDefinedParserParser());
 
 		lowPriorityParsers.addParser(new ToLowerCase());
