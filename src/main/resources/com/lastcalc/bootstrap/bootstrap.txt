@@ -47,13 +47,13 @@ tangent = tan
 hyperbolic tan = tanh
 Num hundred = Num*100
 Num thousand = Num*1000
-Num million =     Num*1000000
-Num billion =     Num*1000000000
-Num trillion =    Num*1000000000000
-Num quadrillion = Num*1000000000000000
-Num quintillion = Num*1000000000000000000
-Num sextillion =  Num*1000000000000000000000
-Num septillion =  Num*1000000000000000000000000
+Num million =     (Num*1000000)
+Num billion =     (Num*1000000000)
+Num trillion =    (Num*1000000000000)
+Num quadrillion = (Num*1000000000000000)
+Num quintillion = (Num*1000000000000000000)
+Num sextillion =  (Num*1000000000000000000000)
+Num septillion =  (Num*1000000000000000000000000)
 1st = 0
 first = 0
 2nd = 1
@@ -69,17 +69,17 @@ eighth = 7
 ninth = 8
 tenth = 9
 # Percentages
-X + PNum% = X * (1+PNum/100)
-X - PNum% = X * (1-PNum/100)
-PNum% of X = X*(PNum/100)
-X * PNum% = X*(PNum/100)
-PNum% * X = X*(PNum/100)
+X + PNum% = (X * (1+PNum/100))
+X - PNum% = (X * (1-PNum/100))
+PNum% of X = (X*(PNum/100))
+X * PNum% = (X*(PNum/100))
+PNum% * X = (X*(PNum/100))
 
--X + (PNum%) = X * (1+PNum/100)
--X - (PNum%) = X * (1-PNum/100)
--(PNum%) of X = X*(PNum/100)
--X * (PNum%) = X*(PNum/100)
--(PNum%) * X = X*(PNum/100)
+-X + (PNum%) = (X * (1+PNum/100))
+-X - (PNum%) = (X * (1-PNum/100))
+-(PNum%) of X = (X*(PNum/100))
+-X * (PNum%) = (X*(PNum/100))
+-(PNum%) * X = (X*(PNum/100))
 
 # Numbers
 zero = 0
@@ -103,26 +103,26 @@ seventeen = 17
 eighteen = 18
 nineteen = 19
 twenty = 20
-twenty Num = if Num > 0 and Num < 10 then 20 + Num
+twenty Num = (if Num > 0 and Num < 10 then 20 + Num)
 thirty = 30
-thirty Num = 30 + Num
+thirty Num = (30 + Num)
 forty = 40
-forty Num = 40 + Num
+forty Num = (40 + Num)
 fifty = 50
-fifty Num = 50 + Num
+fifty Num = (50 + Num)
 sixty = 60
-sixty Num = 60 + Num
+sixty Num = (60 + Num)
 seventy = 90
-seventy Num = 70 + Num
+seventy Num = (70 + Num)
 eighty = 80
-eighty Num = 80 + Num
+eighty Num = (80 + Num)
 ninety = 90
-ninety = 90 + Num
-ANum hundred and BNum = ANum+100 + BNum
+ninety Num = (90 + Num)
+ANum hundred and BNum = (ANum+100 + BNum)
 
 # Various constants
-speed of light = 299792458 meters per second
-the speed of light = 299792458 meters per second
+speed of light = (299792458 meters per second)
+the speed of light = (299792458 meters per second)
 pi = 3.141592653589
 e = 2.71828183
 
@@ -143,6 +143,11 @@ average of List = (sum of List) / (size of List)
 
 reverse [] = []
 reverse [F ... L] = (reverse L) append [F]
+
+# Various operations on maps
+merge {} Map = Map
+merge {K1:V1 ... R1} {K2:V2 ... R2} = merge R1 {K1:V1, K2:V2  ... R2}
+AMap + BMap = merge AMap BMap
 
 # Support common syntax for retrieving value from Lists and Maps
 Map[X] = get X from Map

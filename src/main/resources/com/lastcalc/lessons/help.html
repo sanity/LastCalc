@@ -290,8 +290,31 @@
     </div>
   </div>
   <div class="section">
-    <h1>Advanced Programming</h1>
+      <h1>Maps</h1>
     <div class="lesson">
+        <h2>Basics</h2>
+        Lists are very useful, but they can't do everything, they only allow you to
+        look up items based on their position in the list. Maps let you store items
+        and look them up by anything you want. In this simple example we want
+        to store 3 friend's phone numbers so that we can look them up based on our
+        friend's name:
+        <div class="question">phoneBook = {"joe" : 5552727, "fred" : 5558764, "bill" : 5552319}</div>
+        And now let's look up Fred's number:
+        <div class="question">get "fred" from phoneBook</div>
+    </div>
+    <div class="lesson">
+        <h2>Pattern Matching</h2>
+        As with lists, Maps can also be used in function definitions using pattern matching, here
+        we define a function that retrieves Fred's number:
+        <div class="question">fredNumber {"fred" : X ... Rest} = X</div>
+        <div class="question">fredNumber phoneBook</div>
+    </div>
+  </div>
+
+  <div class="section">
+      <h1>Advanced Programming</h1>
+
+      <div class="lesson">
       <h2>Recursion</h2>
       How do we put pattern matching on lists to use? To do this we must
       rely on a concept called "recursion", which basically means a
