@@ -1,6 +1,8 @@
-sudo: false
+after_success:sudo: false
 language: java
 notifications:
   email:
     - ian.clarke@gmail.com
     - oliverlee010@gmail.com
+after_success:
+  - mvn clean cobertura:cobertura coveralls:report
